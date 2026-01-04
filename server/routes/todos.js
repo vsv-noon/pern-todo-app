@@ -51,18 +51,20 @@ router.get("/date/:date", async (req, res) => {
 // Update a todo
 router.put("/:id", async (req, res) => {
   try {
-    const { title, description, completed } = req.body;
+    const { title, description, completed, due_date, remind_at } = req.body;
 
     const result = await pool.query(
       `
       UPDATE todos 
       SET title = $1, 
           description = $2, 
-          completed = $3 
-      WHERE id = $4
+          completed = $3,
+          due_date = $4,
+          remind_at = $5
+      WHERE id = $6
       RETURNING *
       `,
-      [title, description, completed, req.params.id]
+      [title, description, completed, due_date, remind_at, req.params.id]
     );
 
     res.json(result.rows[0]);
@@ -85,7 +87,7 @@ router.delete("/:id", async (req, res) => {
     if (result.rowCount === 0) {
       return res.status(404).json({ error: "Todo not found" });
     }
- 
+
     res.sendStatus(204);
   } catch (err) {
     console.error(err);

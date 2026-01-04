@@ -6,6 +6,8 @@ import { TodoList } from "./components/TodoList/TodoList";
 import { apiFetch } from "./api";
 import type { Todo } from "./types/todo";
 import { EditTodoModal } from "./components/EditTodoModal/EditTodoModal";
+import { requestNotificationPermission } from "./hooks/useNotifications";
+import { useReminders } from "./hooks/useReminders";
 
 function App() {
   const [allTodos, setAllTodos] = useState<Todo[]>([]);
@@ -64,6 +66,12 @@ function App() {
   useEffect(() => {
     loadAll();
   }, [loadAll]);
+
+  useEffect(() => {
+    requestNotificationPermission();
+  }, []);
+
+  useReminders(allTodos);
 
   return (
     <>
