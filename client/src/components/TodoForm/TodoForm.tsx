@@ -12,6 +12,7 @@ export function TodoForm({ refresh }: TodoFormProps) {
       body: JSON.stringify({
         title,
         due_date: date,
+        remind_at: date,
       }),
     });
 

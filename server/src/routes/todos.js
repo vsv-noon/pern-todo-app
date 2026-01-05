@@ -35,6 +35,7 @@ router.get("/", async (req, res) => {
     const result = await pool.query(
       `
       SELECT * FROM todos 
+      WHERE deleted_at IS NULL
       ORDER BY due_date
       `
     );
@@ -88,6 +89,7 @@ router.put("/:id", async (req, res) => {
           due_date = COALESCE($4, due_date),
           remind_at = COALESCE($5, remind_at)
       WHERE id = $6
+      AND deleted_at IS NULL
       RETURNING *
       `,
       [title, description, completed, due_date, remind_at, req.params.id]
@@ -107,8 +109,10 @@ router.delete("/:id", async (req, res) => {
 
     const result = await pool.query(
       `
-      DELETE FROM todos 
+      UPDATE todos 
+      SET deleted_at = now()
       WHERE id = $1 
+      AND deleted_at IS NULL
       RETURNING *
       `,
       [id]

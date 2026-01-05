@@ -10,6 +10,8 @@ export function TodoList({ todos, onEdit, onUpdate, onDelete }: TodoListProps) {
         title: todo.title,
         description: todo.description,
         completed: !todo.completed,
+        due_date: todo.due_date,
+        reminder_at: todo.remind_at,
       }),
     });
 
