@@ -3,6 +3,7 @@ import type { EditTodoModalProps } from "./types";
 import { apiFetch } from "../../api";
 import type { Todo } from "../../types/todo";
 import { styles } from "./style";
+import { validateTodo } from "../../utils/validation";
 
 export function EditTodoModal({ todo, onClose, onSave }: EditTodoModalProps) {
   const [title, setTitle] = useState(todo.title);
@@ -15,6 +16,7 @@ export function EditTodoModal({ todo, onClose, onSave }: EditTodoModalProps) {
       : ""
   );
   const [loading, setLoading] = useState(false);
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   function localDateTimeToISO(value: string): string {
     const [date, time] = value.split("T");
@@ -27,6 +29,13 @@ export function EditTodoModal({ todo, onClose, onSave }: EditTodoModalProps) {
 
   async function handleSave() {
     setLoading(true);
+
+    const validationError = validateTodo(title, dueDate);
+
+    if (validationError) {
+      setValidationError(validationError);
+      return;
+    }
 
     const updated = await apiFetch<Todo>(`/todos/${todo.id}`, {
       method: "PATCH",
@@ -49,6 +58,7 @@ export function EditTodoModal({ todo, onClose, onSave }: EditTodoModalProps) {
       {loading && <div>Loading...</div>}
       <div style={styles.overlay} onClick={onClose}>
         <div style={styles.modal} onClick={(e) => e.stopPropagation()}>
+          {validationError && <p style={{ color: "red" }}>{validationError}</p>}
           <h3>Edit a task</h3>
 
           <label>
