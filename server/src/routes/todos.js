@@ -9,16 +9,22 @@ import {
   updateTodo,
 } from "../controllers/todos.controller.js";
 
+import { validate } from "../middleware/validate.js";
+import {
+  createTodoSchema,
+  updateTodoSchema,
+} from "../validation/todo.schema.js";
+
 const router = Router();
 
 // Create
-router.post("/", createTodo);
+router.post("/", validate(createTodoSchema), createTodo);
 
 // Restore
 router.patch("/:id/restore", restoreTodo);
 
 // Update
-router.patch("/:id", updateTodo);
+router.patch("/:id", validate(updateTodoSchema), updateTodo);
 
 // Reade
 router.get("/", getAllTodos);

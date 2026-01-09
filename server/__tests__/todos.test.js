@@ -22,6 +22,15 @@ describe("Todos API", () => {
     expect(Array.isArray(res.body)).toBe(true);
   });
 
+  it("rejects todo without title", async () => {
+    const res = await createTodo({
+      title: "",
+      due_date: "2026-01-01"
+    })
+
+    expect(res.status).toBe(400);
+  })
+
   it("updates todo", async () => {
     const create = await createTodo();
 
