@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { apiFetch } from "../api/api";
 import type { Todo } from "../types/todo";
 import { requestNotificationPermission } from "../hooks/useNotifications";
 import { useReminders } from "../hooks/useReminders";
 import { CalendarView } from "../components/CalendarView/CalendarView";
-import { TodoForm } from "../components/TodoForm/TodoForm";
+import { AddTodoModal } from "../components/AddTodoModal/AddTodoModal";
 import { TodoList } from "../components/TodoList/TodoList";
 import { EditTodoModal } from "../components/EditTodoModal/EditTodoModal";
 import { Filters } from "../components/Filters/Filters";
@@ -29,6 +29,8 @@ export default function HomePage() {
   );
 
   const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
+
+  const [isModalOpen, setModalOpen] = useState(false);
 
   const loadTodos = useCallback(
     async function () {
@@ -57,7 +59,7 @@ export default function HomePage() {
     apiFetch<Record<string, number>>("/todos/calendar-counts")
       .then(setCalendarCounts)
       .catch(console.error);
-  }, []);
+  }, [todos]);
 
   useEffect(() => {
     setParams({
@@ -87,6 +89,12 @@ export default function HomePage() {
     setTodos((prev) => prev.filter((todo) => todo.id !== id));
   }
 
+  function handleCreated(todo: Todo) {
+    setTodos((prev) => [...prev, todo]);
+  }
+
+  const existingTitles = useMemo(() => todos.map((t) => t.title), [todos]);
+
   useEffect(() => {
     requestNotificationPermission();
   }, []);
@@ -101,7 +109,14 @@ export default function HomePage() {
         selectedDate={selectedDate}
         counts={calendarCounts}
       />
-      <TodoForm refresh={loadTodos} />
+      <button onClick={() => setModalOpen(true)}>➕ Add task</button>
+      <AddTodoModal
+        isOpen={isModalOpen}
+        defaultDate={selectedDate}
+        existingTitles={existingTitles}
+        onClose={() => setModalOpen(false)}
+        onCreated={handleCreated}
+      />
       <Filters
         search={search}
         status={status}
