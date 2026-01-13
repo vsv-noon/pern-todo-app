@@ -1,0 +1,40 @@
+.todoItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 6px;
+}
+
+.todoItem:hover {
+  background: #f7f9fc;
+}
+
+.todoItem .title {
+  flex: 1;
+}
+
+.todoItem .actions {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+  display: flex;
+  gap: 4px;
+}
+
+.todoItem:hover .actions,
+.todoItem:focus-within .actions {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.todoItem .actions button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.todoItem .actions button:hover {
+  transform: scale(1.1);
+}

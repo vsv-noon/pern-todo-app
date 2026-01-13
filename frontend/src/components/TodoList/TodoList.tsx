@@ -2,6 +2,8 @@ import type { TodoListProps } from "./types";
 import type { Todo } from "../../types/todo";
 import { apiDelete, apiFetch } from "../../api/api";
 
+import "./TodoList.css";
+
 export function TodoList({ todos, onEdit, onUpdate, onDelete }: TodoListProps) {
   async function toggleCompleted(todo: Todo) {
     const updated = await apiFetch<Todo>(`/todos/${todo.id}`, {
@@ -29,25 +31,26 @@ export function TodoList({ todos, onEdit, onUpdate, onDelete }: TodoListProps) {
     <ul>
       {todos &&
         todos.map((todo) => (
-          <li key={todo.id} style={{ marginBottom: 8 }}>
+          <li key={todo.id} className="todoItem">
             <input
               type="checkbox"
               checked={todo.completed}
               onChange={() => toggleCompleted(todo)}
             />
 
-            <>
-              <span
-                style={{
-                  textDecoration: todo.completed ? "line-through" : "none",
-                }}
-              >
-                {todo.title}
-              </span>
+            <span
+              className="title"
+              style={{
+                textDecoration: todo.completed ? "line-through" : "none",
+              }}
+            >
+              {todo.title}
+            </span>
 
+            <div className="actions">
               <button onClick={() => onEdit(todo)}>✏️</button>
               <button onClick={() => deleteTodo(todo)}>🗑</button>
-            </>
+            </div>
           </li>
         ))}
     </ul>
