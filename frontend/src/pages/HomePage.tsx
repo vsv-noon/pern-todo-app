@@ -10,6 +10,7 @@ import { TodoList } from "../components/TodoList/TodoList";
 import { EditTodoModal } from "../components/EditTodoModal/EditTodoModal";
 import { Filters } from "../components/Filters/Filters";
 import { formatDate } from "../utils/date";
+import { ModalBase } from "../components/ModalBase/ModalBase";
 
 export default function HomePage() {
   const [params, setParams] = useSearchParams();
@@ -93,6 +94,10 @@ export default function HomePage() {
     setTodos((prev) => [...prev, todo]);
   }
 
+  function handleEdit(todo: Todo) {
+    setEditingTodo(todo);
+  }
+
   const existingTitles = useMemo(() => todos.map((t) => t.title), [todos]);
 
   useEffect(() => {
@@ -116,6 +121,12 @@ export default function HomePage() {
         existingTitles={existingTitles}
         onClose={() => setModalOpen(false)}
         onCreated={handleCreated}
+      />
+      <EditTodoModal
+        isOpen={Boolean(editingTodo)}
+        todo={editingTodo}
+        onClose={() => setEditingTodo(null)}
+        onUpdated={handleUpdateTodo}
       />
       <Filters
         search={search}
@@ -146,14 +157,7 @@ export default function HomePage() {
             onDelete={handleDeleteTodo}
           />
         </div>
-      }
-      {editingTodo && (
-        <EditTodoModal
-          todo={editingTodo}
-          onClose={() => setEditingTodo(null)}
-          onSave={handleUpdateTodo}
-        />
-      )}
+      }     
     </>
   );
 }

@@ -1,111 +1,177 @@
-import { useState } from "react";
-import type { EditTodoModalProps } from "./types";
+import { useEffect, useState } from "react";
+import type { EditTodoModalFormState, EditTodoModalProps } from "./types";
 import { apiFetch } from "../../api/api";
-import type { Todo } from "../../types/todo";
+import type { Priority, Todo } from "../../types/todo";
 import { styles } from "./style";
 import { validateTodo } from "../../utils/validation";
+// import { createPortal } from "react-dom";
+import { ModalBase } from "../ModalBase/ModalBase";
 
-export function EditTodoModal({ todo, onClose, onSave }: EditTodoModalProps) {
-  const [title, setTitle] = useState(todo.title);
-  const [description, setDescription] = useState(todo.description ?? "");
-  const [completed, setCompleted] = useState(todo.completed);
-  const [dueDate, setDueDate] = useState(todo.due_date);
-  const [remindAt, setRemindAt] = useState(
-    todo.remind_at
-      ? todo.remind_at.slice(0, 16) // for input[type=datetime-local]
-      : ""
-  );
+export function EditTodoModal({
+  todo,
+  isOpen,
+  onClose,
+  onUpdated,
+}: EditTodoModalProps) {
+  const [form, setForm] = useState<EditTodoModalFormState | null>(null);
   const [loading, setLoading] = useState(false);
-  const [validationError, setValidationError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  function localDateTimeToISO(value: string): string {
-    const [date, time] = value.split("T");
-    const [year, month, day] = date.split("-").map(Number);
-    const [hour, minute] = time.split(":").map(Number);
+  useEffect(() => {
+    if (!isOpen || !todo) return;
 
-    const localDate = new Date(year, month - 1, day, hour, minute);
-    return localDate.toISOString();
+    setForm({
+      title: todo.title,
+      description: todo.description ?? "",
+      due_date: todo.due_date,
+      remind_at: todo.remind_at ?? "",
+      priority: todo.priority,
+      completed: todo.completed,
+    });
+
+    setError(null);
+  }, [isOpen, todo]);
+
+  // useEffect(() => {
+  //   if (!isOpen) return;
+
+  //   function onKeyDown(e: KeyboardEvent) {
+  //     if (e.key === "Escape") {
+  //       onClose();
+  //     }
+
+  //     if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+  //       submit();
+  //     }
+  //   }
+
+  //   window.addEventListener("keydown", onKeyDown);
+  //   return () => window.removeEventListener("keydown", onKeyDown);
+  // }, [isOpen, form]);
+
+  // -----------------------------
+  // Helpers
+  // -----------------------------
+  function update<K extends keyof EditTodoModalFormState>(
+    key: K,
+    value: EditTodoModalFormState[K]
+  ) {
+    // if (!form) return;
+    setForm((prev) => ({ ...prev!, [key]: value }));
   }
 
-  async function handleSave() {
-    setLoading(true);
+  async function submit() {
+    if (!form || !todo) return;
 
-    const validationError = validateTodo(title, dueDate);
-
+    const validationError = validateTodo(form.title, form.due_date);
     if (validationError) {
-      setValidationError(validationError);
+      setError(validationError);
       return;
     }
 
-    const updated = await apiFetch<Todo>(`/todos/${todo.id}`, {
-      method: "PATCH",
-      body: JSON.stringify({
-        title,
-        description,
-        completed,
-        due_date: dueDate,
-        remind_at: remindAt ? localDateTimeToISO(remindAt) : null,
-      }),
-    });
+    try {
+      setLoading(true);
+      setError(null);
 
-    onSave(updated);
-    onClose();
-    setLoading(false);
+      const updated = await apiFetch<Todo>(`/todos/${todo.id}`, {
+        method: "PATCH",
+        body: JSON.stringify({
+          title: form.title,
+          description: form.description,
+          completed: form.completed,
+          due_date: form.due_date,
+          remind_at: form.remind_at || null,
+          priority: form.priority,
+        }),
+      });
+
+      onUpdated(updated);
+      onClose();
+    } catch (err) {
+      console.error(err);
+      setError("Failed to update todo");
+    } finally {
+      setLoading(false);
+    }
   }
 
+  if (!isOpen || !form) return null;
+
   return (
-    <>
-      {loading && <div>Loading...</div>}
-      <div style={styles.overlay} onClick={onClose}>
-        <div style={styles.modal} onClick={(e) => e.stopPropagation()}>
-          {validationError && <p style={{ color: "red" }}>{validationError}</p>}
-          <h3>Edit a task</h3>
+    <ModalBase
+      isOpen={true}
+      title="✏️ Edit task"
+      onClose={onClose}
+      onSubmit={submit}
+    >
+      <div style={{ display: "grid", gap: 8 }}>
+        {/* Title */}
+        <input
+          autoFocus
+          value={form.title}
+          onChange={(e) => update("title", e.target.value)}
+        />
 
-          <label>
-            {"Title"}
-            <input value={title} onChange={(e) => setTitle(e.target.value)} />
-          </label>
+        {/* Description */}
+        <textarea
+          value={form.description}
+          onChange={(e) => update("description", e.target.value)}
+        />
 
-          <label>
-            {"Description"}
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          </label>
+        {/* Completed */}
+        <label style={styles.row}>
+          <input
+            type="checkbox"
+            checked={form.completed}
+            onChange={(e) => update("completed", e.target.checked)}
+          />
+          Completed
+        </label>
 
-          <label style={{ display: "flex", gap: 8 }}>
-            <input
-              type="checkbox"
-              checked={completed}
-              onChange={(e) => setCompleted(e.target.checked)}
-            />
-            {"Completed"}
-          </label>
+        {/* Due date */}
+        <label>
+          Due date:
+          <input
+            type="date"
+            value={form.due_date}
+            onChange={(e) => update("due_date", e.target.value)}
+          />
+        </label>
 
-          <label>
-            {"Due Date"}
-            <input
-              type="date"
-              value={dueDate}
-              onChange={(e) => setDueDate(e.target.value)}
-            />
-          </label>
-          <label>
-            {"Reminder"}
-            <input
-              type="datetime-local"
-              value={remindAt}
-              onChange={(e) => setRemindAt(e.target.value)}
-            />
-          </label>
+        {/* Reminder */}
+        <label>
+          Reminder:
+          <input
+            type="datetime-local"
+            value={form.remind_at}
+            onChange={(e) => update("remind_at", e.target.value)}
+          />
+        </label>
 
-          <div style={styles.actions}>
-            <button onClick={onClose}>{"Cancel"}</button>
-            <button onClick={handleSave}>{"Save"}</button>
-          </div>
+        {/* Priority */}
+        <label>
+          Priority:
+          <select
+            value={form.priority}
+            onChange={(e) => update("priority", e.target.value as Priority)}
+          >
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+          </select>
+        </label>
+
+        {error && <p style={styles.error}>{error}</p>}
+
+        <div style={styles.actions}>
+          <button onClick={onClose}>Cancel</button>
+          <button disabled={loading} onClick={submit}>
+            {loading ? "Saving..." : "Save"}
+          </button>
         </div>
+
+        <p style={styles.hint}>💡 Ctrl + Enter — save • Esc — close</p>
       </div>
-    </>
+    </ModalBase>
   );
 }

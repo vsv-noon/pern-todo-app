@@ -14,23 +14,6 @@ export const styles: Record<string, React.CSSProperties> = {
     padding: 20,
     width: 420,
     display: "grid",
-    gap: 10,
-  },
-  row: {
-    display: "flex",
-    gap: 8,
-    alignItems: "center",
-  },
-  actions: {
-    display: "flex",
-    justifyContent: "flex-end",
-    gap: 8,
-  },
-  error: {
-    color: "crimson",
-  },
-  hint: {
-    fontSize: 12,
-    opacity: 0.6,
+    gap: 12,
   },
 };

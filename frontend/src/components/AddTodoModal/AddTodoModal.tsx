@@ -4,7 +4,8 @@ import type { AddTodoModalProps, AddTodoModalFormState } from "./types";
 import { validateTodo } from "../../utils/validation";
 import type { Priority, Todo } from "../../types/todo";
 import { emptyAddTodoModalForm } from "./constants";
-import { createPortal } from "react-dom";
+import { ModalBase } from "../ModalBase/ModalBase";
+
 import { styles } from "./style";
 
 export function AddTodoModal({
@@ -21,23 +22,23 @@ export function AddTodoModal({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!isOpen) return;
+  // useEffect(() => {
+  //   if (!isOpen) return;
 
-    function onKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") {
-        onClose();
-      }
+  //   function onKeyDown(e: KeyboardEvent) {
+  //     if (e.key === "Escape") {
+  //       onClose();
+  //     }
 
-      if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
-        handleSubmit();
-      }
-    }
+  //     if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+  //       handleSubmit();
+  //     }
+  //   }
 
-    window.addEventListener("keydown", onKeyDown);
+  //   window.addEventListener("keydown", onKeyDown);
 
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [isOpen, form]);
+  //   return () => window.removeEventListener("keydown", onKeyDown);
+  // }, [isOpen, form]);
 
   useEffect(() => {
     if (isOpen) {
@@ -103,18 +104,27 @@ export function AddTodoModal({
 
   if (!isOpen) return null;
 
-  return createPortal(
-    <div style={styles.backdrop} onClick={onClose}>
-      <div style={styles.modal} onClick={(e) => e.stopPropagation()}>
-        <h2>➕ New task</h2>
-
+  return (
+    <ModalBase
+      isOpen={isOpen}
+      title="➕ New task"
+      onClose={onClose}
+      onSubmit={handleSubmit}
+    >
+      <div style={{ display: "grid", gap: 8 }}>
         <div style={styles.field}>
           <input
             autoFocus
             value={form.title}
             onChange={(e) => updateField("title", e.target.value)}
             placeholder="Title"
+            // list="title-suggestion"
           />
+          {/* <datalist id="title-suggestion">
+            {suggestions.map((s, id) => (
+              <option key={id} value={s} />
+            ))}
+          </datalist> */}
           {suggestions.length > 0 && (
             <ul style={styles.suggestions}>
               {suggestions.map((s, id) => (
@@ -174,7 +184,6 @@ export function AddTodoModal({
 
         <p style={styles.hint}>💡 Ctrl + Enter — create • Esc — close</p>
       </div>
-    </div>,
-    document.body
+    </ModalBase>
   );
 }
