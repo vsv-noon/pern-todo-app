@@ -3,8 +3,13 @@ import type { Todo } from "../../types/todo";
 import { apiDelete, apiFetch } from "../../api/api";
 
 import "./TodoList.css";
+import { ConfirmationDialog } from "../ConfirmationDialog/ConfirmationDialog";
+import { useState } from "react";
 
 export function TodoList({ todos, onEdit, onUpdate, onDelete }: TodoListProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<Todo | null>(null);
+
   async function toggleCompleted(todo: Todo) {
     const updated = await apiFetch<Todo>(`/todos/${todo.id}`, {
       method: "PATCH",
@@ -20,39 +25,68 @@ export function TodoList({ todos, onEdit, onUpdate, onDelete }: TodoListProps) {
     onUpdate(updated);
   }
 
-  async function deleteTodo(todo: Todo) {
-    if (!window.confirm(`Delete task "${todo.title}"?`)) return;
+  function handleDeleteClick(todo: Todo) {
+    setItemToDelete(todo);
+    setIsModalOpen(true);
+  }
 
-    await apiDelete(`/todos/${todo.id}`);
-    onDelete(todo.id);
+  async function handleConfirmDelete(todo: Todo | null) {
+    if (todo) {
+      console.log(`Deleting item with ID: ${todo.id}`);
+      await apiDelete(`/todos/${todo.id}`);
+      onDelete(todo.id);
+    }
+    setItemToDelete(null);
+  }
+
+  // async function deleteTodo(todo: Todo) {
+  //   // if (!window.confirm(`Delete task "${todo.title}"?`)) return;
+
+  //   await apiDelete(`/todos/${todo.id}`);
+  //   onDelete(todo.id);
+  // }
+
+  function handleCloseModal() {
+    setIsModalOpen(false);
+    setItemToDelete(null);
   }
 
   return (
-    <ul>
-      {todos &&
-        todos.map((todo) => (
-          <li key={todo.id} className="todoItem">
-            <input
-              type="checkbox"
-              checked={todo.completed}
-              onChange={() => toggleCompleted(todo)}
-            />
+    <>
+      <ul>
+        {todos &&
+          todos.map((todo) => (
+            <li key={todo.id} className="todoItem">
+              <input
+                type="checkbox"
+                checked={todo.completed}
+                onChange={() => toggleCompleted(todo)}
+              />
 
-            <span
-              className="title"
-              style={{
-                textDecoration: todo.completed ? "line-through" : "none",
-              }}
-            >
-              {todo.title}
-            </span>
+              <span
+                className="title"
+                style={{
+                  textDecoration: todo.completed ? "line-through" : "none",
+                }}
+              >
+                {todo.title}
+              </span>
 
-            <div className="actions">
-              <button onClick={() => onEdit(todo)}>✏️</button>
-              <button onClick={() => deleteTodo(todo)}>🗑</button>
-            </div>
-          </li>
-        ))}
-    </ul>
+              <div className="actions">
+                <button onClick={() => onEdit(todo)}>✏️</button>
+                {/* <button onClick={() => deleteTodo(todo)}>🗑</button> */}
+                <button onClick={() => handleDeleteClick(todo)}>🗑</button>
+              </div>
+            </li>
+          ))}
+      </ul>
+      <ConfirmationDialog
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        title="Are you sure?"
+        message={`Do you really want to delete task "${itemToDelete?.title}"`}
+        onConfirm={() => handleConfirmDelete(itemToDelete)}
+      />
+    </>
   );
 }

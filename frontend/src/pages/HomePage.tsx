@@ -5,9 +5,9 @@ import type { Todo } from "../types/todo";
 import { requestNotificationPermission } from "../hooks/useNotifications";
 import { useReminders } from "../hooks/useReminders";
 import { CalendarView } from "../components/CalendarView/CalendarView";
-import { AddTodoModal } from "../components/AddTodoModal/AddTodoModal";
+import { AddTodoModal } from "../components/AddTodo/AddTodo";
 import { TodoList } from "../components/TodoList/TodoList";
-import { EditTodoModal } from "../components/EditTodoModal/EditTodoModal";
+import { EditTodoModal } from "../components/EditTodo/EditTodo";
 import { Filters } from "../components/Filters/Filters";
 import { formatDate } from "../utils/date";
 // import { ModalBase } from "../components/ModalBase/ModalBase";
@@ -94,9 +94,9 @@ export default function HomePage() {
     setTodos((prev) => [...prev, todo]);
   }
 
-  function handleEdit(todo: Todo) {
-    setEditingTodo(todo);
-  }
+  // function handleEdit(todo: Todo) {
+  //   setEditingTodo(todo);
+  // }
 
   const existingTitles = useMemo(() => todos.map((t) => t.title), [todos]);
 
@@ -157,7 +157,7 @@ export default function HomePage() {
             onDelete={handleDeleteTodo}
           />
         </div>
-      }     
+      }
     </>
   );
 }

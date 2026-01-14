@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { TodoForm } from "../AddTodoModal/AddTodoModal";
+import { TodoForm } from "../AddTodo/AddTodo";
 import userEvent from "@testing-library/user-event";
 import { render, screen } from "@testing-library/react";
 

@@ -4,7 +4,7 @@ import type { AddTodoModalProps, AddTodoModalFormState } from "./types";
 import { validateTodo } from "../../utils/validation";
 import type { Priority, Todo } from "../../types/todo";
 import { emptyAddTodoModalForm } from "./constants";
-import { ModalBase } from "../ModalBase/ModalBase";
+import { Modal } from "../Modal/Modal";
 
 import { styles } from "./style";
 
@@ -131,13 +131,11 @@ export function AddTodoModal({
   if (!isOpen) return null;
 
   return (
-    <ModalBase
-      isOpen={isOpen}
-      title="➕ New task"
-      onClose={onClose}
-      onSubmit={handleSubmit}
-    >
+    <Modal isOpen={isOpen} onClose={onClose} onConfirm={handleSubmit}>
       <div style={{ display: "grid", gap: 8 }}>
+        <div className="modal-header">
+          <h3>{"➕ New task"}</h3>
+        </div>
         <div style={styles.field}>
           <input
             type="text"
@@ -221,6 +219,6 @@ export function AddTodoModal({
 
         <p style={styles.hint}>💡 Ctrl + Enter — create • Esc — close</p>
       </div>
-    </ModalBase>
+    </Modal>
   );
 }

@@ -4,8 +4,7 @@ import { apiFetch } from "../../api/api";
 import type { Priority, Todo } from "../../types/todo";
 import { styles } from "./style";
 import { validateTodo } from "../../utils/validation";
-// import { createPortal } from "react-dom";
-import { ModalBase } from "../ModalBase/ModalBase";
+import { Modal } from "../Modal/Modal";
 
 export function EditTodoModal({
   todo,
@@ -32,31 +31,10 @@ export function EditTodoModal({
     setError(null);
   }, [isOpen, todo]);
 
-  // useEffect(() => {
-  //   if (!isOpen) return;
-
-  //   function onKeyDown(e: KeyboardEvent) {
-  //     if (e.key === "Escape") {
-  //       onClose();
-  //     }
-
-  //     if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
-  //       submit();
-  //     }
-  //   }
-
-  //   window.addEventListener("keydown", onKeyDown);
-  //   return () => window.removeEventListener("keydown", onKeyDown);
-  // }, [isOpen, form]);
-
-  // -----------------------------
-  // Helpers
-  // -----------------------------
   function update<K extends keyof EditTodoModalFormState>(
     key: K,
     value: EditTodoModalFormState[K]
   ) {
-    // if (!form) return;
     setForm((prev) => ({ ...prev!, [key]: value }));
   }
 
@@ -98,13 +76,11 @@ export function EditTodoModal({
   if (!isOpen || !form) return null;
 
   return (
-    <ModalBase
-      isOpen={true}
-      title="✏️ Edit task"
-      onClose={onClose}
-      onSubmit={submit}
-    >
+    <Modal isOpen={true} onClose={onClose} onConfirm={submit}>
       <div style={{ display: "grid", gap: 8 }}>
+        <div className="modal-header">
+          <h3>{"✏️ Edit task"}</h3>
+        </div>
         {/* Title */}
         <input
           autoFocus
@@ -172,6 +148,6 @@ export function EditTodoModal({
 
         <p style={styles.hint}>💡 Ctrl + Enter — save • Esc — close</p>
       </div>
-    </ModalBase>
+    </Modal>
   );
 }
