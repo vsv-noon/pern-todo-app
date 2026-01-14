@@ -1,10 +1,10 @@
-import { useEffect } from "react";
-import type { Todo } from "../types/todo";
+import { useEffect } from 'react';
+import type { Todo } from '../types/todo';
 
 export function useReminders(todos: Todo[]) {
   useEffect(() => {
-    if (!("Notification" in window)) return;
-    if (Notification.permission !== "granted") return;
+    if (!('Notification' in window)) return;
+    if (Notification.permission !== 'granted') return;
 
     const timers: number[] = [];
 
@@ -24,7 +24,7 @@ export function useReminders(todos: Todo[]) {
       if (diff <= 0) return;
 
       const id = window.setTimeout(() => {
-        new Notification("Todo reminder", {
+        new Notification('Todo reminder', {
           body: todo.title,
         });
       }, diff);

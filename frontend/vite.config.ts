@@ -1,6 +1,6 @@
-import { defineConfig } from "vite";
-import { defineConfig as defineVitestConfig, mergeConfig } from "vitest/config";
-import react from "@vitejs/plugin-react";
+import { defineConfig } from 'vite';
+import { defineConfig as defineVitestConfig, mergeConfig } from 'vitest/config';
+import react from '@vitejs/plugin-react';
 
 // https://vite.dev/config/
 const viteConfig = defineConfig({
@@ -9,9 +9,9 @@ const viteConfig = defineConfig({
 
 const vitestConfig = defineVitestConfig({
   test: {
-    environment: "jsdom",
+    environment: 'jsdom',
     globals: true,
-    setupFiles: "./src/test/setup.ts",
+    setupFiles: './src/test/setup.ts',
   },
 });
 

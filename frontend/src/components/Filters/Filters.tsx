@@ -1,13 +1,8 @@
-import type { FilterProps } from "./types";
+import type { FilterProps } from './types';
 
-export function Filters({
-  search,
-  status,
-  onSearchChange,
-  onStatusChange,
-}: FilterProps) {
+export function Filters({ search, status, onSearchChange, onStatusChange }: FilterProps) {
   return (
-    <div style={{ display: "flex", gap: 12, marginBottom: 12 }}>
+    <div style={{ display: 'flex', gap: 12, marginBottom: 12 }}>
       <input
         placeholder="Search..."
         value={search}

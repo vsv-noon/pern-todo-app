@@ -1,14 +1,14 @@
 export async function up(pgm) {
-  pgm.addColumn("todos", {
+  pgm.addColumn('todos', {
     deleted_at: {
-      type: "timestamptz",
+      type: 'timestamptz',
       notNull: false,
     },
   });
 
-  pgm.createIndex("todos", "deleted_at");
+  pgm.createIndex('todos', 'deleted_at');
 }
 
 export async function down(pgm) {
-  pgm.dropColumn("todos", "deleted_at");
+  pgm.dropColumn('todos', 'deleted_at');
 }

@@ -1,18 +1,13 @@
-import { useEffect, useState } from "react";
-import type { EditTodoModalFormState, EditTodoModalProps } from "./types";
-import { apiFetch } from "../../api/api";
-import type { Priority, Todo } from "../../types/todo";
-import { styles } from "./style";
-import { validateTodo } from "../../utils/validation";
-import { Modal } from "../Modal/Modal";
+import { useEffect, useState } from 'react';
+import type { EditTodoFormState, EditTodoProps } from './types';
+import { apiFetch } from '../../api/api';
+import type { Priority, Todo } from '../../types/todo';
+import { styles } from './style';
+import { validateTodo } from '../../utils/validation';
+import { Modal } from '../Modal/Modal';
 
-export function EditTodoModal({
-  todo,
-  isOpen,
-  onClose,
-  onUpdated,
-}: EditTodoModalProps) {
-  const [form, setForm] = useState<EditTodoModalFormState | null>(null);
+export function EditTodo({ todo, isOpen, onClose, onUpdated }: EditTodoProps) {
+  const [form, setForm] = useState<EditTodoFormState | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -21,9 +16,9 @@ export function EditTodoModal({
 
     setForm({
       title: todo.title,
-      description: todo.description ?? "",
+      description: todo.description ?? '',
       due_date: todo.due_date,
-      remind_at: todo.remind_at ?? "",
+      remind_at: todo.remind_at ?? '',
       priority: todo.priority,
       completed: todo.completed,
     });
@@ -31,11 +26,9 @@ export function EditTodoModal({
     setError(null);
   }, [isOpen, todo]);
 
-  function update<K extends keyof EditTodoModalFormState>(
-    key: K,
-    value: EditTodoModalFormState[K]
-  ) {
-    setForm((prev) => ({ ...prev!, [key]: value }));
+  function update<K extends keyof EditTodoFormState>(key: K, value: EditTodoFormState[K]) {
+    if (!todo || !form) return null;
+    setForm((prev) => (prev ? { ...prev, [key]: value } : prev));
   }
 
   async function submit() {
@@ -52,7 +45,7 @@ export function EditTodoModal({
       setError(null);
 
       const updated = await apiFetch<Todo>(`/todos/${todo.id}`, {
-        method: "PATCH",
+        method: 'PATCH',
         body: JSON.stringify({
           title: form.title,
           description: form.description,
@@ -67,7 +60,7 @@ export function EditTodoModal({
       onClose();
     } catch (err) {
       console.error(err);
-      setError("Failed to update todo");
+      setError('Failed to update todo');
     } finally {
       setLoading(false);
     }
@@ -77,59 +70,50 @@ export function EditTodoModal({
 
   return (
     <Modal isOpen={true} onClose={onClose} onConfirm={submit}>
-      <div style={{ display: "grid", gap: 8 }}>
+      <div style={{ display: 'grid', gap: 8 }}>
         <div className="modal-header">
-          <h3>{"✏️ Edit task"}</h3>
+          <h3>{'✏️ Edit task'}</h3>
         </div>
-        {/* Title */}
-        <input
-          autoFocus
-          value={form.title}
-          onChange={(e) => update("title", e.target.value)}
-        />
 
-        {/* Description */}
+        <input autoFocus value={form.title} onChange={(e) => update('title', e.target.value)} />
+
         <textarea
           value={form.description}
-          onChange={(e) => update("description", e.target.value)}
+          onChange={(e) => update('description', e.target.value)}
         />
 
-        {/* Completed */}
         <label style={styles.row}>
           <input
             type="checkbox"
             checked={form.completed}
-            onChange={(e) => update("completed", e.target.checked)}
+            onChange={(e) => update('completed', e.target.checked)}
           />
           Completed
         </label>
 
-        {/* Due date */}
         <label>
           Due date:
           <input
             type="date"
             value={form.due_date}
-            onChange={(e) => update("due_date", e.target.value)}
+            onChange={(e) => update('due_date', e.target.value)}
           />
         </label>
 
-        {/* Reminder */}
         <label>
           Reminder:
           <input
             type="datetime-local"
             value={form.remind_at}
-            onChange={(e) => update("remind_at", e.target.value)}
+            onChange={(e) => update('remind_at', e.target.value)}
           />
         </label>
 
-        {/* Priority */}
         <label>
           Priority:
           <select
             value={form.priority}
-            onChange={(e) => update("priority", e.target.value as Priority)}
+            onChange={(e) => update('priority', e.target.value as Priority)}
           >
             <option value="low">Low</option>
             <option value="medium">Medium</option>
@@ -142,7 +126,7 @@ export function EditTodoModal({
         <div style={styles.actions}>
           <button onClick={onClose}>Cancel</button>
           <button disabled={loading} onClick={submit}>
-            {loading ? "Saving..." : "Save"}
+            {loading ? 'Saving...' : 'Save'}
           </button>
         </div>
 

@@ -1,15 +1,15 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import { apiFetch } from "../api/api";
-import type { Todo } from "../types/todo";
-import { requestNotificationPermission } from "../hooks/useNotifications";
-import { useReminders } from "../hooks/useReminders";
-import { CalendarView } from "../components/CalendarView/CalendarView";
-import { AddTodoModal } from "../components/AddTodo/AddTodo";
-import { TodoList } from "../components/TodoList/TodoList";
-import { EditTodoModal } from "../components/EditTodo/EditTodo";
-import { Filters } from "../components/Filters/Filters";
-import { formatDate } from "../utils/date";
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { apiFetch } from '../api/api';
+import type { Todo } from '../types/todo';
+import { requestNotificationPermission } from '../hooks/useNotifications';
+import { useReminders } from '../hooks/useReminders';
+import { CalendarView } from '../components/CalendarView/CalendarView';
+import { AddTodo } from '../components/AddTodo/AddTodo';
+import { TodoList } from '../components/TodoList/TodoList';
+import { EditTodo } from '../components/EditTodo/EditTodo';
+import { Filters } from '../components/Filters/Filters';
+import { formatDate } from '../utils/date';
 // import { ModalBase } from "../components/ModalBase/ModalBase";
 
 export default function HomePage() {
@@ -18,16 +18,12 @@ export default function HomePage() {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const [search, setSearch] = useState(params.get("search") ?? "");
-  const [status, setStatus] = useState(params.get("status") ?? "all");
+  const [search, setSearch] = useState(params.get('search') ?? '');
+  const [status, setStatus] = useState(params.get('status') ?? 'all');
 
-  const [selectedDate, setSelectedDate] = useState(
-    params.get("date") ?? formatDate(new Date())
-  );
+  const [selectedDate, setSelectedDate] = useState(params.get('date') ?? formatDate(new Date()));
 
-  const [calendarCounts, setCalendarCounts] = useState<Record<string, number>>(
-    {}
-  );
+  const [calendarCounts, setCalendarCounts] = useState<Record<string, number>>({});
 
   const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
 
@@ -39,17 +35,17 @@ export default function HomePage() {
         setLoading(true);
 
         const data = await apiFetch<Todo[]>(
-          `/todos?date=${selectedDate}&search=${search}&status=${status}`
+          `/todos?date=${selectedDate}&search=${search}&status=${status}`,
         );
 
         setTodos(data);
       } catch (err) {
-        console.error("Failed to load todos", err);
+        console.error('Failed to load todos', err);
       } finally {
         setLoading(false);
       }
     },
-    [selectedDate, search, status]
+    [selectedDate, search, status],
   );
 
   useEffect(() => {
@@ -57,7 +53,7 @@ export default function HomePage() {
   }, [loadTodos]);
 
   useEffect(() => {
-    apiFetch<Record<string, number>>("/todos/calendar-counts")
+    apiFetch<Record<string, number>>('/todos/calendar-counts')
       .then(setCalendarCounts)
       .catch(console.error);
   }, [todos]);
@@ -81,9 +77,7 @@ export default function HomePage() {
   }
 
   function handleUpdateTodo(updated: Todo) {
-    setTodos((prev) =>
-      prev.map((todo) => (todo.id === updated.id ? updated : todo))
-    );
+    setTodos((prev) => prev.map((todo) => (todo.id === updated.id ? updated : todo)));
   }
 
   function handleDeleteTodo(id: number) {
@@ -115,14 +109,14 @@ export default function HomePage() {
         counts={calendarCounts}
       />
       <button onClick={() => setModalOpen(true)}>➕ Add task</button>
-      <AddTodoModal
+      <AddTodo
         isOpen={isModalOpen}
         defaultDate={selectedDate}
         existingTitles={existingTitles}
         onClose={() => setModalOpen(false)}
         onCreated={handleCreated}
       />
-      <EditTodoModal
+      <EditTodo
         isOpen={Boolean(editingTodo)}
         todo={editingTodo}
         onClose={() => setEditingTodo(null)}
@@ -142,9 +136,7 @@ export default function HomePage() {
               <strong>Tasks for {selectedDate}</strong>
               <button
                 style={{ marginLeft: 8 }}
-                onClick={() => (
-                  setSelectedDate(""), setSearch(""), setStatus("all")
-                )}
+                onClick={() => (setSelectedDate(''), setSearch(''), setStatus('all'))}
               >
                 Show all tasks
               </button>

@@ -3,4 +3,4 @@ export type FilterProps = {
   status: string;
   onSearchChange: (value: string) => void;
   onStatusChange: (value: string) => void;
-}
+};

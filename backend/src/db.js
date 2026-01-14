@@ -1,5 +1,5 @@
-import pkg from "pg";
-import dotenv from "dotenv";
+import pkg from 'pg';
+import dotenv from 'dotenv';
 
 dotenv.config();
 
@@ -14,12 +14,12 @@ export const pool = new Pool({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  ssl: process.env.DB_SSL === "true" ? { rejectUnauthorized: false } : false,
+  ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
 });
 
 pool
-  .query("select 1")
-  .then(() => console.log("DB connected"))
+  .query('select 1')
+  .then(() => console.log('DB connected'))
   .catch(console.error);
 
 // const { rows } = await pool.query("SELECT current_database()");

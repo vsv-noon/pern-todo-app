@@ -11,7 +11,10 @@
     "migrate:test": "dotenv -e .env.test node-pg-migrate up",
     "test": "vitest",
     "test:watch": "vitest --watch",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "ci:format": "prettier --check ."
   },
   "keywords": [],
   "author": "",
@@ -30,9 +33,13 @@
     "@vitest/coverage-v8": "^4.0.16",
     "cross-env": "^10.1.0",
     "dotenv-cli": "^11.0.0",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
     "jest": "^30.2.0",
     "node-pg-migrate": "^8.0.4",
     "nodemon": "^3.1.11",
+    "prettier": "^3.7.4",
     "supertest": "^7.1.4",
     "ts-jest": "^29.4.6",
     "vitest": "^4.0.16"

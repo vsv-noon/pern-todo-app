@@ -1,10 +1,10 @@
-import type { TodoListProps } from "./types";
-import type { Todo } from "../../types/todo";
-import { apiDelete, apiFetch } from "../../api/api";
+import { useState } from 'react';
+import { apiDelete, apiFetch } from '../../api/api';
+import type { TodoListProps } from './types';
+import type { Todo } from '../../types/todo';
+import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog';
 
-import "./TodoList.css";
-import { ConfirmationDialog } from "../ConfirmationDialog/ConfirmationDialog";
-import { useState } from "react";
+import './TodoList.css';
 
 export function TodoList({ todos, onEdit, onUpdate, onDelete }: TodoListProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -12,7 +12,7 @@ export function TodoList({ todos, onEdit, onUpdate, onDelete }: TodoListProps) {
 
   async function toggleCompleted(todo: Todo) {
     const updated = await apiFetch<Todo>(`/todos/${todo.id}`, {
-      method: "PATCH",
+      method: 'PATCH',
       body: JSON.stringify({
         title: todo.title,
         description: todo.description,
@@ -39,13 +39,6 @@ export function TodoList({ todos, onEdit, onUpdate, onDelete }: TodoListProps) {
     setItemToDelete(null);
   }
 
-  // async function deleteTodo(todo: Todo) {
-  //   // if (!window.confirm(`Delete task "${todo.title}"?`)) return;
-
-  //   await apiDelete(`/todos/${todo.id}`);
-  //   onDelete(todo.id);
-  // }
-
   function handleCloseModal() {
     setIsModalOpen(false);
     setItemToDelete(null);
@@ -66,15 +59,16 @@ export function TodoList({ todos, onEdit, onUpdate, onDelete }: TodoListProps) {
               <span
                 className="title"
                 style={{
-                  textDecoration: todo.completed ? "line-through" : "none",
+                  textDecoration: todo.completed ? 'line-through' : 'none',
                 }}
               >
                 {todo.title}
               </span>
+              <span>{todo.due_date}</span>
 
               <div className="actions">
                 <button onClick={() => onEdit(todo)}>✏️</button>
-                {/* <button onClick={() => deleteTodo(todo)}>🗑</button> */}
+
                 <button onClick={() => handleDeleteClick(todo)}>🗑</button>
               </div>
             </li>

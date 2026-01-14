@@ -1,11 +1,11 @@
-import { pool } from "../db.js";
+import { pool } from '../db.js';
 
 export async function createTodo(req, res) {
   try {
     const { title, description, due_date, remind_at } = req.body;
 
     if (!title) {
-      return res.status(400).json({ error: "Title is required" });
+      return res.status(400).json({ error: 'Title is required' });
     }
 
     const result = await pool.query(
@@ -14,13 +14,13 @@ export async function createTodo(req, res) {
       VALUES ($1, $2, $3, $4) 
       RETURNING *
       `,
-      [title, description, due_date, remind_at]
+      [title, description, due_date, remind_at],
     );
 
     res.status(201).json(result.rows[0]);
   } catch (err) {
     console.error(err);
-    res.status(500).send({ error: "Server Error" });
+    res.status(500).send({ error: 'Server Error' });
   }
 }
 
@@ -36,7 +36,7 @@ export async function restoreTodo(req, res) {
       AND deleted_at IS NOT NULL
       RETURNING *
       `,
-      [id]
+      [id],
     );
 
     if (rowCount === 0) {
@@ -50,7 +50,7 @@ export async function restoreTodo(req, res) {
     res.json(rows[0]);
   } catch (err) {
     console.error(err);
-    res.status(500).send({ error: "Server Error" });
+    res.status(500).send({ error: 'Server Error' });
   }
 }
 
@@ -89,7 +89,7 @@ export async function updateTodo(req, res) {
     }
 
     if (fields.length === 0) {
-      return res.status(400).json({ error: "Nothing to update" });
+      return res.status(400).json({ error: 'Nothing to update' });
     }
 
     values.push(id);
@@ -97,23 +97,23 @@ export async function updateTodo(req, res) {
     const result = await pool.query(
       `
       UPDATE todos
-      SET ${fields.join(", ")},
+      SET ${fields.join(', ')},
           updated_at = NOW()
       WHERE id = $${idx}
         AND deleted_at IS NULL
       RETURNING *
       `,
-      values
+      values,
     );
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: "Todo not found" });
+      return res.status(404).json({ error: 'Todo not found' });
     }
 
     res.status(200).json(result.rows[0]);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ error: 'Server error' });
   }
 }
 
@@ -136,14 +136,14 @@ export async function getCalendarCounts(req, res) {
 
     res.json(map);
   } catch (err) {
-    console.error("getCalendarCounts error:", err);
-    res.status(500).json({ error: "Server error" });
+    console.error('getCalendarCounts error:', err);
+    res.status(500).json({ error: 'Server error' });
   }
 }
 
 export async function getTodos(req, res) {
   try {
-    const { date, search = "", status = "all" } = req.query;
+    const { date, search = '', status = 'all' } = req.query;
 
     const values = [];
     const conditions = [];
@@ -161,22 +161,22 @@ export async function getTodos(req, res) {
       `);
     }
 
-    if (status === "completed") {
+    if (status === 'completed') {
       values.push(true);
       conditions.push(`completed = $${values.length}`);
     }
 
-    if (status === "active") {
+    if (status === 'active') {
       values.push(false);
       conditions.push(`completed = $${values.length}`);
     }
 
-    conditions.push("deleted_at IS NULL");
+    conditions.push('deleted_at IS NULL');
 
     const sql = `
       SELECT *
       FROM todos
-      WHERE ${conditions.join(" AND ")}
+      WHERE ${conditions.join(' AND ')}
       ORDER BY due_date ASC, created_at ASC
     `;
 
@@ -184,8 +184,8 @@ export async function getTodos(req, res) {
 
     res.json(result.rows);
   } catch (err) {
-    console.error("getTodos error:", err);
-    res.status(500).json({ error: "Server error" });
+    console.error('getTodos error:', err);
+    res.status(500).json({ error: 'Server error' });
   }
 }
 
@@ -201,16 +201,16 @@ export async function deleteTodo(req, res) {
       AND deleted_at IS NULL
       RETURNING *
       `,
-      [id]
+      [id],
     );
 
     if (result.rowCount === 0) {
-      return res.status(404).json({ error: "Todo not found" });
+      return res.status(404).json({ error: 'Todo not found' });
     }
 
     res.sendStatus(204);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Failed to delete todo" });
+    res.status(500).json({ error: 'Failed to delete todo' });
   }
 }

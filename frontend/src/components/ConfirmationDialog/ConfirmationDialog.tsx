@@ -1,7 +1,7 @@
-import { Modal } from "../Modal/Modal";
-import useCtrlEnterKey from "../../hooks/useCtrlEnterKey";
-import "../Modal/Modal.css";
-import type { ConfirmationDialogProps } from "./types";
+import { Modal } from '../Modal/Modal';
+import useCtrlEnterKey from '../../hooks/useCtrlEnterKey';
+import '../Modal/Modal.css';
+import type { ConfirmationDialogProps } from './types';
 
 export function ConfirmationDialog({
   isOpen,

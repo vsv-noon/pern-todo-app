@@ -1,11 +1,11 @@
-import { configDefaults, defineConfig } from "vitest/config";
+import { configDefaults, defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
-    environment: "node",
+    environment: 'node',
     globals: true,
-    include: ["__tests__/**/*.test.js"],
-    setupFiles: ["./__tests__/loadEnv.js"],
+    include: ['__tests__/**/*.test.js'],
+    setupFiles: ['./__tests__/loadEnv.js'],
     exclude: [...configDefaults.exclude],
     coverage: {
       exclude: [

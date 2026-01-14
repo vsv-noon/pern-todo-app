@@ -1,21 +1,15 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { apiFetch } from "../../api/api";
-import type { AddTodoModalProps, AddTodoModalFormState } from "./types";
-import { validateTodo } from "../../utils/validation";
-import type { Priority, Todo } from "../../types/todo";
-import { emptyAddTodoModalForm } from "./constants";
-import { Modal } from "../Modal/Modal";
+import React, { useEffect, useMemo, useState } from 'react';
+import { apiFetch } from '../../api/api';
+import type { AddTodoProps, AddTodoFormState } from './types';
+import { validateTodo } from '../../utils/validation';
+import type { Priority, Todo } from '../../types/todo';
+import { emptyAddTodoModalForm } from './constants';
+import { Modal } from '../Modal/Modal';
 
-import { styles } from "./style";
+import { styles } from './style';
 
-export function AddTodoModal({
-  isOpen,
-  defaultDate,
-  existingTitles,
-  onClose,
-  onCreated,
-}: AddTodoModalProps) {
-  const [form, setForm] = useState<AddTodoModalFormState>({
+export function AddTodo({ isOpen, defaultDate, existingTitles, onClose, onCreated }: AddTodoProps) {
+  const [form, setForm] = useState<AddTodoFormState>({
     ...emptyAddTodoModalForm,
     due_date: defaultDate,
   });
@@ -26,7 +20,7 @@ export function AddTodoModal({
   const [isSuggestionOpen, setIsSuggestionOpen] = useState(false);
 
   function selectSuggestion(value: string) {
-    updateField("title", value);
+    updateField('title', value);
     setActiveIndex(-1);
     setIsSuggestionOpen(false);
   }
@@ -34,17 +28,17 @@ export function AddTodoModal({
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (!isOpen) return;
 
-    if (e.key === "ArrowDown") {
+    if (e.key === 'ArrowDown') {
       e.preventDefault();
       setActiveIndex((i) => Math.min(i + 1, suggestions.length - 1));
     }
 
-    if (e.key === "ArrowUp") {
+    if (e.key === 'ArrowUp') {
       e.preventDefault();
       setActiveIndex((i) => Math.max(i - 1, 0));
     }
 
-    if (e.key === "Enter") {
+    if (e.key === 'Enter') {
       e.preventDefault();
       const value = suggestions[activeIndex];
       if (value) {
@@ -52,7 +46,7 @@ export function AddTodoModal({
       }
     }
 
-    if (e.key === "Escape") {
+    if (e.key === 'Escape') {
       setIsSuggestionOpen(false);
     }
   }
@@ -61,7 +55,7 @@ export function AddTodoModal({
     if (!isOpen) {
       setForm({
         ...emptyAddTodoModalForm,
-        due_date: "",
+        due_date: '',
       });
       setError(null);
     }
@@ -72,9 +66,7 @@ export function AddTodoModal({
 
     const q = form.title.toLowerCase();
 
-    return existingTitles
-      .filter((t) => t.toLowerCase().includes(q))
-      .slice(0, 5);
+    return existingTitles.filter((t) => t.toLowerCase().includes(q)).slice(0, 5);
   }, [form.title, existingTitles]);
 
   useEffect(() => {
@@ -86,10 +78,7 @@ export function AddTodoModal({
     }
   }, [suggestions, form.title]);
 
-  function updateField<K extends keyof AddTodoModalFormState>(
-    key: K,
-    value: AddTodoModalFormState[K]
-  ) {
+  function updateField<K extends keyof AddTodoFormState>(key: K, value: AddTodoFormState[K]) {
     setForm((prev) => ({
       ...prev,
       [key]: value,
@@ -108,8 +97,8 @@ export function AddTodoModal({
       setLoading(true);
       setError(null);
 
-      const created = await apiFetch<Todo>("/todos", {
-        method: "POST",
+      const created = await apiFetch<Todo>('/todos', {
+        method: 'POST',
         body: JSON.stringify({
           title: form.title,
           description: form.description,
@@ -122,7 +111,7 @@ export function AddTodoModal({
       onClose();
     } catch (err) {
       console.error(err);
-      setError("Failed to create todo");
+      setError('Failed to create todo');
     } finally {
       setLoading(false);
     }
@@ -132,16 +121,16 @@ export function AddTodoModal({
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} onConfirm={handleSubmit}>
-      <div style={{ display: "grid", gap: 8 }}>
+      <div style={{ display: 'grid', gap: 8 }}>
         <div className="modal-header">
-          <h3>{"➕ New task"}</h3>
+          <h3>{'➕ New task'}</h3>
         </div>
         <div style={styles.field}>
           <input
             type="text"
             autoFocus
             value={form.title}
-            onChange={(e) => updateField("title", e.target.value)}
+            onChange={(e) => updateField('title', e.target.value)}
             placeholder="Title"
             onKeyDown={handleKeyDown}
             onBlur={() => setTimeout(() => setIsSuggestionOpen(false), 150)}
@@ -161,7 +150,7 @@ export function AddTodoModal({
                   onMouseEnter={() => setActiveIndex(id)}
                   style={{
                     ...styles.suggestionItem,
-                    background: id === activeIndex ? "#e3f2fd" : "white",
+                    background: id === activeIndex ? '#e3f2fd' : 'white',
                   }}
                 >
                   {s}
@@ -173,7 +162,7 @@ export function AddTodoModal({
         <textarea
           placeholder="Description"
           value={form.description}
-          onChange={(e) => updateField("description", e.target.value)}
+          onChange={(e) => updateField('description', e.target.value)}
         />
 
         <label>
@@ -181,7 +170,7 @@ export function AddTodoModal({
           <input
             type="date"
             value={form.due_date}
-            onChange={(e) => updateField("due_date", e.target.value)}
+            onChange={(e) => updateField('due_date', e.target.value)}
           />
         </label>
 
@@ -190,7 +179,7 @@ export function AddTodoModal({
           <input
             type="datetime-local"
             value={form.remind_at}
-            onChange={(e) => updateField("remind_at", e.target.value)}
+            onChange={(e) => updateField('remind_at', e.target.value)}
           />
         </label>
 
@@ -198,9 +187,7 @@ export function AddTodoModal({
           Priority:
           <select
             value={form.priority}
-            onChange={(e) =>
-              updateField("priority", e.target.value as Priority)
-            }
+            onChange={(e) => updateField('priority', e.target.value as Priority)}
           >
             <option value="low">Low</option>
             <option value="medium">Medium</option>
@@ -212,9 +199,7 @@ export function AddTodoModal({
 
         <div style={styles.actions}>
           <button onClick={onClose}>Cancel</button>
-          <button onClick={handleSubmit}>
-            {loading ? "Creating..." : "Add"}
-          </button>
+          <button onClick={handleSubmit}>{loading ? 'Creating...' : 'Add'}</button>
         </div>
 
         <p style={styles.hint}>💡 Ctrl + Enter — create • Esc — close</p>
