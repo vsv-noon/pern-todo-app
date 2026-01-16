@@ -4,6 +4,7 @@ import { RootLayout } from '../layouts/RootLayout';
 import HomePage from '../pages/HomePage';
 import AboutPage from '../pages/AboutPage';
 import NotFoundPage from '../pages/NotFoundPage';
+import { TrashList } from '../components/TrashList/TrashList';
 
 export const router = createBrowserRouter([
   {
@@ -16,6 +17,10 @@ export const router = createBrowserRouter([
       {
         path: '/about',
         element: <AboutPage />,
+      },
+      {
+        path: '/trash',
+        element: <TrashList />,
       },
       {
         path: '*',

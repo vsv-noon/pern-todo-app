@@ -1,4 +1,4 @@
-.todoItem {
+.trashItem {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -7,15 +7,15 @@
   border-bottom: solid 1px rgba(0, 0, 0, 0.5);
 }
 
-.todoItem:hover {
+.trashItem:hover {
   background: #f7f9fc;
 }
 
-.todoItem .title {
+.trashItem .title {
   flex: 1;
 }
 
-.todoItem .actions {
+.trashItem .actions {
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.15s ease;
@@ -23,19 +23,19 @@
   gap: 4px;
 }
 
-.todoItem:hover .actions,
-.todoItem:focus-within .actions {
+.trashItem:hover .actions,
+.trashItem:focus-within .actions {
   opacity: 1;
   pointer-events: auto;
 }
 
-.todoItem .actions button {
+.trashItem .actions button {
   background: transparent;
   border: none;
   cursor: pointer;
   font-size: 16px;
 }
 
-.todoItem .actions button:hover {
+.trashItem .actions button:hover {
   transform: scale(1.1);
 }
