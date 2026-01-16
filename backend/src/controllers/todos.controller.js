@@ -28,26 +28,25 @@ export async function restoreTodo(req, res) {
   try {
     const { id } = req.params;
 
-    const { rows, rowCount } = await pool.query(
+    const result = await pool.query(
       `
       UPDATE todos
-      SET deleted_at = NULL
-      WHERE id = $1
-      AND deleted_at IS NOT NULL
+      SET deleted_at = NULL, updated_at = NOW()
+      WHERE id = $1      
       RETURNING *
       `,
       [id],
     );
 
-    if (rowCount === 0) {
-      return res.sendStatus(404);
+    if (!result.rows[0]) {
+      return res.status(404).json({ error: 'Todo not found' });
     }
 
-    if (Number.isNaN(id)) {
-      return res.sendStatus(400);
-    }
+    // if (Number.isNaN(id)) {
+    //   return res.sendStatus(400);
+    // }
 
-    res.json(rows[0]);
+    res.json(result.rows[0]);
   } catch (err) {
     console.error(err);
     res.status(500).send({ error: 'Server Error' });
@@ -223,6 +222,23 @@ export async function getTodos(req, res) {
   }
 }
 
+export async function getDeletedTodos(req, res) {
+  try {
+    const result = await pool.query(
+      `
+      SELECT * 
+      FROM todos
+      WHERE deleted_at IS NOT NULL
+      ORDER BY deleted_at DESC
+      `,
+    );
+
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to load deleted todos' });
+  }
+}
+
 export async function deleteTodo(req, res) {
   try {
     const { id } = req.params;
@@ -246,5 +262,29 @@ export async function deleteTodo(req, res) {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to delete todo' });
+  }
+}
+
+export async function hardDeleteTodo(req, res) {
+  try {
+    const { id } = req.params;
+
+    const result = await pool.query(
+      `
+      DELETE FROM todos 
+      WHERE id = $1 
+      RETURNING id
+      `,
+      [id],
+    );
+
+    if (!result.rows[0]) {
+      return res.status(404).json({ error: 'Todo not found' });
+    }
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Hard delete failed' });
   }
 }

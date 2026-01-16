@@ -2,12 +2,14 @@ import { Router } from 'express';
 
 import {
   createTodo,
-  deleteTodo,
   getCalendarCounts,
   getTitleSuggestions,
   getTodos,
+  getDeletedTodos,
   restoreTodo,
   updateTodo,
+  deleteTodo,
+  hardDeleteTodo,
 } from '../controllers/todos.controller.js';
 
 import { validate } from '../middleware/validate.js';
@@ -28,8 +30,12 @@ router.patch('/:id', validate(updateTodoSchema), updateTodo);
 router.get('/calendar-counts', getCalendarCounts);
 router.get('/suggestions', getTitleSuggestions);
 router.get('/', getTodos);
+router.get('/deleted', getDeletedTodos);
 
-// Delete
+// Soft delete
 router.delete('/:id', deleteTodo);
+
+// Hard delete
+router.delete('/:id/hard', hardDeleteTodo);
 
 export default router;
