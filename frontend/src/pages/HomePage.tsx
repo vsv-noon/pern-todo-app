@@ -21,28 +21,19 @@ type CalendarValue = Date | [Date, Date];
 
 export default function HomePage() {
   const [params, setParams] = useSearchParams();
-
   const [todos, setTodos] = useState<Todo[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-
   const [search, setSearch] = useState(params.get('search') ?? '');
   const [status, setStatus] = useState(params.get('status') ?? 'active');
-
   const [selectedDate, setSelectedDate] = useState(
     params.get('date') ?? formattedDate(new Date(), LAST_INDEX),
   );
-
   const [dateRange, setDateRange] = useState<CalendarValue>([
     getFirstDayOfMonth(),
     getLastDayOfMonth(),
   ]);
-
-  console.log(dateRange);
-
   const [calendarCounts, setCalendarCounts] = useState<Record<string, number>>({});
-
   const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
-
   const [isModalOpen, setModalOpen] = useState(false);
 
   const loadTodos = useCallback(
@@ -116,7 +107,11 @@ export default function HomePage() {
       />
       {Array.isArray(dateRange) && <ProductivityChart from={dateRange[0]} to={dateRange[1]} />}
       {/* <TodoPriorityChart /> */}
-      {Array.isArray(dateRange) && <TodoStatusChart from={dateRange[0]} to={dateRange[1]} />}
+      <TodoStatusChart
+        endpoint="status"
+        from={Array.isArray(dateRange) ? dateRange[0] : dateRange}
+        to={Array.isArray(dateRange) ? dateRange[1] : dateRange}
+      />
       {Array.isArray(dateRange) && <TodoByDateChart from={dateRange[0]} to={dateRange[1]} />}
       <button onClick={() => setModalOpen(true)}>➕ Add task</button>
 

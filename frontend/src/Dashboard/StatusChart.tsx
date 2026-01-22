@@ -1,8 +1,9 @@
 import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
-import { useEffect, useState } from 'react';
-import { fetchStats } from '../api/api';
+import { useStatData } from '../hooks/useStatData';
 
 import './style.css';
+// import { useEffect, useState } from 'react';
+// import { fetchStats } from '../api/api';
 
 export type ChartData = {
   name: string;
@@ -10,45 +11,64 @@ export type ChartData = {
 };
 
 export type StatusChartProps = {
+  endpoint: string;
   from: Date;
   to: Date;
 };
 
 const COLORS = ['#00C49F', '#FF8042'];
 
-export function TodoStatusChart({ from, to }: StatusChartProps) {
-  const fromStr = from.toLocaleDateString('en-CA');
-  const toStr = to.toLocaleDateString('en-CA') ?? fromStr;
-  const [status, setStatus] = useState<{ completed: boolean; count: string }[]>();
+export function TodoStatusChart({ endpoint, from, to }: StatusChartProps) {
+  const statusData = useStatData(endpoint, from, to);
 
-  useEffect(() => {
-    async function load() {
-      try {
-        const data = await fetchStats('status', {
-          from: fromStr,
-          to: toStr,
-        });
+  // const [statusData, setStatusData] = useState<{ completed: boolean; count: string }[]>();
 
-        setStatus(data as { completed: boolean; count: string }[]);
-      } catch (err) {
-        console.error(err);
-      }
-    }
+  // useEffect(() => {
+  //   async function load() {
+  //     try {
+  //       const fromStr = from.toLocaleDateString('en-CA');
+  //       const toStr = (to ?? from).toLocaleDateString('en-CA');
+  //       const data = await fetchStats('status', {
+  //         from: fromStr,
+  //         to: toStr,
+  //       });
 
-    load();
-  }, [fromStr, toStr]);
+  //       setStatusData(data as { completed: boolean; count: string }[]);
+  //     } catch (err) {
+  //       console.error(err);
+  //     }
+  //   }
 
+  //   load();
+  // }, [from, to]);
+
+  let done: number = 0;
+  let active: number = 0;
   let chartData: ChartData[] = [];
 
-  if (status) {
-    const done = Number(status[1].count);
-    const active = Number(status[0].count);
-
+  if (statusData) {
+    (statusData as { completed: boolean; count: string }[]).map((el) => {
+      if (el.completed === true) {
+        done = Number(el.count);
+      } else {
+        active = Number(el.count);
+      }
+    });
     chartData = [
       { name: 'Completed', value: done },
       { name: 'Active', value: active },
     ];
   }
+
+  // if (status) {
+  //   // console.log(status.length)
+  //   // console.log(status)
+  //   const done = Number(status[1]?.count);
+  //   const active = Number(status[0]?.count ?? 0);
+
+  // }
+
+  // if (!from) return null;
 
   return (
     <div className="chart-container">

@@ -2,9 +2,6 @@ import { useEffect, useState } from 'react';
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { fetchStats } from '../api/api';
 
-// const FROM = '2026-01-01';
-// const TO = '2026-01-31';
-
 export function ProductivityChart({ from, to }: { from: Date; to: Date }) {
   const [productivity, setProductivity] = useState<{ date: string; count: number }[]>();
 
