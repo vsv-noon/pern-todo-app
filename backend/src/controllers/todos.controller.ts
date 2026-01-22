@@ -3,7 +3,7 @@ import type { Request, Response } from 'express';
 
 export async function createTodo(req: Request, res: Response) {
   try {
-    const { title, description, due_date, remind_at } = req.body;
+    const { title, description, due_date, remind_at, priority } = req.body;
 
     if (!title) {
       return res.status(400).json({ error: 'Title is required' });
@@ -11,11 +11,11 @@ export async function createTodo(req: Request, res: Response) {
 
     const result = await pool.query(
       `
-      INSERT INTO todos (title, description, due_date, remind_at) 
-      VALUES ($1, $2, $3, $4) 
+      INSERT INTO todos (title, description, due_date, remind_at, priority) 
+      VALUES ($1, $2, $3, $4, $5) 
       RETURNING *
       `,
-      [title, description, due_date, remind_at],
+      [title, description, due_date, remind_at, priority],
     );
 
     res.status(201).json(result.rows[0]);
@@ -27,7 +27,7 @@ export async function createTodo(req: Request, res: Response) {
 
 export async function updateTodo(req: Request, res: Response) {
   try {
-    const { title, description, completed, due_date, remind_at } = req.body;
+    const { title, description, completed, due_date, remind_at, priority } = req.body;
     const { id } = req.params;
 
     const fields = [];
@@ -57,6 +57,11 @@ export async function updateTodo(req: Request, res: Response) {
     if (remind_at !== undefined) {
       fields.push(`remind_at = $${idx++}`);
       values.push(remind_at);
+    }
+
+    if (priority !== undefined) {
+      fields.push(`priority = $${idx++}`);
+      values.push(priority);
     }
 
     if (fields.length === 0) {

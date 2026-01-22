@@ -18,3 +18,11 @@ export function correctTimezone(date: Date): Date {
 export function formattedDate(d: Date, s: number) {
   return correctTimezone(d).toISOString().slice(0, s);
 }
+
+export function getFirstDayOfMonth(date = new Date()) {
+  return new Date(date.getFullYear(), date.getMonth(), 1);
+}
+
+export function getLastDayOfMonth(date = new Date()) {
+  return new Date(date.getFullYear(), date.getMonth() + 1, 0);
+}

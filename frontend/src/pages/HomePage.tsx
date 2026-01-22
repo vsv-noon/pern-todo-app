@@ -7,11 +7,17 @@ import { useReminders } from '../hooks/useReminders';
 import { CalendarView } from '../components/CalendarView/CalendarView';
 import { TodoList } from '../components/TodoList/TodoList';
 import { Filters } from '../components/Filters/Filters';
-import { formattedDate } from '../utils/date';
+import { formattedDate, getFirstDayOfMonth, getLastDayOfMonth } from '../utils/date';
 import { AddTodoModal } from '../components/AddTodoModal/AddTodoModal';
 import { EditTodoModal } from '../components/EditTodoModal/EditTodoModal';
 import Loader from '../components/Loader/Loader';
 import { LAST_INDEX } from './constants';
+import { TodoStatusChart } from '../Dashboard/StatusChart';
+import TodoByDateChart from '../Dashboard/TodoByDateChart';
+// import { TodoPriorityChart } from '../Dashboard/TodoPriorityChart';
+import { ProductivityChart } from '../Dashboard/ProductivityChart';
+
+type CalendarValue = Date | [Date, Date];
 
 export default function HomePage() {
   const [params, setParams] = useSearchParams();
@@ -25,6 +31,13 @@ export default function HomePage() {
   const [selectedDate, setSelectedDate] = useState(
     params.get('date') ?? formattedDate(new Date(), LAST_INDEX),
   );
+
+  const [dateRange, setDateRange] = useState<CalendarValue>([
+    getFirstDayOfMonth(),
+    getLastDayOfMonth(),
+  ]);
+
+  console.log(dateRange);
 
   const [calendarCounts, setCalendarCounts] = useState<Record<string, number>>({});
 
@@ -95,10 +108,16 @@ export default function HomePage() {
     <>
       <h1>PERN ToDo Calendar</h1>
       <CalendarView
+        // dateRange={dateRange}
+        setDateRange={setDateRange}
         onSelect={handleDateSelect}
-        selectedDate={selectedDate}
+        // selectedDate={selectedDate}
         counts={calendarCounts}
       />
+      {Array.isArray(dateRange) && <ProductivityChart from={dateRange[0]} to={dateRange[1]} />}
+      {/* <TodoPriorityChart /> */}
+      {Array.isArray(dateRange) && <TodoStatusChart from={dateRange[0]} to={dateRange[1]} />}
+      {Array.isArray(dateRange) && <TodoByDateChart from={dateRange[0]} to={dateRange[1]} />}
       <button onClick={() => setModalOpen(true)}>➕ Add task</button>
 
       <AddTodoModal
@@ -118,6 +137,7 @@ export default function HomePage() {
         onSearchChange={setSearch}
         onStatusChange={setStatus}
       />
+      <div>{todos.length}</div>
       {loading && <Loader />}
       {
         <div>

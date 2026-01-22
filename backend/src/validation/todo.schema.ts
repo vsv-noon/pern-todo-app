@@ -5,6 +5,7 @@ export const createTodoSchema = z.object({
   description: z.string().max(500).optional(),
   due_date: z.string().refine((value) => !isNaN(Date.parse(value)), 'Invalid due date'),
   remind_at: z.string().nullable().optional(),
+  priority: z.string().optional(),
 });
 
 export const updateTodoSchema = z
@@ -14,5 +15,6 @@ export const updateTodoSchema = z
     completed: z.boolean().optional(),
     due_date: z.string().optional(),
     remind_at: z.string().nullable().optional(),
+    priority: z.string().optional(),
   })
   .refine((data) => Object.keys(data).length > 0, 'Nothing to update');
