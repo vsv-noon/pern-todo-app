@@ -105,14 +105,18 @@ export default function HomePage() {
         // selectedDate={selectedDate}
         counts={calendarCounts}
       />
-      {Array.isArray(dateRange) && <ProductivityChart from={dateRange[0]} to={dateRange[1]} />}
+      {Array.isArray(dateRange) && (
+        <ProductivityChart endpoint="productivity" from={dateRange[0]} to={dateRange[1]} />
+      )}
       {/* <TodoPriorityChart /> */}
       <TodoStatusChart
         endpoint="status"
         from={Array.isArray(dateRange) ? dateRange[0] : dateRange}
         to={Array.isArray(dateRange) ? dateRange[1] : dateRange}
       />
-      {Array.isArray(dateRange) && <TodoByDateChart from={dateRange[0]} to={dateRange[1]} />}
+      {Array.isArray(dateRange) && (
+        <TodoByDateChart endpoint="todosByDate" from={dateRange[0]} to={dateRange[1]} />
+      )}
       <button onClick={() => setModalOpen(true)}>➕ Add task</button>
 
       <AddTodoModal
