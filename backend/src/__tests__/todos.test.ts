@@ -1,7 +1,7 @@
 import request from 'supertest';
-import app from '../app.ts';
+import app from '../app.js';
 import './setupDb.ts';
-import { createTodo } from './helpers/createTodo.ts';
+import { createTodo } from './helpers/createTodo.js';
 import { describe, it, expect } from 'vitest';
 
 describe('Todos API', () => {

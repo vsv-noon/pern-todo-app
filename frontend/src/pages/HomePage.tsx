@@ -136,7 +136,7 @@ export default function HomePage() {
         onSearchChange={setSearch}
         onStatusChange={setStatus}
       />
-      <div>{todos.length}</div>
+
       {loading && <Loader />}
       {
         <div>

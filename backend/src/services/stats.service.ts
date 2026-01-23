@@ -1,4 +1,4 @@
-import { pool } from '../db.ts';
+import { pool } from '../config/db.js';
 
 export type TodoRow = {
   date: string;

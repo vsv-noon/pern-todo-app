@@ -1,15 +1,33 @@
-// import dotenv from "dotenv";
-import app from './app.ts';
 import cron from 'node-cron';
-import { cleanupDeletedTodos } from './cron/cleanupDeletedTodos.ts';
-import { saveDailyMetrics } from './cron/saveDailyMetrics.ts';
+import { app } from './app.js';
+import { env } from './config/env.js';
+import { testDbConnection } from './config/db.js';
+import { cleanupDeletedTodos } from './cron/cleanupDeletedTodos.js';
+import { saveDailyMetrics } from './cron/saveDailyMetrics.js';
+// import dotenv from "dotenv";
 // dotenv.config();
 
-const PORT = process.env.PORT || 5000;
+// const port = process.env.PORT || 5000;
+
+// app.listen(port, () => {
+//   console.log(`Server is running on http://localhost:${port}`);
+// });
 
 cron.schedule('0 3 * * *', cleanupDeletedTodos);
 cron.schedule('5 0 * * *', saveDailyMetrics);
 
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
+async function bootstrap() {
+  try {
+    await testDbConnection();
+    console.log('Database connected');
+
+    app.listen(env.PORT, () => {
+      console.log(`Server listening on port ${env.PORT}`);
+    });
+  } catch (err) {
+    console.error('Failed to start server', err);
+    process.exit(1);
+  }
+}
+
+bootstrap();

@@ -4,7 +4,7 @@ import {
   getStatus,
   getStreak,
   getTodosByDate,
-} from '../services/stats.service.ts';
+} from '../services/stats.service.js';
 
 export async function getStats(
   req: Request<unknown, unknown, unknown, { type?: string; from?: string; to?: string }>,

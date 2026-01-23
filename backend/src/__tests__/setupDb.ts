@@ -1,5 +1,5 @@
 import { afterAll, beforeEach } from 'vitest';
-import { pool } from '../db.ts';
+import { pool } from '../config/db.js';
 
 if (process.env.NODE_ENV !== 'test') {
   throw new Error('❌ Tests are not running in test environment');

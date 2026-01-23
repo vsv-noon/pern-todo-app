@@ -1,4 +1,4 @@
-import { pool } from '../db.ts';
+import { pool } from '../config/db.js';
 import type { Request, Response } from 'express';
 
 export async function createTodo(req: Request, res: Response) {
