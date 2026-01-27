@@ -47,6 +47,11 @@ export default defineConfig(
       // Prettier в конце (отключает конфликтующие правила)
     },
   },
+  // {
+  //   "env": {
+  //     "node": true,
+  //   },
+  // },
   // Специальные правила для тестов Vitest
   // {
   //   files: ['**/*.test.ts', '**/*.spec.ts'],

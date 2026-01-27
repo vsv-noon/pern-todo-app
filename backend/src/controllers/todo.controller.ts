@@ -64,12 +64,6 @@ export async function getTodos(req: Request, res: Response) {
   if (status && status !== 'all') filters.status = status;
 
   try {
-    // const todos = await todoService.getTodoList({
-    //   date: date ?? undefined,
-    //   search: search ?? undefined,
-    //   status: status ?? 'all',
-    // });
-
     const todos = await todoService.getTodoList(req.user.userId, filters);
 
     return res.json(todos);
@@ -79,27 +73,9 @@ export async function getTodos(req: Request, res: Response) {
   }
 }
 
-// export async function getTodos(req: Request, res: Response) {
-//   if (!req.user) return res.status(401).json({ error: 'Unauthorized' });
-//   const userId = req.user.id;
-//   // console.log(req.user);
-
-//   const { rows } = await pool.query(
-//     `
-//     SELECT *
-//     FROM todos
-//     WHERE
-//     user_id = $1 AND deleted_at IS NULL
-//     `,
-//     [userId]
-//   );
-
-//   res.json(rows);
-// }
-
 export async function getCalendarCounts(req: Request, res: Response) {
   if (!req.user) return res.status(401).json({ error: 'Unauthorized' });
-  console.log(req.user);
+
   try {
     const counts = await todoService.getCalendarTodoCounts(req.user.userId);
     return res.json(counts);

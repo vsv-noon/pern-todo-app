@@ -35,16 +35,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     saveAuth(res);
   }
 
+  async function logout() {
+    await authApi.logout();
+    localStorage.clear();
+    setUser(null);
+  }
+
   function saveAuth(res: authApi.AuthResponse) {
     localStorage.setItem('accessToken', res.accessToken);
     localStorage.setItem('refreshToken', res.refreshToken);
     localStorage.setItem('user', JSON.stringify(res.user));
     setUser(res.user);
-  }
-
-  function logout() {
-    localStorage.clear();
-    setUser(null);
   }
 
   return (

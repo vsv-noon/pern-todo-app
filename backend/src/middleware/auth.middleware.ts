@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
 
-import { verifyToken } from '../utils/jwt.js';
+import { verifyAccessToken } from '../utils/jwt.js';
 
 export function authMiddleware(req: Request, res: Response, next: NextFunction) {
   {
@@ -13,7 +13,7 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction) 
     const token = authHeader.slice(7);
 
     try {
-      const payload = verifyToken(token);
+      const payload = verifyAccessToken(token);
       req.user = payload;
       return next();
     } catch {

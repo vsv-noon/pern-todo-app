@@ -14,6 +14,7 @@ export async function apiFetch<T>(url: string, options: RequestInit = {}): Promi
 
   if (res.status === 401) {
     const newToken = await refreshAccessToken();
+
     if (!newToken) throw new Error('Unauthorized');
 
     return apiFetch<T>(url, options);
@@ -24,7 +25,14 @@ export async function apiFetch<T>(url: string, options: RequestInit = {}): Promi
 }
 
 export async function apiDelete(url: string): Promise<void> {
-  const res = await fetch(import.meta.env.VITE_API_URL + url, { method: 'DELETE' });
+  const accessToken = localStorage.getItem('accessToken');
+  const res = await fetch(import.meta.env.VITE_API_URL + url, {
+    headers: {
+      'Content-Type': 'application/json',
+      ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
+    },
+    method: 'DELETE',
+  });
 
   if (!res.ok) throw new Error(`API error: ${res.status}`);
 }
@@ -40,7 +48,7 @@ async function refreshAccessToken() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ refreshToken }),
       });
-
+      console.log(res);
       if (!res.ok) return null;
 
       const data = await res.json();

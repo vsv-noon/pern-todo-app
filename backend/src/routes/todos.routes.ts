@@ -1,38 +1,38 @@
-import { Router } from 'express';
+// import { Router } from 'express';
 
-import {
-  createTodo,
-  getCalendarCounts,
-  getTitleSuggestions,
-  getTodos,
-  getDeletedTodos,
-  updateTodo,
-  deleteTodo,
-  bulkRestoreTodos,
-  bulkHardDeleteTodos,
-} from '../controllers/todos.controller.js';
-import { validate } from '../middleware/validate.js';
-import { createTodoSchema, updateTodoSchema } from '../validation/todo.schema.js';
+// import {
+//   createTodo,
+//   getCalendarCounts,
+//   getTitleSuggestions,
+//   getTodos,
+//   getDeletedTodos,
+//   updateTodo,
+//   deleteTodo,
+//   bulkRestoreTodos,
+//   bulkHardDeleteTodos,
+// } from '../controllers/todos.controller.js';
+// import { validate } from '../middleware/validate.js';
+// import { createTodoSchema, updateTodoSchema } from '../validation/todo.schema.js';
 
-const router = Router();
+// const router = Router();
 
-// Create
-router.post('/', validate(createTodoSchema), createTodo);
+// // Create
+// router.post('/', validate(createTodoSchema), createTodo);
 
-// Update
-router.patch('/:id', validate(updateTodoSchema), updateTodo);
+// // Update
+// router.patch('/:id', validate(updateTodoSchema), updateTodo);
 
-// Reade
-router.get('/calendar-counts', getCalendarCounts);
-router.get('/suggestions', getTitleSuggestions);
-router.get('/', getTodos);
-router.get('/deleted', getDeletedTodos);
+// // Reade
+// router.get('/calendar-counts', getCalendarCounts);
+// router.get('/suggestions', getTitleSuggestions);
+// router.get('/', getTodos);
+// router.get('/deleted', getDeletedTodos);
 
-// Soft delete
-router.delete('/:id', deleteTodo);
+// // Soft delete
+// router.delete('/:id', deleteTodo);
 
-// bulk restore / delete
-router.patch('/restore/bulk', bulkRestoreTodos);
-router.delete('/hard/bulk', bulkHardDeleteTodos);
+// // bulk restore / delete
+// router.patch('/restore/bulk', bulkRestoreTodos);
+// router.delete('/hard/bulk', bulkHardDeleteTodos);
 
-export default router;
+// export default router;

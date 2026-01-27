@@ -14,8 +14,19 @@ export function login(email: string, password: string) {
 }
 
 export function register(email: string, password: string) {
-  return apiFetch<AuthResponse>('auth/register', {
+  return apiFetch<AuthResponse>('/auth/register', {
     method: 'POST',
     body: JSON.stringify({ email, password }),
   });
 }
+
+export const logout = async (): Promise<void> => {
+  const refreshToken = localStorage.getItem('refreshToken');
+  if (!refreshToken) return;
+
+  await fetch(`${import.meta.env.VITE_API_URL}/auth/logout`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ refreshToken }),
+  });
+};

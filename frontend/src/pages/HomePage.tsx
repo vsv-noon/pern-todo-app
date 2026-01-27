@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-// import { apiFetch } from '../api/api';
+// import { apiFetch } from '../services/api';
 import { apiFetch } from '../api/client';
+// import { getTodos } from '../services/api';
 import type { Todo } from '../types/todo';
 import { requestNotificationPermission } from '../hooks/useNotifications';
 import { useReminders } from '../hooks/useReminders';
@@ -45,6 +46,8 @@ export default function HomePage() {
         const data = await apiFetch<Todo[]>(
           `/todos?date=${selectedDate}&search=${search}&status=${status}`,
         );
+
+        // const data = await getTodos({date: selectedDate, search, status});
 
         setTodos(data);
       } catch (err) {

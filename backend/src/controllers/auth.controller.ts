@@ -39,3 +39,32 @@ export async function me(req: Request, res: Response) {
 
   return res.json({ userId: req.user.userId });
 }
+
+export async function refresh(req: Request, res: Response) {
+  const { refreshToken } = req.body;
+  if (!refreshToken) {
+    return res.status(400).json({ error: 'Refresh token required' });
+  }
+
+  try {
+    const tokens = await authService.refreshTokens(refreshToken);
+    return res.json(tokens);
+  } catch (err) {
+    return res.status(401).json({ error: (err as Error).message });
+  }
+}
+
+export async function logout(req: Request, res: Response) {
+  const { refreshToken } = req.body;
+
+  if (!refreshToken) {
+    return res.status(400).json({ error: 'Refresh token required' });
+  }
+
+  try {
+    await authService.logout(refreshToken);
+    return res.status(204).send();
+  } catch (err) {
+    return res.status(400).json({ error: (err as Error).message });
+  }
+}

@@ -3,7 +3,7 @@ import { getProductivity, getStatus, getStreak, getTodosByDate } from '../models
 export type StatsType = 'productivity' | 'status' | 'streak' | 'todosByDate';
 
 export async function getStats(
-  // userId: number,
+  userId: number,
   type: StatsType,
   from: string | null,
   to: string | null
