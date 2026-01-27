@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import * as authApi from '../api/auth.api';
 import { AuthContext } from './AuthContext';
 import type { User } from '../types/todo';
+import { setLogoutAndRedirect } from './authBridge';
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -40,6 +41,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.clear();
     setUser(null);
   }
+
+  async function logoutAndRedirect() {
+    await authApi.logout().finally(() => {
+      setUser(null);
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('user');
+      window.location.href = '/login';
+    });
+  }
+
+  useEffect(() => {
+    setLogoutAndRedirect(logoutAndRedirect);
+  });
 
   function saveAuth(res: authApi.AuthResponse) {
     localStorage.setItem('accessToken', res.accessToken);

@@ -1,3 +1,5 @@
+import { callLogoutAndRedirect } from '../auth/authBridge';
+
 let refreshPromise: Promise<string> | null = null;
 
 export async function apiFetch<T>(url: string, options: RequestInit = {}): Promise<T> {
@@ -15,7 +17,11 @@ export async function apiFetch<T>(url: string, options: RequestInit = {}): Promi
   if (res.status === 401) {
     const newToken = await refreshAccessToken();
 
-    if (!newToken) throw new Error('Unauthorized');
+    // if (!newToken) throw new Error('Unauthorized');
+    if (!newToken) {
+      callLogoutAndRedirect();
+      throw new Error('Unauthorized');
+    }
 
     return apiFetch<T>(url, options);
   }

@@ -5,6 +5,7 @@ import { env } from './config/env.js';
 import { testDbConnection } from './config/db.js';
 import { cleanupDeletedTodos } from './cron/cleanupDeletedTodos.js';
 import { saveDailyMetrics } from './cron/saveDailyMetrics.js';
+import { cleanupExpiresTokens } from './cron/cleanupExpiresTokens.js';
 // import dotenv from "dotenv";
 // dotenv.config();
 
@@ -15,6 +16,7 @@ import { saveDailyMetrics } from './cron/saveDailyMetrics.js';
 // });
 
 cron.schedule('0 3 * * *', cleanupDeletedTodos);
+cron.schedule('5 3 * * *', cleanupExpiresTokens);
 cron.schedule('5 0 * * *', saveDailyMetrics);
 
 async function bootstrap() {

@@ -5,7 +5,12 @@ import {
   revokeRefreshToken,
 } from '../models/refreshToken.model.js';
 import { createUser, findUserByEmail } from '../models/user.model.js';
-import { generateRefreshToken, signAccessToken } from '../utils/jwt.js';
+import {
+  generateRefreshToken,
+  hashToken,
+  REFRESH_TOKEN_EXPIRES_IN,
+  signAccessToken,
+} from '../utils/jwt.js';
 import { comparePassword, hashPassword } from '../utils/password.js';
 
 interface LoginResponse {
@@ -24,9 +29,10 @@ export async function register(email: string, password: string): Promise<LoginRe
   const user = await createUser({ email, passwordHash });
 
   const refreshTokenStr = generateRefreshToken();
+
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
 
-  await createRefreshToken(user.id, refreshTokenStr, expiresAt);
+  await createRefreshToken(user.id, hashToken(refreshTokenStr), expiresAt);
 
   const accessToken = signAccessToken({ userId: user.id });
 
@@ -49,9 +55,12 @@ export async function login(email: string, password: string): Promise<LoginRespo
   }
 
   const refreshTokenStr = generateRefreshToken();
-  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
 
-  await createRefreshToken(user.id, refreshTokenStr, expiresAt);
+  // const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+  const expiresAt = REFRESH_TOKEN_EXPIRES_IN;
+
+  // await createRefreshToken(user.id, refreshTokenStr, expiresAt);
+  await createRefreshToken(user.id, hashToken(refreshTokenStr), expiresAt);
 
   const accessToken = signAccessToken({ userId: user.id });
 
@@ -66,7 +75,7 @@ export async function refreshTokens(
   refreshTokenStr: string
 ): Promise<{ accessToken: string; refreshToken: string }> {
   // Проверяем валидность refresh токена
-  const refreshToken = await findValidRefreshToken(refreshTokenStr);
+  const refreshToken = await findValidRefreshToken(hashToken(refreshTokenStr));
   if (!refreshToken) {
     throw new Error('Invalid or expired refresh token');
   }
@@ -77,9 +86,10 @@ export async function refreshTokens(
   // Опционально: ротация refresh токена (новый токен)
   const newRefreshToken = generateRefreshToken();
 
-  const newExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+  // const newExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+  const newExpiresAt = REFRESH_TOKEN_EXPIRES_IN;
 
-  await createRefreshToken(refreshToken.user_id, newRefreshToken, newExpiresAt);
+  await createRefreshToken(refreshToken.user_id, hashToken(newRefreshToken), newExpiresAt);
   await revokeRefreshToken(refreshTokenStr); // отзываем старый
 
   return {
@@ -89,7 +99,7 @@ export async function refreshTokens(
 }
 
 export async function logout(refreshTokenStr: string): Promise<void> {
-  await revokeRefreshToken(refreshTokenStr);
+  await revokeRefreshToken(hashToken(refreshTokenStr));
 }
 
 export async function logoutAll(user_id: number): Promise<void> {
