@@ -18,6 +18,7 @@ import { cleanupExpiresTokens } from './cron/cleanupExpiresTokens.js';
 cron.schedule('0 3 * * *', cleanupDeletedTodos);
 cron.schedule('5 3 * * *', cleanupExpiresTokens);
 cron.schedule('5 0 * * *', saveDailyMetrics);
+// cron.schedule('32 9 * * *', saveDailyMetrics);
 
 async function bootstrap() {
   try {
