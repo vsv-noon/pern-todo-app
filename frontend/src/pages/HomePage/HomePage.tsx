@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { apiFetch } from '../../api/client';
-// import { getTodos } from '../services/api';
 import type { Todo } from '../../types/todo';
 import { requestNotificationPermission } from '../../hooks/useNotifications';
 import { useReminders } from '../../hooks/useReminders';
@@ -12,16 +11,14 @@ import { formattedDate, getFirstDayOfMonth, getLastDayOfMonth } from '../../util
 import { AddTodoModal } from '../../components/AddTodoModal/AddTodoModal';
 import { EditTodoModal } from '../../components/EditTodoModal/EditTodoModal';
 import Loader from '../../components/Loader/Loader';
+import { useDebounce } from '../../hooks/useDebounce';
 import { LAST_INDEX } from '../constants';
-import { TodoStatusChart } from '../../Dashboard/StatusChart';
-// import TodoByDateChart from '../Dashboard/TodoByDateChart';
-// import { TodoPriorityChart } from '../Dashboard/TodoPriorityChart';
-// import { ProductivityChart } from '../Dashboard/ProductivityChart';
+import { TodoStatusChart } from '../../Dashboard/widgets/StatusChart';
 
 import './style.css';
-import { useDebounce } from '../../hooks/useDebounce';
 
-type CalendarValue = Date | [Date, Date];
+// type CalendarValue = Date | [Date, Date];
+type CalendarValue = string | [string, string];
 
 export default function HomePage() {
   const [params, setParams] = useSearchParams();
@@ -30,7 +27,7 @@ export default function HomePage() {
   const [search, setSearch] = useState(params.get('search') ?? '');
   const [status, setStatus] = useState(params.get('status') ?? 'active');
   const [selectedDate, setSelectedDate] = useState(
-    params.get('date') ?? formattedDate(new Date(), LAST_INDEX),
+    params.get('date') ?? new Date().toLocaleDateString('en-CA'),
   );
   const [dateRange, setDateRange] = useState<CalendarValue>([
     getFirstDayOfMonth(),
@@ -80,6 +77,10 @@ export default function HomePage() {
       status,
     });
   }, [selectedDate, search, status, setParams]);
+
+  function handleDateRange(date: Date) {
+    setDateRange(formattedDate(date, LAST_INDEX));
+  }
 
   function handleDateSelect(date: Date) {
     setSelectedDate(formattedDate(date, LAST_INDEX));
@@ -136,23 +137,17 @@ export default function HomePage() {
       <div className="calendar-charts-block">
         <CalendarView
           // dateRange={dateRange}
-          setDateRange={setDateRange}
+          setDateRange={handleDateRange}
           onSelect={handleDateSelect}
           // selectedDate={selectedDate}
           counts={calendarCounts}
         />
-        {/* {Array.isArray(dateRange) && (
-        <ProductivityChart endpoint="productivity" from={dateRange[0]} to={dateRange[1]} />
-      )} */}
-        {/* <TodoPriorityChart /> */}
+
         <TodoStatusChart
           endpoint="status"
           from={Array.isArray(dateRange) ? dateRange[0] : dateRange}
           to={Array.isArray(dateRange) ? dateRange[1] : dateRange}
         />
-        {/* {Array.isArray(dateRange) && (
-        <TodoByDateChart endpoint="todosByDate" from={dateRange[0]} to={dateRange[1]} />
-      )} */}
       </div>
 
       {loading && <Loader />}

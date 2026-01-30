@@ -1,6 +1,6 @@
 // import type { Value } from "react-calendar/dist/shared/types.js";
 
-type CalendarValue = Date | [Date, Date];
+// type CalendarValue = Date | [Date, Date];
 
 export type CalendarViewProps = {
   // selectedDate: string | null;
@@ -10,5 +10,5 @@ export type CalendarViewProps = {
   // setDateRange: () => void;
   // setDateRange: Dispatch<SetStateAction<[Date, Date]>>
   // setDateRange: (value: Value, event: MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-  setDateRange: (value: CalendarValue) => void;
+  setDateRange: (value: Date) => void;
 };

@@ -1,5 +1,6 @@
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { useStatData } from '../hooks/useStatData';
+import { useStatData } from '../../hooks/useStatData';
+
 import './style.css';
 
 export default function TodoByDateChart({
@@ -8,15 +9,15 @@ export default function TodoByDateChart({
   to,
 }: {
   endpoint: string;
-  from: Date;
-  to: Date;
+  from: string;
+  to: string;
 }) {
-  const todosByDate = useStatData(endpoint, from, to);
+  const data = useStatData(endpoint, from, to);
 
   return (
     <div style={{ width: '100%', height: 300 }}>
       <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={todosByDate}>
+        <LineChart data={data}>
           <XAxis dataKey="date" />
           <YAxis allowDecimals={false} />
           <Tooltip />

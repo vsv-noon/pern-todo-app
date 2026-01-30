@@ -10,6 +10,7 @@ export function RootLayout() {
       <header className="header">
         <nav className="header-nav">
           <NavLink to="/">🏠 Home</NavLink>
+          <NavLink to="/dashboard">Dashboard</NavLink>
           <NavLink to="/about">ℹ️ About</NavLink>
           {user && <NavLink to="/trash">🗑 Trash</NavLink>}
         </nav>

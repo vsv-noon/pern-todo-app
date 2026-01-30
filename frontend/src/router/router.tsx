@@ -2,25 +2,22 @@ import { lazy } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 
 import { RootLayout } from '../layouts/RootLayout';
-// import HomePage from '../pages/HomePage/HomePage';
-// import { TrashList } from '../components/TrashList/TrashList';
-// import AboutPage from '../pages/AboutPage';
-// import NotFoundPage from '../pages/NotFoundPage';
 // import { AppLayout } from '../layouts/AppLayout';
-// import { LoginPage } from '../pages/Auth/LoginPage';
-// import { RegisterPage } from '../pages/Auth/RegisterPage';
+
 import { PublicOnlyRoute } from '../auth/PublicOnlyRoute';
 import { ProtectedRoute } from '../auth/ProtectedRoute';
-import { ErrorPage } from '../pages/ErrorPage/ErrorPage';
+
 // import { ProtectedRoute } from '../routes/ProtectedRoute/ProtectedRoute';
 
 const LoginPage = lazy(() => import('../pages/Auth/LoginPage'));
 const RegisterPage = lazy(() => import('../pages/Auth/RegisterPage'));
 
 const HomePage = lazy(() => import('../pages/HomePage/HomePage'));
+const DashboardPage = lazy(() => import('../Dashboard/DashboardPage'));
 const TrashList = lazy(() => import('../components/TrashList/TrashList'));
 const AboutPage = lazy(() => import('../pages/AboutPage'));
 const NotFoundPage = lazy(() => import('../pages/NotFoundPage'));
+const ErrorPage = lazy(() => import('../pages/ErrorPage/ErrorPage'));
 
 export const router = createBrowserRouter([
   {
@@ -48,6 +45,10 @@ export const router = createBrowserRouter([
           {
             path: '/',
             element: <HomePage />,
+          },
+          {
+            path: '/dashboard',
+            element: <DashboardPage />,
           },
           {
             path: '/trash',

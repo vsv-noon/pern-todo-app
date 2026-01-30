@@ -1,5 +1,5 @@
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { useStatData } from '../hooks/useStatData';
+import { useStatData } from '../../hooks/useStatData';
 
 export function ProductivityChart({
   endpoint,
@@ -7,8 +7,8 @@ export function ProductivityChart({
   to,
 }: {
   endpoint: string;
-  from: Date;
-  to: Date;
+  from: string;
+  to: string;
 }) {
   const productivity = useStatData(endpoint, from, to);
 

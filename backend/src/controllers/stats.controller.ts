@@ -14,10 +14,10 @@ export async function getStats(
 
   try {
     const data = await statsService.getStats(
-      req.user.userId,
       type as any,
       from ?? null,
-      to ?? null
+      to ?? null,
+      req.user.userId
     );
 
     return res.json(data);

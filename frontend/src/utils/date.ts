@@ -20,9 +20,9 @@ export function formattedDate(d: Date, s: number) {
 }
 
 export function getFirstDayOfMonth(date = new Date()) {
-  return new Date(date.getFullYear(), date.getMonth(), 1);
+  return new Date(date.getFullYear(), date.getMonth(), 1).toLocaleDateString('en-CA');
 }
 
 export function getLastDayOfMonth(date = new Date()) {
-  return new Date(date.getFullYear(), date.getMonth() + 1, 0);
+  return new Date(date.getFullYear(), date.getMonth() + 1, 0).toLocaleDateString('en-CA');
 }

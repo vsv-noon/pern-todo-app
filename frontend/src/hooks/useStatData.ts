@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { fetchStats } from '../api/stats.api';
 
-export function useStatData(endpoint: string, from: Date, to: Date) {
+export function useStatData(endpoint: string, from: string, to: string) {
   const [data, setData] = useState<{ completed: boolean; count: string }[]>();
 
   // console.log(endpoint);
@@ -10,11 +10,11 @@ export function useStatData(endpoint: string, from: Date, to: Date) {
 
     async function load() {
       try {
-        const fromStr = from?.toLocaleDateString('en-CA');
-        const toStr = (to ?? from)?.toLocaleDateString('en-CA');
+        // const fromStr = from?.toLocaleDateString('en-CA');
+        // const toStr = (to ?? from)?.toLocaleDateString('en-CA');
         const data = await fetchStats(endpoint, {
-          from: fromStr,
-          to: toStr,
+          from,
+          to,
         });
 
         setData(data as { completed: boolean; count: string }[]);

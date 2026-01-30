@@ -5,7 +5,7 @@ export type TodoRow = {
   count: number;
 };
 
-export async function getProductivity(from: string | null, to: string | null) {
+export async function getProductivity(from: string | null, to: string | null, userId: number) {
   const result = await pool.query(
     `
     SELECT
@@ -16,15 +16,42 @@ export async function getProductivity(from: string | null, to: string | null) {
     FROM daily_metrics
     WHERE ($1::date IS NULL OR date >= $1)
       AND ($2::date IS NULL OR date <= $2)
+      AND user_id = $3
     ORDER BY date
     `,
-    [from || null, to || null]
+    [from || null, to || null, userId]
   );
 
   return result.rows;
 }
 
-export async function getStatus(from: string | null, to: string | null): Promise<TodoRow[]> {
+export async function getPriority(
+  from: string | null,
+  to: string | null,
+  userId: number
+): Promise<TodoRow[]> {
+  const result = await pool.query(
+    `
+    SELECT 
+      priority, COUNT(*) 
+    FROM todos
+    WHERE deleted_at IS NULL
+      AND ($1::date IS NULL OR due_date >= $1)
+      AND ($2::date IS NULL OR due_date <= $2)
+      AND user_id = $3
+    GROUP BY priority;
+    `,
+    [from || null, to || null, userId]
+  );
+
+  return result.rows;
+}
+
+export async function getStatus(
+  from: string | null,
+  to: string | null,
+  userId: number
+): Promise<TodoRow[]> {
   const result = await pool.query<TodoRow>(
     `
     SELECT
@@ -33,9 +60,10 @@ export async function getStatus(from: string | null, to: string | null): Promise
     WHERE deleted_at IS NULL
       AND ($1::date IS NULL OR due_date >= $1)
       AND ($2::date IS NULL OR due_date <= $2)
+      AND user_id = $3
     GROUP BY completed;
     `,
-    [from || null, to || null]
+    [from || null, to || null, userId]
   );
 
   return result.rows;
@@ -67,7 +95,11 @@ export async function getStreak() {
   return { streak: Number(result.rows[0]?.streak || 0) };
 }
 
-export async function getTodosByDate(from: string | null, to: string | null): Promise<TodoRow[]> {
+export async function getTodosByDate(
+  from: string | null,
+  to: string | null,
+  userId: number
+): Promise<TodoRow[]> {
   const result = await pool.query<TodoRow>(
     `
     SELECT
@@ -77,10 +109,11 @@ export async function getTodosByDate(from: string | null, to: string | null): Pr
     WHERE deleted_at IS NULL
       AND ($1::date IS NULL OR due_date >= $1)
       AND ($2::date IS NULL OR due_date <= $2)
+      AND user_id = $3
     GROUP BY date
     ORDER BY date
     `,
-    [from, to]
+    [from, to, userId]
   );
 
   return result.rows;

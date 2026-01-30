@@ -1,25 +1,34 @@
-import { getProductivity, getStatus, getStreak, getTodosByDate } from '../models/stats.model.js';
+import {
+  getPriority,
+  getProductivity,
+  getStatus,
+  getStreak,
+  getTodosByDate,
+} from '../models/stats.model.js';
 
-export type StatsType = 'productivity' | 'status' | 'streak' | 'todosByDate';
+export type StatsType = 'priority' | 'productivity' | 'status' | 'streak' | 'todosByDate';
 
 export async function getStats(
-  userId: number,
   type: StatsType,
   from: string | null,
-  to: string | null
+  to: string | null,
+  userId: number
 ): Promise<unknown> {
   switch (type) {
+    case 'priority':
+      return getPriority(from, to, userId);
+
     case 'productivity':
-      return getProductivity(from, to);
+      return getProductivity(from, to, userId);
 
     case 'status':
-      return getStatus(from, to);
+      return getStatus(from, to, userId);
 
     case 'streak':
       return getStreak();
 
     case 'todosByDate':
-      return getTodosByDate(from, to);
+      return getTodosByDate(from, to, userId);
 
     default:
       throw new Error(`Unknown stats type${type}`);
