@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { apiDelete, apiFetch } from '../../api/client';
-// import { apiDelete, apiFetch } from '../../api/api';
 import type { TodoListProps } from './types';
 import type { Todo } from '../../types/todo';
 import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog';
 
 import './TodoList.css';
+import { SortableTodoItem } from '../SortableTodoItem/SortableTodoItem';
 
 export function TodoList({ todos, onEdit, onUpdate, onDelete }: TodoListProps) {
   const [isModalOpen, setModalOpen] = useState(false);
@@ -14,17 +14,27 @@ export function TodoList({ todos, onEdit, onUpdate, onDelete }: TodoListProps) {
   async function toggleCompleted(todo: Todo) {
     const updated = await apiFetch<Todo>(`/todos/${todo.id}`, {
       method: 'PATCH',
-      body: JSON.stringify({
-        title: todo.title,
-        description: todo.description,
-        completed: !todo.completed,
-        due_date: todo.due_date,
-        remind_at: todo.remind_at,
-      }),
+      body: JSON.stringify({ completed: !todo.completed }),
     });
 
     onUpdate(updated);
   }
+
+  // async function toggleCompleted(todo: Todo) {
+  //   const updated = await apiFetch<Todo>(`/todos/${todo.id}`, {
+  //     method: 'PATCH',
+  //     body: JSON.stringify({ completed: !todo.completed }),
+  //     body: JSON.stringify({
+  //       title: todo.title,
+  //       description: todo.description,
+  //       completed: !todo.completed,
+  //       due_date: todo.due_date,
+  //       remind_at: todo.remind_at,
+  //     }),
+  //   });
+
+  //   onUpdate(updated);
+  // }
 
   function handleDeleteClick(todo: Todo) {
     setItemToDelete(todo);
@@ -50,31 +60,13 @@ export function TodoList({ todos, onEdit, onUpdate, onDelete }: TodoListProps) {
       <ul>
         {todos &&
           todos.map((todo) => (
-            <li key={todo.id} className="todoItem">
-              <input
-                type="checkbox"
-                title="select to complete"
-                checked={todo.completed}
-                onChange={() => toggleCompleted(todo)}
-              />
-
-              <span
-                className="title"
-                style={{
-                  textDecoration: todo.completed ? 'line-through' : 'none',
-                }}
-              >
-                {todo.title}
-              </span>
-              <span>{todo.description}</span>
-
-              <div className="actions">
-                <button onClick={() => onEdit(todo)}>✏️</button>
-
-                <button onClick={() => handleDeleteClick(todo)}>🗑</button>
-              </div>
-              <span>{todo.due_date}</span>
-            </li>
+            <SortableTodoItem
+              key={todo.id}
+              todo={todo}
+              onEdit={() => onEdit(todo)}
+              onUpdate={() => toggleCompleted(todo)}
+              onDelete={() => handleDeleteClick(todo)}
+            />
           ))}
       </ul>
       <ConfirmationDialog
