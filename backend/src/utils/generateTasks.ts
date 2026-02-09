@@ -25,9 +25,9 @@ export function generateTasks(goal: GoalProps) {
     count++;
   }
 
-  console.log(currentDate);
+  // console.log(currentDate);
 
-  console.log(tasks);
+  // console.log(tasks);
   return tasks;
 }
 

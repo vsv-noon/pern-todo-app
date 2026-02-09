@@ -70,6 +70,7 @@ export async function updateTodo(
     due_date: string;
     remind_at?: string;
     priority?: number;
+    goal_id?: number;
   }>
 ): Promise<TodoRow | null> {
   const fields = Object.entries(updates)
