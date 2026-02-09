@@ -7,7 +7,6 @@ export type Goal = {
   current_value?: number;
   target_value: number;
   frequency: 'daily' | 'weekly' | 'monthly';
-  period: 'day' | 'week' | 'month';
   completed_at?: string | null;
 };
 

@@ -62,7 +62,6 @@ export function GoalForm({ onCreate }: GoalFormProps) {
       title,
       target_value: targetCount,
       target_type: targetType,
-      period: 'day',
       frequency: frequency,
     };
 

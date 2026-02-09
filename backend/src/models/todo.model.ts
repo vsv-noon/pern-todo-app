@@ -35,18 +35,27 @@ export async function createTodo(
   data: {
     title: string;
     description?: string;
-    due_date: string;
+    due_date: Date;
     remind_at?: string;
     priority?: number;
+    goal_id?: number;
   }
 ): Promise<TodoRow> {
   const result = await pool.query(
     `
-      INSERT INTO todos (user_id, title, description, due_date, remind_at, priority)
-      VALUES ($1, $2, $3, $4::date, $5::timestamptz, $6)
+      INSERT INTO todos (user_id, title, description, due_date, remind_at, priority, goal_id)
+      VALUES ($1, $2, $3, $4::date, $5::timestamptz, $6, $7)
       RETURNING *
       `,
-    [userId, data.title, data.description, data.due_date, data.remind_at, data.priority]
+    [
+      userId,
+      data.title,
+      data.description,
+      data.due_date,
+      data.remind_at,
+      data.priority,
+      data.goal_id,
+    ]
   );
 
   return result.rows[0];
