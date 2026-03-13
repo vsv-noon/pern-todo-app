@@ -15,6 +15,7 @@ export async function createNewGoal(
   userId: number,
   data: {
     title: string;
+    start_date: Date;
     frequency: string;
     target_value: number;
     target_type: string;
@@ -27,6 +28,7 @@ export async function createGoalWithTodos(
   userId: number,
   data: {
     title: string;
+    start_date: Date;
     frequency: string;
     target_value: number;
     target_type: string;

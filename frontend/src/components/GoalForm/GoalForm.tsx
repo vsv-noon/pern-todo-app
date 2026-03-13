@@ -16,6 +16,7 @@ export function GoalForm({ onCreate }: GoalFormProps) {
   const [targetType, setTargetType] = useState<TargetType>('count');
   const [targetValue, setTargetValue] = useState<number | string>(1);
   const [targetCount, setTargetCount] = useState<number>(0);
+  const [startDate, setStartDate] = useState(new Date().toLocaleDateString('en-CA'));
 
   function increment(date: Date, frequency: FrequencyType) {
     if (frequency === 'daily') date.setDate(date.getDate() + 1);
@@ -24,7 +25,7 @@ export function GoalForm({ onCreate }: GoalFormProps) {
   }
 
   function calcTargetValues(date: string, freq: FrequencyType) {
-    const currentDate = new Date();
+    const currentDate = new Date(startDate);
     const targetDate = new Date(date);
     let count = 0;
 
@@ -34,6 +35,10 @@ export function GoalForm({ onCreate }: GoalFormProps) {
     }
 
     return count;
+  }
+
+  function handleChangeStartDate(event: React.ChangeEvent<HTMLInputElement>) {
+    setStartDate(event.target.value);
   }
 
   function handleChangeTargetType(event: React.ChangeEvent<HTMLSelectElement>) {
@@ -60,6 +65,7 @@ export function GoalForm({ onCreate }: GoalFormProps) {
 
     const dto: Goal = {
       title,
+      start_date: startDate,
       target_value: targetCount,
       target_type: targetType,
       frequency: frequency,
@@ -82,6 +88,11 @@ export function GoalForm({ onCreate }: GoalFormProps) {
         onChange={(e) => setTitle(e.target.value)}
         required
       />
+
+      <label>
+        Start date:
+        <input type="date" value={startDate} onChange={handleChangeStartDate} />
+      </label>
 
       <div className="form-input-block">
         <select value={frequency} onChange={(e) => setFrequency(e.target.value as FrequencyType)}>

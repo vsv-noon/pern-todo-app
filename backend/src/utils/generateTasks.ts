@@ -1,5 +1,6 @@
 type GoalProps = {
   title: string;
+  start_date: Date;
   frequency: string;
   target_value: number;
   target_type: number;
@@ -8,7 +9,7 @@ type GoalProps = {
 
 export function generateTasks(goal: GoalProps) {
   const tasks = [];
-  const startDate = new Date();
+  const startDate = new Date(goal.start_date);
 
   let currentDate = new Date(startDate);
   let count = 0;
@@ -25,9 +26,6 @@ export function generateTasks(goal: GoalProps) {
     count++;
   }
 
-  // console.log(currentDate);
-
-  // console.log(tasks);
   return tasks;
 }
 

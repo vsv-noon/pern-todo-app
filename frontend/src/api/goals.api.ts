@@ -1,10 +1,11 @@
 import { apiFetch } from './client';
 
 export type Goal = {
-  id: number;
+  // id: number;
   title: string;
+  start_date: string;
   target_type: 'count' | 'date';
-  current_value: number;
+  // current_value: number;
   target_value: number;
   frequency: 'daily' | 'weekly' | 'monthly';
   completed_at?: string | null;
