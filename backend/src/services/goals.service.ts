@@ -15,10 +15,14 @@ export async function createNewGoal(
   userId: number,
   data: {
     title: string;
+    goal_type: string;
     start_date: Date;
+    until_date: Date;
     frequency: string;
+    start_value: number;
     target_value: number;
     target_type: string;
+    tasks_count: number;
   }
 ) {
   return model.createGoal(userId, data);
@@ -28,10 +32,14 @@ export async function createGoalWithTodos(
   userId: number,
   data: {
     title: string;
+    goal_type: string;
     start_date: Date;
+    until_date: Date;
     frequency: string;
+    start_value: number;
     target_value: number;
     target_type: string;
+    tasks_count: number;
   }
 ) {
   const client = await pool.connect();

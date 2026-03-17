@@ -5,6 +5,7 @@ type GoalProps = {
   target_value: number;
   target_type: number;
   period: string;
+  tasks_count: number;
 };
 
 export function generateTasks(goal: GoalProps) {
@@ -14,7 +15,7 @@ export function generateTasks(goal: GoalProps) {
   let currentDate = new Date(startDate);
   let count = 0;
 
-  while (count < goal.target_value) {
+  while (count < goal.tasks_count) {
     const taskTitle = `${goal.title} (${frequencyLabel(goal.frequency)})`;
 
     tasks.push({
