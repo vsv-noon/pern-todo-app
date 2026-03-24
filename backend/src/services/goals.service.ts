@@ -20,6 +20,7 @@ export async function createNewGoal(
     until_date: Date;
     frequency: string;
     start_value: number;
+    current_value: number;
     target_value: number;
     unit: string;
     target_type: string;
@@ -38,6 +39,7 @@ export async function createGoalWithTodos(
     until_date: Date;
     frequency: string;
     start_value: number;
+    current_value: number;
     target_value: number;
     unit: string;
     target_type: string;

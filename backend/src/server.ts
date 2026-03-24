@@ -23,7 +23,7 @@ cron.schedule('5 0 * * *', saveDailyMetrics);
 async function bootstrap() {
   try {
     await testDbConnection();
-    console.log('Database connected');
+    console.log(`Database connected: ${env.DATABASE_URL}`);
 
     app.listen(env.PORT, () => {
       console.log(`Server listening on port ${env.PORT}`);

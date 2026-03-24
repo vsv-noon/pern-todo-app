@@ -23,5 +23,14 @@ export async function createMeasurement(userId: number, data: GoalMeasurementsRo
     [goal_id, userId, measured_value, note, measured_at]
   );
 
+  await pool.query(
+    `
+    UPDATE goals
+    SET current_value = $1
+    WHERE id = $2 AND goal_type = 'metric'
+    `,
+    [measured_value, goal_id]
+  );
+
   return result.rows[0];
 }

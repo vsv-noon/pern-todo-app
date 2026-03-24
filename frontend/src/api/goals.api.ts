@@ -10,19 +10,20 @@ export type ProgressData = {
 };
 
 export type Goal = {
-  id: number;
+  id?: number;
   title: string;
   goal_type: 'metric' | 'counter';
   start_date: string;
   target_type: 'count' | 'date';
   start_value?: number | null;
+  current_value: number;
   target_value: number;
   unit: string;
   frequency: 'daily' | 'weekly' | 'monthly';
   tasks_count: number;
   until_date: string;
   completed_at?: string | null;
-  progress_data: ProgressData;
+  progress_data?: ProgressData;
 };
 
 export async function fetchGoals(): Promise<Goal[]> {
@@ -36,6 +37,13 @@ export async function fetchGoalById(id: number): Promise<Goal> {
 export async function createGoal(data: Goal) {
   return apiFetch('/goals', {
     method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
+export async function updateGoal(id: number, data: Goal): Promise<Goal> {
+  return apiFetch(`/goals/${id}`, {
+    method: 'PATCH',
     body: JSON.stringify(data),
   });
 }

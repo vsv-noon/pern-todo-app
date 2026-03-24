@@ -8,6 +8,7 @@ export type GoalsRow = {
   frequency: string;
   target_type: string;
   start_value: number;
+  current_value: number;
   target_value: number;
   unit: string;
   tasks_count: number;
@@ -22,6 +23,7 @@ export async function createGoal(userId: number, data: GoalsRow) {
     frequency,
     target_type,
     start_value,
+    current_value,
     target_value,
     unit,
     tasks_count,
@@ -29,8 +31,8 @@ export async function createGoal(userId: number, data: GoalsRow) {
 
   const result = await pool.query(
     `
-    INSERT INTO goals (user_id, title, goal_type, start_date, until_date, frequency, target_type, start_value, target_value, unit, tasks_count)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+    INSERT INTO goals (user_id, title, goal_type, start_date, until_date, frequency, target_type, start_value, current_value, target_value, unit, tasks_count)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
     RETURNING *
     `,
     [
@@ -42,6 +44,7 @@ export async function createGoal(userId: number, data: GoalsRow) {
       frequency,
       target_type,
       start_value,
+      current_value,
       target_value,
       unit,
       tasks_count,
