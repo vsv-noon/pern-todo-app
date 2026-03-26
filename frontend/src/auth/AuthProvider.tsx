@@ -26,14 +26,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     init();
   }, []);
 
-  async function login(email: string, password: string) {
-    const res = await authApi.login(email, password);
-    console.log(res);
+  async function login(email: string, password: string, token: string) {
+    const res = await authApi.login(email, password, token);
+    // console.log(res);
     saveAuth(res);
   }
 
-  async function register(email: string, password: string) {
-    const res = await authApi.register(email, password);
+  // async function login(email: string, password: string) {
+  //   const res = await authApi.login(email, password);
+  //   console.log(res);
+  //   saveAuth(res);
+  // }
+
+  async function register(email: string, password: string, token: string) {
+    const res = await authApi.register(email, password, token);
     saveAuth(res);
   }
 
