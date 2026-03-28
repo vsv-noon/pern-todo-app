@@ -6,10 +6,10 @@ export type AuthResponse = {
   user: { id: number; email: string };
 };
 
-export function login(email: string, password: string, token: string) {
+export function login(email: string, password: string, captchaToken: string) {
   return apiFetch<AuthResponse>('/auth/login', {
     method: 'POST',
-    body: JSON.stringify({ email, password, token }),
+    body: JSON.stringify({ email, password, captchaToken }),
   });
 }
 
@@ -20,10 +20,10 @@ export function login(email: string, password: string, token: string) {
 //   });
 // }
 
-export function register(email: string, password: string, token: string) {
+export function register(email: string, password: string, captchaToken: string) {
   return apiFetch<AuthResponse>('/auth/register', {
     method: 'POST',
-    body: JSON.stringify({ email, password, token }),
+    body: JSON.stringify({ email, password, captchaToken }),
   });
 }
 

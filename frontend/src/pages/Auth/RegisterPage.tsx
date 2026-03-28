@@ -9,7 +9,7 @@ import './style.css';
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [token, setToken] = useState<string | null>(null);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -22,7 +22,7 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!token) {
+    if (!captchaToken) {
       setError('Пройдите верификацию Turnstile');
       return;
     }
@@ -31,7 +31,7 @@ export default function RegisterPage() {
     setError('');
 
     try {
-      await register(email, password, token);
+      await register(email, password, captchaToken);
       navigate('/');
     } catch (err) {
       const typedError = err as Error;
@@ -85,18 +85,18 @@ export default function RegisterPage() {
           scriptOptions={{
             appendTo: 'body',
           }}
-          onSuccess={(token) => setToken(token)}
+          onSuccess={(token) => setCaptchaToken(token)}
           onError={() => {
-            setToken(null);
+            setCaptchaToken(null);
             setError('Error Turnstile');
           }}
           onExpire={() => {
-            setToken(null);
+            setCaptchaToken(null);
             setError('Token is expired.');
           }}
         />
 
-        <button type="submit" disabled={!token || loading}>
+        <button type="submit" disabled={!captchaToken || loading}>
           {loading ? 'Signing up...' : 'Sign up'}
         </button>
         <div>

@@ -7,23 +7,23 @@ const verifyEndpoint = process.env.VERIFY_ENDPOINT || '';
 const TURNSTILE_SECRET = process.env.TURNSTILE_SECRET_KEY || '1x0000000000000000000000000000000AA';
 
 export async function register(req: Request, res: Response) {
-  const { email, password, token } = req.body as {
+  const { email, password, captchaToken } = req.body as {
     email?: string;
     password?: string;
-    token: string;
+    captchaToken: string;
   };
 
   if (!email || !password) {
     return res.status(400).json({ error: 'Email and password are required' });
   }
 
-  if (!token) {
+  if (!captchaToken) {
     return res.status(400).json({ success: false, error: ['No token'] });
   }
 
   const formData = new URLSearchParams({
     secret: TURNSTILE_SECRET,
-    response: token,
+    response: captchaToken,
   });
 
   try {
@@ -69,23 +69,23 @@ export async function register(req: Request, res: Response) {
 }
 
 export async function login(req: Request, res: Response) {
-  const { email, password, token } = req.body as {
+  const { email, password, captchaToken } = req.body as {
     email?: string;
     password?: string;
-    token: string;
+    captchaToken: string;
   };
 
   if (!email || !password) {
     return res.status(400).json({ success: false, error: ['Email and password are required'] });
   }
 
-  if (!token) {
+  if (!captchaToken) {
     return res.status(400).json({ success: false, error: ['No token'] });
   }
 
   const formData = new URLSearchParams({
     secret: TURNSTILE_SECRET,
-    response: token,
+    response: captchaToken,
   });
 
   try {
