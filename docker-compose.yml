@@ -1,0 +1,69 @@
+services:
+  # DataBase PostgreSQL
+  db:
+    image: postgres:18.1-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: my_pern_app
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d my_pern_app"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - my-pern-app-network
+
+  # Node.js API
+  server:
+    build: ./backend
+    restart: always
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend:/app
+      - server_node_modules:/app/node_modules
+    environment:
+      # node-pg-migrate автоматически использует DATABASE_URL
+      DATABASE_URL: postgres://postgres:postgres@db:5432/my_pern_app
+      NODE_ENV: development
+    depends_on:
+      db:
+        condition: service_healthy
+      # Сначала накатываем миграции, потом запускаем сервер
+    command: >
+      sh -c "npx node-pg-migrate up -m ./src/migrations -j ts && npm run dev"
+    networks:
+      - my-pern-app-network
+
+  # React App
+  client:
+    build: ./frontend
+    restart: always
+    ports:
+      - "3000:5173"
+    volumes:
+      - ./frontend:/app
+      - client_node_modules:/app/node_modules
+    environment:
+      # - WDS_SOCKET_PORT=0 # Для корректного Hot Reload в Docker
+        - CHOKIDAR_USEPOLLING=true # Optional: useful for specific HMR configuration
+    depends_on:
+      - server
+    stdin_open: true # Keeps the container running
+    tty: true # Keeps the container running
+    networks: 
+      - my-pern-app-network
+
+networks:
+  my-pern-app-network:
+    driver: bridge
+volumes:
+  pgdata:
+  server_node_modules:
+  client_node_modules:
