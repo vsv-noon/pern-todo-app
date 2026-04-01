@@ -26,8 +26,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     init();
   }, []);
 
-  async function login(email: string, password: string, token: string) {
-    const res = await authApi.login(email, password, token);
+  async function login(email: string, password: string, token: string, isActivated: boolean) {
+    const res = await authApi.login(email, password, token, isActivated);
     // console.log(res);
     saveAuth(res);
   }
@@ -38,8 +38,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   //   saveAuth(res);
   // }
 
-  async function register(email: string, password: string, token: string) {
-    const res = await authApi.register(email, password, token);
+  async function register(email: string, password: string, token: string, isActivated: boolean) {
+    const res = await authApi.register(email, password, token, isActivated);
     saveAuth(res);
   }
 

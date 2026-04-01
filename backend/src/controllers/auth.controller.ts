@@ -1,7 +1,9 @@
 import type { Request, Response } from 'express';
 import type { TurnstileServerValidationResponse } from '@marsidev/react-turnstile';
+import jwt from 'jsonwebtoken';
 
 import * as authService from '../services/auth.service.js';
+import { pool } from '../config/db.js';
 
 const verifyEndpoint = process.env.VERIFY_ENDPOINT || '';
 const TURNSTILE_SECRET = process.env.TURNSTILE_SECRET_KEY || '1x0000000000000000000000000000000AA';
@@ -47,7 +49,7 @@ export async function register(req: Request, res: Response) {
       return res.status(201).json({
         success: true,
         message: 'Verification OK',
-        user: { id: result.user.id, email: result.user.email },
+        user: { id: result.user.id, email: result.user.email, isActivated: false },
         accessToken: result.accessToken,
         refreshToken: result.refreshToken,
       });
@@ -109,7 +111,11 @@ export async function login(req: Request, res: Response) {
       return res.status(200).json({
         success: true,
         message: 'Verification OK',
-        user: { id: result.user.id, email: result.user.email },
+        user: {
+          id: result.user.id,
+          email: result.user.email,
+          isActivated: result.user.isActivated,
+        },
         accessToken: result.accessToken,
         refreshToken: result.refreshToken,
       });
@@ -157,5 +163,38 @@ export async function logout(req: Request, res: Response) {
     return res.status(204).send();
   } catch (err) {
     return res.status(400).json({ error: (err as Error).message });
+  }
+}
+
+export async function activateAccount(req: Request, res: Response) {
+  try {
+    const { token } = req.params;
+    const secret = process.env.JWT_ACTIVATION_SECRET;
+
+    if (!token || !secret) {
+      return res.status(400).json({ message: 'Invalid request or server config' });
+    }
+    // Token verification
+    const userData = jwt.verify(token as string, secret as string) as { userId: number };
+    console.log('userData', userData);
+    if (!userData) {
+      return res.status(400).json({ message: 'Некорректная ссылка активации' });
+    }
+
+    // Find user
+    const user = await pool.query('SELECT * FROM users WHERE id = $1', [userData.userId]);
+    if (user.rows.length === 0) {
+      return res.status(400).json({ message: 'Пользователь не найден' });
+    }
+
+    // Refresh status
+    await pool.query('UPDATE users SET is_activated = true WHERE id = $1', [userData.userId]);
+
+    // Redirect to LoginPage
+    return res.redirect(`${process.env.CLIENT_URL}/login?status=success`);
+    // return res.redirect(`http://localhost/login`);
+  } catch (err) {
+    console.error(err);
+    return res.status(401).json({ message: 'Link expired or invalid' });
   }
 }

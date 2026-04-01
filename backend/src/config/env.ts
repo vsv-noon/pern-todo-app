@@ -11,6 +11,7 @@ import { SignOptions } from 'jsonwebtoken';
 export const env = {
   PORT: process.env.PORT ?? '5000',
   DATABASE_URL: process.env.DATABASE_URL ?? '',
-  JWT_SECRET: process.env.JWT_SECRET ?? 'change-me-in-prod',
+  JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET ?? 'change-me-in-prod',
+  JWT_ACTiVATION_SECRET: process.env.JWT_ACTIVATION_SECRET ?? 'change-me-in-prod',
   JWT_EXPIRES_IN: (process.env.JWT_EXPIRES_IN ?? '1h') as SignOptions['expiresIn'],
 };

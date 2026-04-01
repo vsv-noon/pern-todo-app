@@ -1,3 +1,4 @@
+import { sendMail } from '../config/mailer.js';
 import {
   createRefreshToken,
   findValidRefreshToken,
@@ -10,11 +11,12 @@ import {
   hashToken,
   REFRESH_TOKEN_EXPIRES_IN,
   signAccessToken,
+  signActivationToken,
 } from '../utils/jwt.js';
 import { comparePassword, hashPassword } from '../utils/password.js';
 
 interface LoginResponse {
-  user: { id: number; email: string };
+  user: { id: number; email: string; isActivated: boolean };
   accessToken: string;
   refreshToken: string;
 }
@@ -36,8 +38,12 @@ export async function register(email: string, password: string): Promise<LoginRe
 
   const accessToken = signAccessToken({ userId: user.id });
 
+  const activationToken = signActivationToken({ userId: user.id });
+
+  await sendMail(email, activationToken);
+
   return {
-    user: { id: user.id, email: user.email },
+    user: { id: user.id, email: user.email, isActivated: user.is_activated },
     accessToken,
     refreshToken: refreshTokenStr,
   };
@@ -64,8 +70,14 @@ export async function login(email: string, password: string): Promise<LoginRespo
 
   const accessToken = signAccessToken({ userId: user.id });
 
+  const activationToken = signActivationToken({ userId: user.id });
+
+  await sendMail(email, activationToken);
+
+  console.log(activationToken);
+
   return {
-    user: { id: user.id, email: user.email },
+    user: { id: user.id, email: user.email, isActivated: user.is_activated },
     accessToken,
     refreshToken: refreshTokenStr,
   };

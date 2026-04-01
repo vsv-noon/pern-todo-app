@@ -75,6 +75,17 @@ services:
     networks:
       - my-pern-app-network
 
+  mailpit:
+    image: axllent/mailpit
+    restart: always
+    ports:
+      - "1025:1025" # SMTP
+      - "8025:8025" # Web UI
+    environment:
+      MP_SMTP_DISABLE_RDNS: "true"
+    networks:
+      - my-pern-app-network
+
 networks:
   my-pern-app-network:
     driver: bridge

@@ -6,10 +6,10 @@ export type AuthResponse = {
   user: { id: number; email: string };
 };
 
-export function login(email: string, password: string, captchaToken: string) {
+export function login(email: string, password: string, captchaToken: string, isActivated: boolean) {
   return apiFetch<AuthResponse>('/auth/login', {
     method: 'POST',
-    body: JSON.stringify({ email, password, captchaToken }),
+    body: JSON.stringify({ email, password, captchaToken, isActivated }),
   });
 }
 
@@ -20,10 +20,15 @@ export function login(email: string, password: string, captchaToken: string) {
 //   });
 // }
 
-export function register(email: string, password: string, captchaToken: string) {
+export function register(
+  email: string,
+  password: string,
+  captchaToken: string,
+  isActivated: boolean,
+) {
   return apiFetch<AuthResponse>('/auth/register', {
     method: 'POST',
-    body: JSON.stringify({ email, password, captchaToken }),
+    body: JSON.stringify({ email, password, captchaToken, isActivated }),
   });
 }
 

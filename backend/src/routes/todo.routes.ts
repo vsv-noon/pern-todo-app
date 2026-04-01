@@ -2,10 +2,12 @@ import { Router } from 'express';
 
 import * as todoController from '../controllers/todo.controller.js';
 import { authMiddleware } from '../middleware/auth.middleware.js';
+import { activateMiddleware } from '../middleware/activate.middleware.js';
 
 const router = Router();
 
 router.use(authMiddleware);
+router.use(activateMiddleware);
 
 router.get('/', todoController.getTodos);
 router.get('/calendar-counts', todoController.getCalendarCounts);

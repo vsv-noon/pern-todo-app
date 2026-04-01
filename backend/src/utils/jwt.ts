@@ -9,6 +9,7 @@ export type JwtPayload = {
 };
 
 const ACCESS_TOKEN_EXPIRES_IN = '15m';
+const ACTIVATION_TOKEN_EXPIRES_IN = '24h';
 export const REFRESH_TOKEN_EXPIRES_IN = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
 // const REFRESH_TOKEN_EXPIRES_IN = '7d';
 // export const REFRESH_TOKEN_EXPIRES_IN = new Date(Date.now() + 5 * 60 * 1000);
@@ -23,14 +24,20 @@ export function generateRefreshToken(): string {
 }
 
 export function signAccessToken(payload: JwtPayload): string {
-  return jwt.sign(payload, env.JWT_SECRET as Secret, {
+  return jwt.sign(payload, env.JWT_ACCESS_SECRET as Secret, {
     expiresIn: ACCESS_TOKEN_EXPIRES_IN,
+  });
+}
+
+export function signActivationToken(payload: JwtPayload): string {
+  return jwt.sign(payload, env.JWT_ACTiVATION_SECRET, {
+    expiresIn: ACTIVATION_TOKEN_EXPIRES_IN,
   });
 }
 
 export function verifyAccessToken(token: string): JwtPayload | null {
   try {
-    return jwt.verify(token, env.JWT_SECRET as Secret) as JwtPayload;
+    return jwt.verify(token, env.JWT_ACCESS_SECRET as Secret) as JwtPayload;
   } catch {
     return null;
   }

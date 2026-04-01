@@ -6,10 +6,17 @@ import { Turnstile } from '@marsidev/react-turnstile';
 
 import './style.css';
 
+export interface RegisterFormData {
+  email: string;
+  password: string;
+  captchaToken: string | null;
+  isActivated: boolean;
+}
+
 export default function RegisterPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  // const [email, setEmail] = useState('');
+  // const [password, setPassword] = useState('');
+  // const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -20,9 +27,21 @@ export default function RegisterPage() {
   //   return <Navigate to="/" replace />;
   // }
 
+  const [formData, setFormData] = useState<RegisterFormData>({
+    email: '',
+    password: '',
+    captchaToken: null,
+    isActivated: false,
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+    if (error) setError('');
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!captchaToken) {
+    if (!formData.captchaToken) {
       setError('Пройдите верификацию Turnstile');
       return;
     }
@@ -31,7 +50,12 @@ export default function RegisterPage() {
     setError('');
 
     try {
-      await register(email, password, captchaToken);
+      await register(
+        formData.email,
+        formData.password,
+        formData.captchaToken,
+        formData.isActivated,
+      );
       navigate('/');
     } catch (err) {
       const typedError = err as Error;
@@ -56,8 +80,8 @@ export default function RegisterPage() {
               name="email"
               type="email"
               required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={formData.email}
+              onChange={handleChange}
             />
           </div>
           <div>
@@ -67,8 +91,8 @@ export default function RegisterPage() {
               name="password"
               type="password"
               required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={formData.password}
+              onChange={handleChange}
             />
           </div>
         </div>
@@ -85,18 +109,18 @@ export default function RegisterPage() {
           scriptOptions={{
             appendTo: 'body',
           }}
-          onSuccess={(token) => setCaptchaToken(token)}
+          onSuccess={(token) => setFormData((prev) => ({ ...prev, captchaToken: token }))}
           onError={() => {
-            setCaptchaToken(null);
+            setFormData((prev) => ({ ...prev, captchaToken: null }));
             setError('Error Turnstile');
           }}
           onExpire={() => {
-            setCaptchaToken(null);
+            setFormData((prev) => ({ ...prev, captchaToken: null }));
             setError('Token is expired.');
           }}
         />
 
-        <button type="submit" disabled={!captchaToken || loading}>
+        <button type="submit" disabled={!formData.captchaToken || loading}>
           {loading ? 'Signing up...' : 'Sign up'}
         </button>
         <div>

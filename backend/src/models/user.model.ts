@@ -5,12 +5,13 @@ export type UserRow = {
   email: string;
   password_hash: string;
   created_at: Date;
+  is_activated: boolean;
 };
 
 export async function findUserByEmail(email: string): Promise<UserRow | null> {
   const res = await pool.query<UserRow>(
     `
-    SELECT id, email, password_hash, created_at
+    SELECT id, email, password_hash, created_at, is_activated
     FROM users
     WHERE email = $1
     `,
@@ -23,7 +24,7 @@ export async function findUserByEmail(email: string): Promise<UserRow | null> {
 export async function findUserById(id: number): Promise<UserRow | null> {
   const res = await pool.query<UserRow>(
     `
-    SELECT id, email, password_hash, created_at
+    SELECT id, email, password_hash, created_at, is_activated
     FROM users
     WHERE id = $1
     `,
