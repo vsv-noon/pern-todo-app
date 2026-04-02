@@ -1,8 +1,8 @@
 import nodemailer from 'nodemailer';
 
 // Send the email
-export async function sendMail(email: string, activationToken: string) {
-  const activationUrl = `http://localhost/api/auth/activate/${activationToken}`;
+export async function sendMail(email: string, url: string, message: string) {
+  // const activationUrl = `http://localhost/api/auth/activate/${activationToken}`;
   // Configure the transporter for Mailpit
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
@@ -22,7 +22,7 @@ export async function sendMail(email: string, activationToken: string) {
     html: `
     <div>
       <h1>Для активации перейдите по ссылке:</h1>
-      <a href="${activationUrl}">${activationUrl}</a>
+      <a href="${url}">${message}</a>
     </div>
     `,
   };

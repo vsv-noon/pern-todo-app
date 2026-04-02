@@ -6,15 +6,15 @@ import react from '@vitejs/plugin-react';
 const viteConfig = defineConfig({
   plugins: [react()],
   server: {
-    watch: {
-      usePolling: true,
-    },
+    host: true, // Needed for the Docker Container port mapping to work correctly
+    // strictPort: true,
+    port: 3000, // Port inside a container
     hmr: {
       clientPort: 80,
     },
-    host: true, // Needed for the Docker Container port mapping to work correctly
-    strictPort: true,
-    port: 3000, // Default Vite port
+    watch: {
+      usePolling: true,
+    },
   },
 });
 

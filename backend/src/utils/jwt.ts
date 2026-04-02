@@ -10,6 +10,7 @@ export type JwtPayload = {
 
 const ACCESS_TOKEN_EXPIRES_IN = '15m';
 const ACTIVATION_TOKEN_EXPIRES_IN = '24h';
+const RESET_TOKEN_EXPIRES_IN = '30m';
 export const REFRESH_TOKEN_EXPIRES_IN = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
 // const REFRESH_TOKEN_EXPIRES_IN = '7d';
 // export const REFRESH_TOKEN_EXPIRES_IN = new Date(Date.now() + 5 * 60 * 1000);
@@ -32,6 +33,12 @@ export function signAccessToken(payload: JwtPayload): string {
 export function signActivationToken(payload: JwtPayload): string {
   return jwt.sign(payload, env.JWT_ACTiVATION_SECRET, {
     expiresIn: ACTIVATION_TOKEN_EXPIRES_IN,
+  });
+}
+
+export function signResetToken(payload: JwtPayload): string {
+  return jwt.sign(payload, env.JWT_RESET_PASSWORD_SECRET, {
+    expiresIn: RESET_TOKEN_EXPIRES_IN,
   });
 }
 

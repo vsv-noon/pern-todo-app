@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../../auth/useAuth';
 // import { useAuth } from '../../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Turnstile } from '@marsidev/react-turnstile';
 
 import './style.css';
@@ -14,18 +14,10 @@ export interface RegisterFormData {
 }
 
 export default function RegisterPage() {
-  // const [email, setEmail] = useState('');
-  // const [password, setPassword] = useState('');
-  // const [captchaToken, setCaptchaToken] = useState<string | null>(null);
-
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { register } = useAuth();
   const navigate = useNavigate();
-
-  // if (user) {
-  //   return <Navigate to="/" replace />;
-  // }
 
   const [formData, setFormData] = useState<RegisterFormData>({
     email: '',
@@ -39,7 +31,7 @@ export default function RegisterPage() {
     if (error) setError('');
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!formData.captchaToken) {
       setError('Пройдите верификацию Turnstile');
@@ -124,7 +116,8 @@ export default function RegisterPage() {
           {loading ? 'Signing up...' : 'Sign up'}
         </button>
         <div>
-          <a href="/login">Sign in to your account</a>
+          <p>Have an account?</p>
+          <Link to="/login">Sign In</Link>
         </div>
       </form>
     </div>

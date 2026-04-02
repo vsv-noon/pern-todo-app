@@ -42,3 +42,17 @@ export const logout = async (): Promise<void> => {
     body: JSON.stringify({ refreshToken }),
   });
 };
+
+export async function forgotPassword(email: string) {
+  return await apiFetch('/auth/forgot-password', {
+    method: 'POST',
+    body: JSON.stringify({ email }),
+  });
+}
+
+export async function resetPassword(token: string, newPassword: string) {
+  return await apiFetch('/auth/reset-password', {
+    method: 'POST',
+    body: JSON.stringify({ token, newPassword }),
+  });
+}

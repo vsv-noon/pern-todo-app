@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/useAuth';
 // import { useAuth } from '../../context/AuthContext';
 import { Turnstile } from '@marsidev/react-turnstile';
@@ -20,10 +20,6 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // const [email, setEmail] = useState('');
-  // const [password, setPassword] = useState('');
-  // const [captchaToken, setCaptchaToken] = useState<string | null>(null);
-
   const [formData, setFormData] = useState<LoginFormData>({
     email: '',
     password: '',
@@ -36,7 +32,7 @@ export default function LoginPage() {
     if (error) setError('');
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!formData.captchaToken) {
       setError('Пройдите верификацию Turnstile');
@@ -45,7 +41,6 @@ export default function LoginPage() {
 
     setLoading(true);
     setError('');
-    // setSuccess('');
 
     try {
       await login(formData.email, formData.password, formData.captchaToken, formData.isActivated);
@@ -122,7 +117,10 @@ export default function LoginPage() {
           {loading ? 'Signing in...' : 'Sign in'}
         </button>
         <div>
-          <a href="/register">Create new account</a>
+          <Link to="/reset-password">Forgot Password?</Link>
+          <Link to="/register">Create new account</Link>
+
+          {/* <a href="/register">Create new account</a> */}
         </div>
       </form>
     </div>

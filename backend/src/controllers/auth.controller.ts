@@ -4,6 +4,9 @@ import jwt from 'jsonwebtoken';
 
 import * as authService from '../services/auth.service.js';
 import { pool } from '../config/db.js';
+import { signResetToken } from '../utils/jwt.js';
+import { sendMail } from '../config/mailer.js';
+import { hashPassword } from '../utils/password.js';
 
 const verifyEndpoint = process.env.VERIFY_ENDPOINT || '';
 const TURNSTILE_SECRET = process.env.TURNSTILE_SECRET_KEY || '1x0000000000000000000000000000000AA';
@@ -196,5 +199,53 @@ export async function activateAccount(req: Request, res: Response) {
   } catch (err) {
     console.error(err);
     return res.status(401).json({ message: 'Link expired or invalid' });
+  }
+}
+
+export async function forgotPassword(req: Request, res: Response) {
+  const { email } = req.body;
+
+  try {
+    const userRes = await pool.query('SELECT id FROM users WHERE email = $1', [email]);
+    if (userRes.rows.length === 0) {
+      return res.json({ message: 'Если email существует, письмо будет отправлено' });
+    }
+
+    const userId = userRes.rows[0].id;
+    const resetToken = signResetToken({ userId: userId });
+
+    const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
+    const message = 'Reset your password';
+
+    sendMail(email, resetUrl, message);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+}
+
+export async function resetPassword(req: Request, res: Response) {
+  const { token, newPassword } = req.body;
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_RESET_PASSWORD_SECRET as string) as {
+      userId: string;
+    };
+
+    const hashNewPassword = await hashPassword(newPassword);
+
+    const result = await pool.query('UPDATE users SET password_hash = $1 WHERE id = $2', [
+      hashNewPassword,
+      decoded.userId,
+    ]);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: 'User not found' });
+
+      res.json({ message: 'Пароль успешно изменен. Теперь вы можете войти' });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(401).json({ message: 'Ссылка недействительна или просрочена' });
   }
 }

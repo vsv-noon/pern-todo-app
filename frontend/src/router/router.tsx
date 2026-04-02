@@ -7,6 +7,8 @@ import { RootLayout } from '../layouts/RootLayout';
 import { PublicOnlyRoute } from '../auth/PublicOnlyRoute';
 import { ProtectedRoute } from '../auth/ProtectedRoute';
 import GoalDetailPage from '../pages/GoalDetailPage/GoalDetailPage';
+import ResetPasswordPage from '../pages/ResetPasswordPage/ResetPasswordPage';
+import ForgotPasswordPage from '../pages/ForgotPasswordPage/ForgotPasswordPage';
 
 // import { ProtectedRoute } from '../routes/ProtectedRoute/ProtectedRoute';
 
@@ -69,6 +71,14 @@ export const router = createBrowserRouter([
       {
         path: '/about',
         element: <AboutPage />,
+      },
+      {
+        path: '/reset-password',
+        element: <ForgotPasswordPage />,
+      },
+      {
+        path: '/reset-password/:token',
+        element: <ResetPasswordPage />,
       },
       {
         path: '*',

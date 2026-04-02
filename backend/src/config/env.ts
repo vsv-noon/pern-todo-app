@@ -13,5 +13,6 @@ export const env = {
   DATABASE_URL: process.env.DATABASE_URL ?? '',
   JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET ?? 'change-me-in-prod',
   JWT_ACTiVATION_SECRET: process.env.JWT_ACTIVATION_SECRET ?? 'change-me-in-prod',
+  JWT_RESET_PASSWORD_SECRET: process.env.JWT_RESET_PASSWORD_SECRET ?? 'change-me-in-prod',
   JWT_EXPIRES_IN: (process.env.JWT_EXPIRES_IN ?? '1h') as SignOptions['expiresIn'],
 };

@@ -40,7 +40,10 @@ export async function register(email: string, password: string): Promise<LoginRe
 
   const activationToken = signActivationToken({ userId: user.id });
 
-  await sendMail(email, activationToken);
+  const activationUrl = `http://localhost/api/auth/activate/${activationToken}`;
+  const message = 'Activate your account';
+
+  await sendMail(email, activationUrl, message);
 
   return {
     user: { id: user.id, email: user.email, isActivated: user.is_activated },
@@ -69,12 +72,6 @@ export async function login(email: string, password: string): Promise<LoginRespo
   await createRefreshToken(user.id, hashToken(refreshTokenStr), expiresAt);
 
   const accessToken = signAccessToken({ userId: user.id });
-
-  const activationToken = signActivationToken({ userId: user.id });
-
-  await sendMail(email, activationToken);
-
-  console.log(activationToken);
 
   return {
     user: { id: user.id, email: user.email, isActivated: user.is_activated },
