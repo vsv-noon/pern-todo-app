@@ -9,6 +9,7 @@ import { ProtectedRoute } from '../auth/ProtectedRoute';
 import GoalDetailPage from '../pages/GoalDetailPage/GoalDetailPage';
 import ResetPasswordPage from '../pages/ResetPasswordPage/ResetPasswordPage';
 import ForgotPasswordPage from '../pages/ForgotPasswordPage/ForgotPasswordPage';
+import VerifyYourEmail from '../components/VerifyYourEmail/VerifyYourEmail';
 
 // import { ProtectedRoute } from '../routes/ProtectedRoute/ProtectedRoute';
 
@@ -79,6 +80,10 @@ export const router = createBrowserRouter([
       {
         path: '/reset-password/:token',
         element: <ResetPasswordPage />,
+      },
+      {
+        path: '/verify-your-email',
+        element: <VerifyYourEmail />,
       },
       {
         path: '*',

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '../../auth/useAuth';
 // import { useAuth } from '../../context/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
-import { Turnstile } from '@marsidev/react-turnstile';
+// import { Turnstile } from '@marsidev/react-turnstile';
 
 import './style.css';
 
@@ -33,26 +33,21 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!formData.captchaToken) {
-      setError('Пройдите верификацию Turnstile');
-      return;
-    }
+    // if (!formData.captchaToken) {
+    //   setError('Пройдите верификацию Turnstile');
+    //   return;
+    // }
 
     setLoading(true);
     setError('');
 
     try {
-      await register(
-        formData.email,
-        formData.password,
-        formData.captchaToken,
-        formData.isActivated,
-      );
+      await register(formData);
       navigate('/login');
     } catch (err) {
       const typedError = err as Error;
       setError(typedError.message || 'Register failed');
-      console.log(err);
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -89,7 +84,7 @@ export default function RegisterPage() {
           </div>
         </div>
 
-        <Turnstile
+        {/* <Turnstile
           as="aside"
           siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
           options={{
@@ -110,9 +105,10 @@ export default function RegisterPage() {
             setFormData((prev) => ({ ...prev, captchaToken: null }));
             setError('Token is expired.');
           }}
-        />
+        /> */}
 
-        <button type="submit" disabled={!formData.captchaToken || loading}>
+        {/* <button type="submit" disabled={!formData.captchaToken || loading}> */}
+        <button type="submit" disabled={loading}>
           {loading ? 'Signing up...' : 'Sign up'}
         </button>
         <div>

@@ -54,7 +54,7 @@ export async function refreshAccessToken() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ refreshToken }),
       });
-      console.log(res);
+      // console.log(res);
       if (!res.ok) return null;
 
       const data = await res.json();

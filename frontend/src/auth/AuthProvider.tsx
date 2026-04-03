@@ -3,6 +3,7 @@ import * as authApi from '../api/auth.api';
 import { AuthContext } from './AuthContext';
 import type { User } from '../types/todo';
 import { setLogoutAndRedirect } from './authBridge';
+import type { AuthFormType } from './types';
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -26,21 +27,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     init();
   }, []);
 
-  async function login(email: string, password: string, token: string, isActivated: boolean) {
-    const res = await authApi.login(email, password, token, isActivated);
-    // console.log(res);
-    saveAuth(res);
-  }
-
-  // async function login(email: string, password: string) {
-  //   const res = await authApi.login(email, password);
-  //   console.log(res);
+  // async function login(email: string, password: string, token: string, isActivated: boolean) {
+  //   const res = await authApi.login(email, password, token, isActivated);
+  //   // console.log(res);
   //   saveAuth(res);
   // }
 
-  async function register(email: string, password: string, token: string, isActivated: boolean) {
-    const res = await authApi.register(email, password, token, isActivated);
-    saveAuth(res);
+  // async function register(email: string, password: string, token: string, isActivated: boolean) {
+  //   const res = await authApi.register(email, password, token, isActivated);
+  //   saveAuth(res);
+  // }
+
+  async function login(data: AuthFormType) {
+    const res = await authApi.login(data);
+
+    if (res.user.isActivated) {
+      saveAuth(res);
+    }
+  }
+
+  async function register(data: AuthFormType) {
+    await authApi.register(data);
+    // saveAuth(res);
   }
 
   async function logout() {

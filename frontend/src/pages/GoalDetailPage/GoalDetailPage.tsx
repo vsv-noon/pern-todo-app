@@ -6,7 +6,7 @@ import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'rec
 function GoalDetailPage() {
   const { id } = useParams();
   const [goal, setGoal] = useState<Goal>();
-  console.log(goal);
+  // console.log(goal);
 
   useEffect(() => {
     if (id) {

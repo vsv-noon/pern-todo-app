@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/useAuth';
 // import { useAuth } from '../../context/AuthContext';
-import { Turnstile } from '@marsidev/react-turnstile';
+// import { Turnstile } from '@marsidev/react-turnstile';
 
 import './style.css';
 
@@ -14,7 +14,7 @@ export interface LoginFormData {
 }
 
 export default function LoginPage() {
-  const { login } = useAuth();
+  const { user, login } = useAuth();
   const navigate = useNavigate();
 
   const [error, setError] = useState('');
@@ -34,21 +34,27 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!formData.captchaToken) {
-      setError('Пройдите верификацию Turnstile');
-      return;
-    }
+    // if (!formData.captchaToken) {
+    //   setError('Пройдите верификацию Turnstile');
+    //   return;
+    // }
 
     setLoading(true);
     setError('');
 
     try {
-      await login(formData.email, formData.password, formData.captchaToken, formData.isActivated);
-      navigate('/');
+      // await login(formData.email, formData.password, formData.captchaToken, formData.isActivated);
+      await login(formData);
+
+      if (user) {
+        navigate('/');
+      } else {
+        navigate('/verify-your-email');
+      }
     } catch (err) {
       const typedError = err as Error;
       setError(typedError.message || 'Login failed');
-      console.log(err);
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -85,7 +91,7 @@ export default function LoginPage() {
             />
           </div>
         </div>
-        <Turnstile
+        {/* <Turnstile
           as="aside"
           siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
           options={{
@@ -111,9 +117,10 @@ export default function LoginPage() {
             setFormData((prev) => ({ ...prev, captchaToken: null }));
             setError('Token is expired.');
           }}
-        />
+        /> */}
 
-        <button type="submit" disabled={!formData.captchaToken || loading}>
+        {/* <button type="submit" disabled={!formData.captchaToken || loading}> */}
+        <button type="submit" disabled={loading}>
           {loading ? 'Signing in...' : 'Sign in'}
         </button>
         <div>

@@ -1,7 +1,10 @@
 import 'dotenv/config';
 import { SignOptions } from 'jsonwebtoken';
 
-if (!process.env.VERIFY_ENDPOINT) {
+// const TURNSTILE_SECRET = process.env.TURNSTILE_SECRET_KEY || '1x0000000000000000000000000000000AA';
+// const VERIFY_ENDPOINT = process.env.TURNSTILE_VERIFY_ENDPOINT;
+
+if (!process.env.TURNSTILE_VERIFY_ENDPOINT) {
   throw new Error('Missing VERIFY_ENDPOINT in environment variables');
 }
 
@@ -14,6 +17,6 @@ export const ENV = {
   JWT_RESET_PASSWORD_SECRET: process.env.JWT_RESET_PASSWORD_SECRET ?? 'change-me-in-prod',
   JWT_EXPIRES_IN: (process.env.JWT_EXPIRES_IN ?? '1h') as SignOptions['expiresIn'],
 
-  VERIFY_ENDPOINT: process.env.VERIFY_ENDPOINT,
+  TURNSTILE_VERIFY_ENDPOINT: process.env.TURNSTILE_VERIFY_ENDPOINT,
   TURNSTILE_SECRET: process.env.TURNSTILE_SECRET_KEY || 'default_secret',
 };

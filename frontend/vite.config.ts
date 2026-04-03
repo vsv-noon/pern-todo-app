@@ -9,9 +9,9 @@ const viteConfig = defineConfig({
     host: true, // Needed for the Docker Container port mapping to work correctly
     // strictPort: true,
     port: 3000, // Port inside a container
-    hmr: {
-      clientPort: 80,
-    },
+    // hmr: {
+    //   clientPort: 80,
+    // },
     watch: {
       usePolling: true,
     },

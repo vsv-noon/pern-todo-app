@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { apiFetch } from '../../api/client';
 import type { Todo } from '../../types/todo';
 import { requestNotificationPermission } from '../../hooks/useNotifications';
@@ -21,6 +21,7 @@ import './style.css';
 type CalendarValue = string | [string, string];
 
 export default function HomePage() {
+  const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
   const [todos, setTodos] = useState<Todo[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -38,6 +39,35 @@ export default function HomePage() {
   const [isModalOpen, setModalOpen] = useState(false);
 
   const debouncedValue = useDebounce(search, 300);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const token = localStorage.getItem('accessToken');
+
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const data = await apiFetch('/users/me');
+
+        if (data) {
+          localStorage.setItem('user', JSON.stringify(data));
+        }
+      } catch (error) {
+        console.error('Ошибка загрузки профиля', error);
+        localStorage.removeItem('user');
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        navigate('/login');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, [navigate]);
 
   const loadTodos = useCallback(
     async function () {

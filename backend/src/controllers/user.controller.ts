@@ -12,5 +12,10 @@ export async function getProfile(req: Request, res: Response) {
     return res.status(404).json({ error: 'User not found' });
   }
 
-  return res.json({ id: user.id, email: user.email, createdAt: user.created_at });
+  return res.json({
+    id: user.id,
+    email: user.email,
+    createdAt: user.created_at,
+    isActivated: user.is_activated,
+  });
 }

@@ -4,13 +4,13 @@ import pkg from 'pg';
 // dotenv.config();
 
 const { Pool, types } = pkg;
-import { env } from './env.js';
+import { ENV } from './env.js';
 
 // OID 1082 = DATE (returns string YYYY-MM-DD, without TZ)
 types.setTypeParser(1082, (value) => value);
 
 export const pool = new Pool({
-  connectionString: env.DATABASE_URL,
+  connectionString: ENV.DATABASE_URL,
 });
 
 export async function testDbConnection() {

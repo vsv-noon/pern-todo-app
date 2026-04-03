@@ -64,11 +64,26 @@ export async function login(req: Request, res: Response) {
       refreshToken: result.refreshToken,
     });
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return res.status(500).json({ success: false, error: (err as Error).message });
     // return res.status(500).json({ success: false, error: 'Internal server error' });
   }
 }
+
+// export async function me(req: Request, res: Response) {
+//   if (!req.user) {
+//     return res.status(401).json({ error: 'Unauthorized' });
+//   }
+
+//   const userId = req.user.userId;
+//   const user = await findUserById(userId);
+
+//   return res.json({
+//     userId: user?.id,
+//     email: user?.email,
+//     isActivated: user?.is_activated,
+//   });
+// }
 
 export async function me(req: Request, res: Response) {
   if (!req.user) {
