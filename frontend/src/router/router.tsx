@@ -10,6 +10,7 @@ import GoalDetailPage from '../pages/GoalDetailPage/GoalDetailPage';
 import ResetPasswordPage from '../pages/ResetPasswordPage/ResetPasswordPage';
 import ForgotPasswordPage from '../pages/ForgotPasswordPage/ForgotPasswordPage';
 import VerifyYourEmail from '../components/VerifyYourEmail/VerifyYourEmail';
+import TasksPage from '../pages/TasksPage/TasksPage';
 
 // import { ProtectedRoute } from '../routes/ProtectedRoute/ProtectedRoute';
 
@@ -54,6 +55,10 @@ export const router = createBrowserRouter([
           {
             path: '/dashboard',
             element: <DashboardPage />,
+          },
+          {
+            path: '/tasks',
+            element: <TasksPage />,
           },
           {
             path: '/goals',

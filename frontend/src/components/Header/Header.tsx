@@ -17,6 +17,7 @@ export function Header() {
           <>
             <NavLink to="/dashboard">Dashboard</NavLink>
             <NavLink to="/goals">Goals</NavLink>
+            <NavLink to="/tasks">Tasks</NavLink>
             <NavLink to="/trash">🗑 Trash</NavLink>
           </>
         )}

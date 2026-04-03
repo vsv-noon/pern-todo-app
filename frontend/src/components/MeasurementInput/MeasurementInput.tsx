@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { apiFetch } from '../../api/client';
 
 interface MeasurementInputProps {
   goalId: number;
@@ -8,16 +9,10 @@ interface MeasurementInputProps {
 export function MeasurementInput({ goalId, onMeasurement }: MeasurementInputProps) {
   const [value, setValue] = useState('');
   const [date, setDate] = useState(new Date().toLocaleDateString('en-CA'));
-  const accessToken = localStorage.getItem('accessToken');
-  console.log(date);
 
   const addMeasurement = async () => {
-    await fetch('http://localhost:5000/api/goal-measurements', {
+    await apiFetch('/goal-measurements', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
-      },
       body: JSON.stringify({
         goal_id: goalId,
         measured_value: Number(value),
