@@ -1,7 +1,7 @@
 import cron from 'node-cron';
 
 import { app } from './app.js';
-import { env } from './config/env.js';
+import { ENV } from './config/env.js';
 import { testDbConnection } from './config/db.js';
 import { cleanupDeletedTodos } from './cron/cleanupDeletedTodos.js';
 import { saveDailyMetrics } from './cron/saveDailyMetrics.js';
@@ -23,10 +23,10 @@ cron.schedule('5 0 * * *', saveDailyMetrics);
 async function bootstrap() {
   try {
     await testDbConnection();
-    console.log(`Database connected: ${env.DATABASE_URL}`);
+    console.log(`Database connected: ${ENV.DATABASE_URL}`);
 
-    app.listen(env.PORT, () => {
-      console.log(`Server listening on port ${env.PORT}`);
+    app.listen(ENV.PORT, () => {
+      console.log(`Server listening on port ${ENV.PORT}`);
     });
   } catch (err) {
     console.error('Failed to start server', err);

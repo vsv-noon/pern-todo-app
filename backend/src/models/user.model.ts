@@ -18,7 +18,7 @@ export async function findUserByEmail(email: string): Promise<UserRow | null> {
     [email]
   );
 
-  return res.rows[0] ?? null;
+  return res.rows[0] || null;
 }
 
 export async function findUserById(id: number): Promise<UserRow | null> {
@@ -42,10 +42,29 @@ export async function createUser(params: {
     `
     INSERT INTO users (email, password_hash)
     VALUES ($1, $2)
-    RETURNING id, email, password_hash, created_at
+    RETURNING *
     `,
     [params.email, params.passwordHash]
   );
 
-  return res.rows[0];
+  const user = res.rows[0];
+
+  if (!user) {
+    throw new Error('FAILED_TO_CREATE_USER');
+  }
+
+  return user;
+}
+
+export async function updatePassword(userId: string, passwordHash: string) {
+  const result = await pool.query('UPDATE users SET password_hash = $1 WHERE id = $2', [
+    passwordHash,
+    userId,
+  ]);
+
+  if (result.rowCount === null) {
+    return false;
+  }
+
+  return result.rowCount > 0;
 }

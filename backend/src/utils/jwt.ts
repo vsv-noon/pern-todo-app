@@ -2,7 +2,7 @@ import crypto from 'crypto';
 
 import jwt, { Secret } from 'jsonwebtoken';
 
-import { env } from '../config/env.js';
+import { ENV } from '../config/env.js';
 
 export type JwtPayload = {
   userId: number;
@@ -16,7 +16,7 @@ export const REFRESH_TOKEN_EXPIRES_IN = new Date(Date.now() + 7 * 24 * 60 * 60 *
 // export const REFRESH_TOKEN_EXPIRES_IN = new Date(Date.now() + 5 * 60 * 1000);
 
 // const signOptions: SignOptions = {
-//   // expiresIn: env.JWT_EXPIRES_IN,
+//   // expiresIn: ENV.JWT_EXPIRES_IN,
 //   expiresIn: '10m',
 // };
 
@@ -25,26 +25,26 @@ export function generateRefreshToken(): string {
 }
 
 export function signAccessToken(payload: JwtPayload): string {
-  return jwt.sign(payload, env.JWT_ACCESS_SECRET as Secret, {
+  return jwt.sign(payload, ENV.JWT_ACCESS_SECRET as Secret, {
     expiresIn: ACCESS_TOKEN_EXPIRES_IN,
   });
 }
 
 export function signActivationToken(payload: JwtPayload): string {
-  return jwt.sign(payload, env.JWT_ACTiVATION_SECRET, {
+  return jwt.sign(payload, ENV.JWT_ACTiVATION_SECRET, {
     expiresIn: ACTIVATION_TOKEN_EXPIRES_IN,
   });
 }
 
 export function signResetToken(payload: JwtPayload): string {
-  return jwt.sign(payload, env.JWT_RESET_PASSWORD_SECRET, {
+  return jwt.sign(payload, ENV.JWT_RESET_PASSWORD_SECRET, {
     expiresIn: RESET_TOKEN_EXPIRES_IN,
   });
 }
 
 export function verifyAccessToken(token: string): JwtPayload | null {
   try {
-    return jwt.verify(token, env.JWT_ACCESS_SECRET as Secret) as JwtPayload;
+    return jwt.verify(token, ENV.JWT_ACCESS_SECRET as Secret) as JwtPayload;
   } catch {
     return null;
   }

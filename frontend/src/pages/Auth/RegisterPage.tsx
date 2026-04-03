@@ -48,7 +48,7 @@ export default function RegisterPage() {
         formData.captchaToken,
         formData.isActivated,
       );
-      navigate('/');
+      navigate('/login');
     } catch (err) {
       const typedError = err as Error;
       setError(typedError.message || 'Register failed');

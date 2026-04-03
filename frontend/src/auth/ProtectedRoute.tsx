@@ -8,6 +8,6 @@ export function ProtectedRoute() {
   console.log(user);
   if (loading) return <Loader />;
   if (!user) return <Navigate to="/login" replace />;
-  if (user.isActivated === false) return <Navigate to="/please-verify-email" />;
+  if (user.isActivated === false) return <Navigate to="/login" replace />;
   return <Outlet />;
 }

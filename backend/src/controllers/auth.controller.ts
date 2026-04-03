@@ -1,134 +1,72 @@
 import type { Request, Response } from 'express';
-import type { TurnstileServerValidationResponse } from '@marsidev/react-turnstile';
 import jwt from 'jsonwebtoken';
 
 import * as authService from '../services/auth.service.js';
 import { pool } from '../config/db.js';
-import { signResetToken } from '../utils/jwt.js';
-import { sendMail } from '../config/mailer.js';
-import { hashPassword } from '../utils/password.js';
-
-const verifyEndpoint = process.env.VERIFY_ENDPOINT || '';
-const TURNSTILE_SECRET = process.env.TURNSTILE_SECRET_KEY || '1x0000000000000000000000000000000AA';
 
 export async function register(req: Request, res: Response) {
-  const { email, password, captchaToken } = req.body as {
+  const { email, password } = req.body as {
     email?: string;
     password?: string;
-    captchaToken: string;
   };
 
-  if (!email || !password) {
-    return res.status(400).json({ error: 'Email and password are required' });
-  }
-
-  if (!captchaToken) {
-    return res.status(400).json({ success: false, error: ['No token'] });
-  }
-
-  const formData = new URLSearchParams({
-    secret: TURNSTILE_SECRET,
-    response: captchaToken,
-  });
-
   try {
-    const verify = await fetch(verifyEndpoint, {
-      method: 'POST',
-      body: formData,
-      headers: {
-        'content-type': 'application/x-www-form-urlencoded',
-      },
-    });
-
-    const data = (await verify.json()) as TurnstileServerValidationResponse;
-
-    if (data.success) {
-      const result = await authService.register(email, password);
-
-      if (!result) {
-        return res.status(401).json({ success: false, error: ['Invalid credentials'] });
-      }
-
-      return res.status(201).json({
-        success: true,
-        message: 'Verification OK',
-        user: { id: result.user.id, email: result.user.email, isActivated: false },
-        accessToken: result.accessToken,
-        refreshToken: result.refreshToken,
-      });
-    } else {
-      return res
-        .status(400)
-        .json({ success: false, error: data['error-codes'] || ['Verification failed'] });
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required' });
     }
-  } catch (err) {
-    return res.status(500).json({ success: false, error: (err as Error).message });
-  }
 
-  // try {
-  //   const result = await authService.register(email, password);
-  //   return res.status(201).json(result);
-  // } catch (err) {
-  //   return res.status(400).json({ error: (err as Error).message });
-  // }
+    const result = await authService.register(email, password);
+    console.log(result);
+
+    if (!result) {
+      return res.status(409).json({ success: false, error: ['User already exists'] });
+    }
+
+    return res.status(201).json({
+      success: true,
+      message: 'Verification OK',
+      user: { id: result.user.id, email: result.user.email, isActivated: result.user.isActivated },
+      accessToken: result.accessToken,
+      refreshToken: result.refreshToken,
+    });
+  } catch (err) {
+    console.error('Register Error: ', err);
+    return res.status(500).json({ success: false, error: 'Internal server error' });
+  }
 }
 
 export async function login(req: Request, res: Response) {
-  const { email, password, captchaToken } = req.body as {
+  const { email, password } = req.body as {
     email?: string;
     password?: string;
-    captchaToken: string;
   };
 
-  if (!email || !password) {
-    return res.status(400).json({ success: false, error: ['Email and password are required'] });
-  }
-
-  if (!captchaToken) {
-    return res.status(400).json({ success: false, error: ['No token'] });
-  }
-
-  const formData = new URLSearchParams({
-    secret: TURNSTILE_SECRET,
-    response: captchaToken,
-  });
-
   try {
-    const verify = await fetch(verifyEndpoint, {
-      method: 'POST',
-      body: formData,
-      headers: {
-        'content-type': 'application/x-www-form-urlencoded',
-      },
-    });
-
-    const data = (await verify.json()) as TurnstileServerValidationResponse;
-
-    if (data.success) {
-      const result = await authService.login(email, password);
-
-      if (!result) {
-        return res.status(401).json({ success: false, error: ['Invalid credentials'] });
-      }
-
-      return res.status(200).json({
-        success: true,
-        message: 'Verification OK',
-        user: {
-          id: result.user.id,
-          email: result.user.email,
-          isActivated: result.user.isActivated,
-        },
-        accessToken: result.accessToken,
-        refreshToken: result.refreshToken,
-      });
-    } else {
-      return res
-        .status(400)
-        .json({ success: false, error: data['error-codes'] || ['Verification failed'] });
+    if (!email || !password) {
+      return res.status(400).json({ success: false, error: ['Email and password are required'] });
     }
+
+    const result = await authService.login(email, password);
+
+    if (!result) {
+      return res.status(401).json({ success: false, error: ['Invalid credentials'] });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'Verification OK',
+      user: {
+        id: result.user.id,
+        email: result.user.email,
+        isActivated: result.user.isActivated,
+      },
+      accessToken: result.accessToken,
+      refreshToken: result.refreshToken,
+    });
   } catch (err) {
+    console.log(err);
     return res.status(500).json({ success: false, error: (err as Error).message });
+    // return res.status(500).json({ success: false, error: 'Internal server error' });
   }
 }
 
@@ -179,7 +117,7 @@ export async function activateAccount(req: Request, res: Response) {
     }
     // Token verification
     const userData = jwt.verify(token as string, secret as string) as { userId: number };
-    console.log('userData', userData);
+
     if (!userData) {
       return res.status(400).json({ message: 'Некорректная ссылка активации' });
     }
@@ -195,7 +133,7 @@ export async function activateAccount(req: Request, res: Response) {
 
     // Redirect to LoginPage
     return res.redirect(`${process.env.CLIENT_URL}/login?status=success`);
-    // return res.redirect(`http://localhost/login`);
+    // return res.redirect(`http://localhost/register`);
   } catch (err) {
     console.error(err);
     return res.status(401).json({ message: 'Link expired or invalid' });
@@ -203,49 +141,49 @@ export async function activateAccount(req: Request, res: Response) {
 }
 
 export async function forgotPassword(req: Request, res: Response) {
-  const { email } = req.body;
-
   try {
-    const userRes = await pool.query('SELECT id FROM users WHERE email = $1', [email]);
-    if (userRes.rows.length === 0) {
-      return res.json({ message: 'Если email существует, письмо будет отправлено' });
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ message: 'Email required' });
     }
 
-    const userId = userRes.rows[0].id;
-    const resetToken = signResetToken({ userId: userId });
+    await authService.processForgotPassword(email);
 
-    const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
-    const message = 'Reset your password';
-
-    sendMail(email, resetUrl, message);
+    return res
+      .status(200)
+      .json({ message: 'Если email существует, инструкции по сбросу будут отправлены' });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Forgot Password Error: ', err);
+    return res.status(500).json({ message: 'Внутренняя ошибка сервера' });
   }
 }
 
 export async function resetPassword(req: Request, res: Response) {
-  const { token, newPassword } = req.body;
-
   try {
-    const decoded = jwt.verify(token, process.env.JWT_RESET_PASSWORD_SECRET as string) as {
-      userId: string;
-    };
+    const { token, newPassword } = req.body;
 
-    const hashNewPassword = await hashPassword(newPassword);
-
-    const result = await pool.query('UPDATE users SET password_hash = $1 WHERE id = $2', [
-      hashNewPassword,
-      decoded.userId,
-    ]);
-
-    if (result.rowCount === 0) {
-      return res.status(404).json({ message: 'User not found' });
-
-      res.json({ message: 'Пароль успешно изменен. Теперь вы можете войти' });
+    if (!token || !newPassword) {
+      return res.status(400).json({ message: 'Токен и новый пароль обязательны' });
     }
+
+    await authService.resetUserPassword(token, newPassword);
+
+    return res.status(200).json({ message: 'Пароль успешно изменен. Теперь вы можете войти' });
   } catch (err) {
-    console.error(err);
-    res.status(401).json({ message: 'Ссылка недействительна или просрочена' });
+    const typedError = err as Error;
+
+    if (typedError.name === 'TokenExpiredError') {
+      return res.status(401).json({ message: 'Срок действия ссылки истек' });
+    }
+    if (typedError.name === 'JsonWebTokenError') {
+      return res.status(401).json({ message: 'Неверный токен восстановления' });
+    }
+    if (typedError.message === 'USER_NOT_FOUND') {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    console.error('Reset Password Error: ', err);
+    return res.status(500).json({ message: 'Внутренняя ошибка сервера' });
   }
 }

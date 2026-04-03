@@ -1,3 +1,6 @@
+import jwt from 'jsonwebtoken';
+
+import * as userModel from '../models/user.model.js';
 import { sendMail } from '../config/mailer.js';
 import {
   createRefreshToken,
@@ -12,6 +15,7 @@ import {
   REFRESH_TOKEN_EXPIRES_IN,
   signAccessToken,
   signActivationToken,
+  signResetToken,
 } from '../utils/jwt.js';
 import { comparePassword, hashPassword } from '../utils/password.js';
 
@@ -40,10 +44,17 @@ export async function register(email: string, password: string): Promise<LoginRe
 
   const activationToken = signActivationToken({ userId: user.id });
 
-  const activationUrl = `http://localhost/api/auth/activate/${activationToken}`;
-  const message = 'Activate your account';
+  const activationUrl = `${process.env.APP_URL}/auth/activate/${activationToken}`;
 
-  await sendMail(email, activationUrl, message);
+  const sendMailData = {
+    email,
+    url: activationUrl,
+    subject: 'Activation account',
+    text: 'To complete your account verification, please click the link',
+    linkMessage: 'Activate your account',
+  };
+
+  await sendMail(sendMailData);
 
   return {
     user: { id: user.id, email: user.email, isActivated: user.is_activated },
@@ -113,4 +124,41 @@ export async function logout(refreshTokenStr: string): Promise<void> {
 
 export async function logoutAll(user_id: number): Promise<void> {
   await revokeAllUserToken(user_id);
+}
+
+export async function processForgotPassword(email: string) {
+  const user = await userModel.findUserByEmail(email);
+
+  if (!user) return false;
+
+  const resetToken = signResetToken({ userId: user.id });
+  const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
+
+  const sendMailData = {
+    email,
+    url: resetUrl,
+    subject: 'Reset password',
+    text: 'To reset password click the link',
+    linkMessage: 'Reset your password',
+  };
+
+  await sendMail(sendMailData);
+
+  return true;
+}
+
+export async function resetUserPassword(token: string, newPassword: string) {
+  const decoded = jwt.verify(token, process.env.JWT_RESET_PASSWORD_SECRET as string) as {
+    userId: string;
+  };
+
+  const passwordHash = await hashPassword(newPassword);
+
+  const isUpdated = await userModel.updatePassword(decoded.userId, passwordHash);
+
+  if (!isUpdated) {
+    throw new Error('USER_NOT_FOUND');
+  }
+
+  return true;
 }

@@ -15,7 +15,7 @@ function ResetPasswordPage() {
     e.preventDefault();
 
     try {
-      if (!token) return null;
+      if (!token) return;
       await resetPassword(token, password);
       navigate('/login');
     } catch (err) {

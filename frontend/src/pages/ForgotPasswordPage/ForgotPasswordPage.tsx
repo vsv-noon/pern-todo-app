@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { forgotPassword } from '../../api/auth.api';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 
 function ForgotPasswordPage() {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [email, setEmail] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -15,7 +15,7 @@ function ForgotPasswordPage() {
 
     try {
       await forgotPassword(email);
-      navigate('/login');
+      // navigate('/login');
     } catch (err) {
       const typedError = err as Error;
       console.error('Error sending email', typedError.message);
