@@ -1,25 +1,13 @@
-.login-page,
-.register-page {
+.reset-password {
+  margin: 0 auto;
   display: flex;
   /* height: 80vh; */
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   gap: 50px;
 }
 
-.login-page-form a,
-.register-page-form a {
-  color: #000;
-}
-
-.login-page-form a:hover,
-.register-page-form a:hover {
-  color: grey;
-}
-
-.login-page-form,
-.register-page-form {
+.reset-password-form {
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -31,15 +19,13 @@
   box-shadow: 5px 5px 8px grey;
 }
 
-.login-page-form .form-inputs-group,
-.register-page-form .form-inputs-group {
+.reset-password-form .form-inputs-group {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.login-page-form input,
-.register-page-form input {
+.reset-password-form input {
   width: 100%;
   font-size: 16px;
   border-radius: 5px;
@@ -48,8 +34,7 @@
   padding: 5px;
 }
 
-.login-page-form button,
-.register-page-form button {
+.reset-password-form button {
   padding: 5px 10px;
   border-radius: 5px;
   border: 1px solid rgba(0, 0, 0, 0.1);
@@ -58,18 +43,7 @@
   font-size: 16px;
 }
 
-.login-page-form button:hover,
-.register-page-form button:hover {
+.reset-password-form button:hover {
   background: grey;
   color: #fff;
-}
-
-.login-page-form .links-group,
-.register-page-form .links-group {
-  display: flex;
-  justify-content: space-between;
-}
-
-.register-page-form .links-group p {
-  color: grey;
 }

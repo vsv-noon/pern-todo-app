@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { forgotPassword } from '../../api/auth.api';
 // import { useNavigate } from 'react-router-dom';
 
+import './style.css';
+
 function ForgotPasswordPage() {
   // const navigate = useNavigate();
   const [email, setEmail] = useState('');
@@ -23,18 +25,18 @@ function ForgotPasswordPage() {
   };
 
   return (
-    <div>
-      <h1>Reset your password</h1>
+    <div className="forgot-password">
+      <h1>Password Reset</h1>
       <p>
         Forgot your password? Enter your email address and we'll send you a verification code to
         reset it.
       </p>
-      <form onSubmit={handleSubmit}>
+      <form className="forgot-password-form" onSubmit={handleSubmit}>
         <label>
           Email
           <input type="email" placeholder="Email address" value={email} onChange={handleChange} />
         </label>
-        <button type="submit">Reset Password</button>
+        <button type="submit">Send</button>
       </form>
     </div>
   );

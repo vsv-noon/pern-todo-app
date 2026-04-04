@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/useAuth';
 // import { useAuth } from '../../context/AuthContext';
-// import { Turnstile } from '@marsidev/react-turnstile';
+// import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile';
 
 import './style.css';
 
@@ -16,6 +16,7 @@ export interface LoginFormData {
 export default function LoginPage() {
   const { user, login } = useAuth();
   const navigate = useNavigate();
+  // const turnstileRef = useRef<TurnstileInstance>(null);
 
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -26,6 +27,12 @@ export default function LoginPage() {
     captchaToken: null,
     isActivated: false,
   });
+
+  // Общая функция для сброса виджета
+  // const handleReset = () => {
+  //   console.log('Сброс виджета Turnstile...')
+  //   turnstileRef.current?.reset();
+  // }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -62,11 +69,10 @@ export default function LoginPage() {
 
   return (
     <div className="login-page">
-      <div>
-        <h2>Sign in to your account</h2>
-      </div>
+      <h1>Sign in to your account</h1>
+
       {error && <div>{error}</div>}
-      <form onSubmit={handleSubmit}>
+      <form className="login-page-form" onSubmit={handleSubmit}>
         <div className="form-inputs-group">
           <div>
             <label htmlFor="email">Email</label>
@@ -92,6 +98,7 @@ export default function LoginPage() {
           </div>
         </div>
         {/* <Turnstile
+          ref={turnstileRef}
           as="aside"
           siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
           options={{
@@ -99,23 +106,26 @@ export default function LoginPage() {
             theme: 'auto',
             size: 'normal',
             language: 'auto',
+            refreshExpired: 'auto', // Виджет сам обновится и получит новый токен
           }}
           scriptOptions={{
             appendTo: 'body',
           }}
           onSuccess={(token) => {
-            // setCaptchaToken(token);
             setFormData((prev) => ({ ...prev, captchaToken: token }));
+            setError('');
           }}
+          // Сброс, если произошла ошибка сети или Cloudflare
           onError={() => {
-            // setCaptchaToken(null);
             setFormData((prev) => ({ ...prev, captchaToken: null }));
             setError('Error Turnstile');
+            handleReset();
           }}
+          // Сброс, если токен протух (5 минут истекли)
           onExpire={() => {
-            // setCaptchaToken(null);
             setFormData((prev) => ({ ...prev, captchaToken: null }));
             setError('Token is expired.');
+            handleReset();
           }}
         /> */}
 
@@ -123,9 +133,9 @@ export default function LoginPage() {
         <button type="submit" disabled={loading}>
           {loading ? 'Signing in...' : 'Sign in'}
         </button>
-        <div>
+        <div className="links-group">
           <Link to="/reset-password">Forgot Password?</Link>
-          <Link to="/register">Create new account</Link>
+          <Link to="/register">Sign Up</Link>
 
           {/* <a href="/register">Create new account</a> */}
         </div>
