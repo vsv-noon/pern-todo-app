@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 
 import * as authService from '../services/auth.service.js';
 import { pool } from '../config/db.js';
+import { clearRefreshCookie, setRefreshCookie } from '../utils/cookies.js';
 
 export async function register(req: Request, res: Response) {
   const { email, password } = req.body as {
@@ -16,11 +17,12 @@ export async function register(req: Request, res: Response) {
     }
 
     const result = await authService.register(email, password);
-    console.log(result);
 
     if (!result) {
       return res.status(409).json({ success: false, error: ['User already exists'] });
     }
+
+    setRefreshCookie(res, result.refreshToken);
 
     return res.status(201).json({
       success: true,
@@ -52,6 +54,8 @@ export async function login(req: Request, res: Response) {
       return res.status(401).json({ success: false, error: ['Invalid credentials'] });
     }
 
+    setRefreshCookie(res, result.refreshToken);
+
     return res.status(200).json({
       success: true,
       message: 'Verification OK',
@@ -61,12 +65,12 @@ export async function login(req: Request, res: Response) {
         isActivated: result.user.isActivated,
       },
       accessToken: result.accessToken,
-      refreshToken: result.refreshToken,
+      // refreshToken: result.refreshToken,
     });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ success: false, error: (err as Error).message });
-    // return res.status(500).json({ success: false, error: 'Internal server error' });
+    return res.status(500).json({ success: false, error: 'Internal server error' });
+    // return res.status(500).json({ success: false, error: (err as Error).message });
   }
 }
 
@@ -79,13 +83,17 @@ export async function me(req: Request, res: Response) {
 }
 
 export async function refresh(req: Request, res: Response) {
-  const { refreshToken } = req.body;
+  // const { refreshToken } = req.body;
+
+  const refreshToken = req.cookies.refreshToken;
   if (!refreshToken) {
     return res.status(400).json({ error: 'Refresh token required' });
   }
 
   try {
     const tokens = await authService.refreshTokens(refreshToken);
+
+    setRefreshCookie(res, refreshToken);
     return res.json(tokens);
   } catch (err) {
     return res.status(401).json({ error: (err as Error).message });
@@ -93,7 +101,9 @@ export async function refresh(req: Request, res: Response) {
 }
 
 export async function logout(req: Request, res: Response) {
-  const { refreshToken } = req.body;
+  // const { refreshToken } = req.body;
+
+  const { refreshToken } = req.cookies;
 
   if (!refreshToken) {
     return res.status(400).json({ error: 'Refresh token required' });
@@ -101,6 +111,9 @@ export async function logout(req: Request, res: Response) {
 
   try {
     await authService.logout(refreshToken);
+
+    clearRefreshCookie(res);
+
     return res.status(204).send();
   } catch (err) {
     return res.status(400).json({ error: (err as Error).message });
@@ -133,7 +146,6 @@ export async function activateAccount(req: Request, res: Response) {
 
     // Redirect to LoginPage
     return res.redirect(`${process.env.CLIENT_URL}/login?status=success`);
-    // return res.redirect(`http://localhost/register`);
   } catch (err) {
     console.error(err);
     return res.status(401).json({ message: 'Link expired or invalid' });

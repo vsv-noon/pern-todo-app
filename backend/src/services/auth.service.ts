@@ -76,11 +76,8 @@ export async function login(email: string, password: string): Promise<LoginRespo
 
   const refreshTokenStr = generateRefreshToken();
 
-  // const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
-  // const expiresAt = REFRESH_TOKEN_EXPIRES_IN;
   const expiresAt = ENV.refreshToken.expiresIn;
 
-  // await createRefreshToken(user.id, refreshTokenStr, expiresAt);
   await createRefreshToken(user.id, hashToken(refreshTokenStr), expiresAt);
 
   const accessToken = signAccessToken({ userId: user.id });
@@ -107,8 +104,6 @@ export async function refreshTokens(
   // Опционально: ротация refresh токена (новый токен)
   const newRefreshToken = generateRefreshToken();
 
-  // const newExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-  // const newExpiresAt = REFRESH_TOKEN_EXPIRES_IN;
   const newExpiresAt = ENV.refreshToken.expiresIn;
 
   await createRefreshToken(refreshToken.user_id, hashToken(newRefreshToken), newExpiresAt);

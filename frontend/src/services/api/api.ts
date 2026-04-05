@@ -2,13 +2,14 @@
 
 import { logout } from './auth.api';
 
-let refreshPromise: Promise<string> | null = null;
+// let refreshPromise: Promise<string> | null = null;
 
 export async function apiFetch<T>(url: string, options: RequestInit = {}): Promise<T> {
   const accessToken = localStorage.getItem('accessToken');
 
   const res = await fetch(import.meta.env.VITE_API_URL + url, {
     ...options,
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
       ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
@@ -17,7 +18,9 @@ export async function apiFetch<T>(url: string, options: RequestInit = {}): Promi
   });
 
   if (res.status === 401) {
-    const newToken = await refreshAccessToken();
+    // const newToken = await refreshAccessToken();
+
+    const newToken = await refresh();
 
     // if (!newToken) throw new Error('Unauthorized');
     if (!newToken) {
@@ -46,28 +49,42 @@ export async function apiDelete(url: string): Promise<void> {
   if (!res.ok) throw new Error(`API error: ${res.status}`);
 }
 
-export async function refreshAccessToken() {
-  if (!refreshPromise) {
-    refreshPromise = (async () => {
-      const refreshToken = localStorage.getItem('refreshToken');
-      if (!refreshToken) return null;
+async function refresh() {
+  const res = await fetch(import.meta.env.VITE_API_URL + '/auth/refresh', {
+    method: 'POST',
+    credentials: 'include',
+  });
 
-      const res = await fetch(import.meta.env.VITE_API_URL + '/auth/refresh', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ refreshToken }),
-      });
-      console.log(res);
-      if (!res.ok) return null;
+  if (!res.ok) return false;
 
-      const data = await res.json();
-      localStorage.setItem('accessToken', data.accessToken);
-      localStorage.setItem('refreshToken', data.refreshToken);
-      return data.accessToken;
-    })().finally(() => {
-      refreshPromise = null;
-    });
-  }
-
-  return refreshPromise;
+  const data = await res.json();
+  localStorage.setItem('accessToken', data.accessToken);
+  return true;
 }
+
+// export async function refreshAccessToken() {
+//   if (!refreshPromise) {
+//     refreshPromise = (async () => {
+//       const refreshToken = localStorage.getItem('refreshToken');
+//       if (!refreshToken) return null;
+
+//       const res = await fetch(import.meta.env.VITE_API_URL + '/auth/refresh', {
+//         method: 'POST',
+//         credentials: "include",
+//         headers: { 'Content-Type': 'application/json' },
+//         body: JSON.stringify({ refreshToken }),
+//       });
+//       console.log(res);
+//       if (!res.ok) return null;
+
+//       const data = await res.json();
+//       localStorage.setItem('accessToken', data.accessToken);
+//       localStorage.setItem('refreshToken', data.refreshToken);
+//       return data.accessToken;
+//     })().finally(() => {
+//       refreshPromise = null;
+//     });
+//   }
+
+//   return refreshPromise;
+// }

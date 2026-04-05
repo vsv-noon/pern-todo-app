@@ -52,7 +52,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   function saveAuth(res: authApi.AuthResponse) {
     localStorage.setItem('accessToken', res.accessToken);
-    localStorage.setItem('refreshToken', res.refreshToken);
+    // localStorage.setItem('refreshToken', res.refreshToken);
     localStorage.setItem('user', JSON.stringify(res.user));
     setUser(res.user);
   }
