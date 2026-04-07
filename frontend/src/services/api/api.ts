@@ -1,12 +1,14 @@
-// import { callLogoutAndRedirect } from '../auth/authBridge';
+import { callLogoutAndRedirect } from '../../context/AuthContext/authBridge';
 
-import { logout } from './auth.api';
+let accessToken: string | null = null;
 
-// let refreshPromise: Promise<string> | null = null;
+export const setAccessToken = (token: string) => {
+  accessToken = token;
+};
+
+let refreshPromise: Promise<string> | null = null;
 
 export async function apiFetch<T>(url: string, options: RequestInit = {}): Promise<T> {
-  const accessToken = localStorage.getItem('accessToken');
-
   const res = await fetch(import.meta.env.VITE_API_URL + url, {
     ...options,
     credentials: 'include',
@@ -18,14 +20,11 @@ export async function apiFetch<T>(url: string, options: RequestInit = {}): Promi
   });
 
   if (res.status === 401) {
-    // const newToken = await refreshAccessToken();
+    const newToken = await refreshAccessToken();
 
-    const newToken = await refresh();
-
-    // if (!newToken) throw new Error('Unauthorized');
     if (!newToken) {
-      // callLogoutAndRedirect();
-      logout();
+      callLogoutAndRedirect();
+
       throw new Error('Unauthorized');
     }
 
@@ -37,7 +36,6 @@ export async function apiFetch<T>(url: string, options: RequestInit = {}): Promi
 }
 
 export async function apiDelete(url: string): Promise<void> {
-  const accessToken = localStorage.getItem('accessToken');
   const res = await fetch(import.meta.env.VITE_API_URL + url, {
     headers: {
       'Content-Type': 'application/json',
@@ -49,42 +47,25 @@ export async function apiDelete(url: string): Promise<void> {
   if (!res.ok) throw new Error(`API error: ${res.status}`);
 }
 
-async function refresh() {
-  const res = await fetch(import.meta.env.VITE_API_URL + '/auth/refresh', {
-    method: 'POST',
-    credentials: 'include',
-  });
+export async function refreshAccessToken() {
+  if (!refreshPromise) {
+    refreshPromise = (async () => {
+      const res = await fetch(import.meta.env.VITE_API_URL + '/auth/refresh', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+      });
 
-  if (!res.ok) return false;
+      if (!res.ok) return null;
 
-  const data = await res.json();
-  localStorage.setItem('accessToken', data.accessToken);
-  return true;
+      const data = await res.json();
+
+      setAccessToken(data.accessToken);
+      return data.accessToken;
+    })().finally(() => {
+      refreshPromise = null;
+    });
+  }
+
+  return refreshPromise;
 }
-
-// export async function refreshAccessToken() {
-//   if (!refreshPromise) {
-//     refreshPromise = (async () => {
-//       const refreshToken = localStorage.getItem('refreshToken');
-//       if (!refreshToken) return null;
-
-//       const res = await fetch(import.meta.env.VITE_API_URL + '/auth/refresh', {
-//         method: 'POST',
-//         credentials: "include",
-//         headers: { 'Content-Type': 'application/json' },
-//         body: JSON.stringify({ refreshToken }),
-//       });
-//       console.log(res);
-//       if (!res.ok) return null;
-
-//       const data = await res.json();
-//       localStorage.setItem('accessToken', data.accessToken);
-//       localStorage.setItem('refreshToken', data.refreshToken);
-//       return data.accessToken;
-//     })().finally(() => {
-//       refreshPromise = null;
-//     });
-//   }
-
-//   return refreshPromise;
-// }

@@ -22,14 +22,14 @@ export async function register(req: Request, res: Response) {
       return res.status(409).json({ success: false, error: ['User already exists'] });
     }
 
-    setRefreshCookie(res, result.refreshToken);
+    // setRefreshCookie(res, result.refreshToken);
 
     return res.status(201).json({
       success: true,
       message: 'Verification OK',
       user: { id: result.user.id, email: result.user.email, isActivated: result.user.isActivated },
-      accessToken: result.accessToken,
-      refreshToken: result.refreshToken,
+      // accessToken: result.accessToken,
+      // refreshToken: result.refreshToken,
     });
   } catch (err) {
     console.error('Register Error: ', err);
@@ -65,7 +65,6 @@ export async function login(req: Request, res: Response) {
         isActivated: result.user.isActivated,
       },
       accessToken: result.accessToken,
-      // refreshToken: result.refreshToken,
     });
   } catch (err) {
     console.error(err);
@@ -83,9 +82,8 @@ export async function me(req: Request, res: Response) {
 }
 
 export async function refresh(req: Request, res: Response) {
-  // const { refreshToken } = req.body;
-
   const refreshToken = req.cookies.refreshToken;
+
   if (!refreshToken) {
     return res.status(400).json({ error: 'Refresh token required' });
   }
@@ -101,8 +99,6 @@ export async function refresh(req: Request, res: Response) {
 }
 
 export async function logout(req: Request, res: Response) {
-  // const { refreshToken } = req.body;
-
   const { refreshToken } = req.cookies;
 
   if (!refreshToken) {

@@ -3,7 +3,6 @@ import { apiFetch } from './api';
 
 export type AuthResponse = {
   accessToken: string;
-  // refreshToken: string;
   user: { id: number; email: string; isActivated: boolean };
 };
 
@@ -32,14 +31,10 @@ export function register(data: AuthFormType) {
 }
 
 export const logout = async (): Promise<void> => {
-  // const refreshToken = localStorage.getItem('refreshToken');
-  // if (!refreshToken) return;
-
   await fetch(`${import.meta.env.VITE_API_URL}/auth/logout`, {
     method: 'POST',
     credentials: 'include',
-    // headers: { 'Content-Type': 'application/json' },
-    // body: JSON.stringify({ refreshToken }),
+    headers: { 'Content-Type': 'application/json' },
   });
 };
 

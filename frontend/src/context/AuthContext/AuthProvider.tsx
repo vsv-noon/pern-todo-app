@@ -3,23 +3,22 @@ import * as authApi from '../../services/api/auth.api';
 import { AuthContext } from './AuthContext';
 import type { User } from '../../types/todo';
 import type { AuthFormType } from './types';
+import { setLogoutAndRedirect } from './authBridge';
+import { refreshAccessToken, setAccessToken } from '../../services/api/api';
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  // const [user, setUser] = useState<User | null>(null);
   const [user, setUser] = useState<User | null>(() => {
     const savedUser = localStorage.getItem('user');
     return savedUser ? JSON.parse(savedUser) : null;
   });
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function init() {
       try {
-        // const u = localStorage.getItem('user');
-        // if (u) {
-        //   const parsed = JSON.parse(u);
-        //   setUser(parsed);
-        // }
+        const data = await refreshAccessToken();
+        setAccessToken(data);
       } catch {
         setUser(null);
         logout();
@@ -41,7 +40,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   async function register(data: AuthFormType) {
     await authApi.register(data);
-    // saveAuth(res);
   }
 
   async function logout() {
@@ -50,9 +48,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null);
   }
 
+  async function logoutAndRedirect() {
+    await authApi.logout().finally(() => {
+      setUser(null);
+      localStorage.clear();
+      window.location.href = '/login';
+    });
+  }
+
+  useEffect(() => {
+    setLogoutAndRedirect(logoutAndRedirect);
+  });
+
   function saveAuth(res: authApi.AuthResponse) {
-    localStorage.setItem('accessToken', res.accessToken);
-    // localStorage.setItem('refreshToken', res.refreshToken);
     localStorage.setItem('user', JSON.stringify(res.user));
     setUser(res.user);
   }

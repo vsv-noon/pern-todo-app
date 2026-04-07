@@ -1,5 +1,7 @@
 import { Response } from 'express';
 
+import { ENV } from '../config/env.js';
+
 export const REFRESH_COOKIE_NAME = 'refreshToken';
 
 export function setRefreshCookie(res: Response, token: string) {
@@ -8,7 +10,8 @@ export function setRefreshCookie(res: Response, token: string) {
     sameSite: 'strict',
     secure: process.env.NODE_ENV === 'production',
     // path: '/auth/refresh',
-    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    // maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    maxAge: ENV.REFRESH_TOKEN_EXPIRES_AT, // 30 days
   });
 }
 

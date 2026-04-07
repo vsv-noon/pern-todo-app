@@ -15,7 +15,7 @@ export function generateRefreshToken(): string {
 
 export function signAccessToken(payload: JwtPayload): string {
   return jwt.sign(payload, ENV.JWT_ACCESS_SECRET as Secret, {
-    expiresIn: '15m',
+    expiresIn: '1m',
   });
 }
 

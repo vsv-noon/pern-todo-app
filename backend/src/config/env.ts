@@ -13,16 +13,19 @@ export const ENV = {
   DATABASE_URL: process.env.DATABASE_URL ?? '',
 
   JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET ?? 'change-me-in-prod',
+  JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET ?? 'change-me-in-prod',
   JWT_ACTiVATION_SECRET: process.env.JWT_ACTIVATION_SECRET ?? 'change-me-in-prod',
   JWT_RESET_PASSWORD_SECRET: process.env.JWT_RESET_PASSWORD_SECRET ?? 'change-me-in-prod',
   JWT_EXPIRES_IN: (process.env.JWT_EXPIRES_IN ?? '1h') as SignOptions['expiresIn'],
+  // REFRESH_TOKEN_EXPIRES_AT: 3 * 60 * 1000, // 3 min
+  REFRESH_TOKEN_EXPIRES_AT: 30 * 24 * 60 * 60 * 1000, // 30 days
 
   TURNSTILE_VERIFY_ENDPOINT: process.env.TURNSTILE_VERIFY_ENDPOINT,
   TURNSTILE_SECRET: process.env.TURNSTILE_SECRET_KEY || 'default_secret',
 
-  refreshToken: {
-    secret: process.env.REFRESH_TOKEN_SECRET || 'super-secret-refresh-key',
-    // expiresIn: new Date(Date.now() + 60 * 2000), // 1 min,
-    expiresIn: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days,
-  },
+  // refreshToken: {
+  //   secret: process.env.REFRESH_TOKEN_SECRET || 'super-secret-refresh-key',
+  //   expiresIn: new Date(Date.now() + 3 * 60 * 1000), // 1 min,
+  //   // expiresIn: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days,
+  // },
 };

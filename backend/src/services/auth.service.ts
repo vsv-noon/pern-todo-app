@@ -17,15 +17,26 @@ import {
   signResetToken,
 } from '../utils/jwt.js';
 import { comparePassword, hashPassword } from '../utils/password.js';
-import { ENV } from '../config/env.js';
+
+interface RegisterResponse {
+  user: {
+    id: number;
+    email: string;
+    isActivated: boolean;
+  };
+}
 
 interface LoginResponse {
-  user: { id: number; email: string; isActivated: boolean };
+  user: {
+    id: number;
+    email: string;
+    isActivated: boolean;
+  };
   accessToken: string;
   refreshToken: string;
 }
 
-export async function register(email: string, password: string): Promise<LoginResponse> {
+export async function register(email: string, password: string): Promise<RegisterResponse> {
   const existing = await findUserByEmail(email);
   if (existing) {
     throw new Error('User already exists');
@@ -34,13 +45,11 @@ export async function register(email: string, password: string): Promise<LoginRe
   const passwordHash = await hashPassword(password);
   const user = await createUser({ email, passwordHash });
 
-  const refreshTokenStr = generateRefreshToken();
+  // await createRefreshToken(user.id, hashToken(refreshTokenStr));
 
-  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+  // const refreshTokenStr = generateRefreshToken();
 
-  await createRefreshToken(user.id, hashToken(refreshTokenStr), expiresAt);
-
-  const accessToken = signAccessToken({ userId: user.id });
+  // const accessToken = signAccessToken({ userId: user.id });
 
   const activationToken = signActivationToken({ userId: user.id });
 
@@ -58,8 +67,8 @@ export async function register(email: string, password: string): Promise<LoginRe
 
   return {
     user: { id: user.id, email: user.email, isActivated: user.is_activated },
-    accessToken,
-    refreshToken: refreshTokenStr,
+    // accessToken,
+    // refreshToken: refreshTokenStr,
   };
 }
 
@@ -76,9 +85,7 @@ export async function login(email: string, password: string): Promise<LoginRespo
 
   const refreshTokenStr = generateRefreshToken();
 
-  const expiresAt = ENV.refreshToken.expiresIn;
-
-  await createRefreshToken(user.id, hashToken(refreshTokenStr), expiresAt);
+  await createRefreshToken(user.id, hashToken(refreshTokenStr));
 
   const accessToken = signAccessToken({ userId: user.id });
 
@@ -101,12 +108,11 @@ export async function refreshTokens(
   // Генерируем новый access токен
   const accessToken = signAccessToken({ userId: refreshToken.user_id });
 
-  // Опционально: ротация refresh токена (новый токен)
+  // ротация refresh токена (новый токен)
   const newRefreshToken = generateRefreshToken();
 
-  const newExpiresAt = ENV.refreshToken.expiresIn;
+  await createRefreshToken(refreshToken.user_id, hashToken(newRefreshToken));
 
-  await createRefreshToken(refreshToken.user_id, hashToken(newRefreshToken), newExpiresAt);
   await revokeRefreshToken(refreshTokenStr); // отзываем старый
 
   return {

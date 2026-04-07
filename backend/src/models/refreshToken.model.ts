@@ -1,19 +1,23 @@
 import { pool } from '../config/db.js';
+import { ENV } from '../config/env.js';
 
 export type RefreshTokenRow = {
   id: number;
   user_id: number;
   token: string;
-  expires_at: Date;
   created_at: Date;
   revoked_at: Date | null;
 };
 
 export async function createRefreshToken(
   userId: number,
-  token: string,
-  expiresAt: Date
+  token: string
 ): Promise<RefreshTokenRow | undefined> {
+  const expiresAt = new Date(Date.now() + ENV.REFRESH_TOKEN_EXPIRES_AT);
+  // const expiresAt = ENV.refreshToken.expiresIn;
+  // const expiresAt = new Date();
+  // expiresAt.setDate(expiresAt.getDate() + ENV.REFRESH_TOKEN_EXPIRES_AT);
+
   const result = await pool.query<RefreshTokenRow>(
     `
     INSERT INTO refresh_tokens (user_id, token, expires_at)
