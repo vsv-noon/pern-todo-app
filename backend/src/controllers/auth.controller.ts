@@ -6,11 +6,11 @@ import { pool } from '../config/db.js';
 import { clearRefreshCookie, setRefreshCookie } from '../utils/cookies.js';
 
 /**
- * @openapi
+ * @swagger
  * /api/auth/register:
  *  post:
  *    summary: Registering a new Account
- *    tags: [Auth]
+ *    tags: [Authentication]
  *    requestBody:
  *      required: true
  *      content:
@@ -64,11 +64,11 @@ export async function register(req: Request, res: Response) {
 }
 
 /**
- * @openapi
+ * @swagger
  * /api/auth/login:
  *  post:
  *    summary: Account login
- *    tags: [Auth]
+ *    tags: [Authentication]
  *    requestBody:
  *      required: true
  *      content:
@@ -83,7 +83,7 @@ export async function register(req: Request, res: Response) {
  *              password: password
  *    responses:
  *      200:
- *        description: OK
+ *        description: Login successful
  *      401:
  *        description: Invalid credentials
  *      404:
@@ -150,6 +150,21 @@ export async function refresh(req: Request, res: Response) {
   }
 }
 
+/**
+ * @swagger
+ * /api/auth/logout:
+ *    post:
+ *      summary: Logout user
+ *      description: Terminates the current session and clears the auth cookie.
+ *      tags: [Authentication]
+ *      security:
+ *        - bearerAuth: [] # Or cookieAuth if using cookies
+ *      responses:
+ *        204:
+ *          description: Successfully logged out
+ *        401:
+ *          description: Unauthorized
+ */
 export async function logout(req: Request, res: Response) {
   const { refreshToken } = req.cookies;
 

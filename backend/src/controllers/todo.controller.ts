@@ -2,6 +2,36 @@ import type { Request, Response } from 'express';
 
 import * as todoService from '../services/todo.service.js';
 
+/**
+ * @swagger
+ * /api/todos:
+ *    post:
+ *      summary: Create a new Todo
+ *      description: Create a new Todo
+ *      tags: [Todos]
+ *      security:
+ *        - bearerAuth: []
+ *      requestBody:
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                titLe: {type: string}
+ *                description: {type: string}
+ *                due_date: {type: string}
+ *                remind_at: {type: string}
+ *                priority: {type: string}
+ *              example:
+ *                title: New Todo
+ *                description: New Todo
+ *                due_date: 2026-01-01
+ *                priority: high
+ *      responses:
+ *        201:
+ *          description: Todo created successfully
+ */
 export async function createTodo(req: Request, res: Response) {
   if (!req.user) return res.status(401).json({ error: 'Unauthorized' });
 
@@ -26,6 +56,44 @@ export async function createTodo(req: Request, res: Response) {
   }
 }
 
+/**@swagger
+ * /api/todos/{id}:
+ *  patch:
+ *    summary: Partially update a Todo
+ *    description: Update specific fields of a todo
+ *    tags: [Todos]
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        required: true
+ *        schema:
+ *          type: number
+ *        description: The Title ID
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              title:
+ *                type: string
+ *                example: "New title"
+ *              description:
+ *                type: string
+ *                example: "New description"
+ *              due_date:
+ *                type: string
+ *                example: "2026-02-02"
+ *              priority:
+ *                type: string
+ *                example: "medium"
+ *    responses:
+ *      200:
+ *        description: Todo updated successfully
+ *      404:
+ *        description: Todo not found
+ */
 export async function updateTodo(req: Request, res: Response) {
   if (!req.user) return res.status(401).json({ error: 'Unauthorized' });
 
@@ -83,6 +151,13 @@ export async function reorderTodos(req: Request, res: Response) {
  *              type: array
  *              items:
  *                type: object
+ *                properties:
+ *                  id:
+ *                    type: integer
+ *                  task:
+ *                    type: string
+ *                  completed:
+ *                    type: boolean
  */
 export async function getTodos(req: Request, res: Response) {
   if (!req.user) return res.status(401).json({ error: 'Unauthorized' });
@@ -153,6 +228,25 @@ export async function getDeletedTodos(req: Request, res: Response) {
   }
 }
 
+/**
+ * @swagger
+ * /api/todos/{id}:
+ *  delete:
+ *    summary: Delete a todo item
+ *    tags: [Todos]
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        required: true
+ *        schema:
+ *          type: number
+ *        description: The todo ID
+ *    responses:
+ *      204:
+ *        description: Todo deleted successfully
+ *      404:
+ *        description: Todo not found
+ */
 export async function deleteTodo(req: Request, res: Response) {
   if (!req.user) return res.status(401).json({ error: 'Unauthorized' });
 
@@ -170,6 +264,30 @@ export async function deleteTodo(req: Request, res: Response) {
   }
 }
 
+/**
+ * @swagger
+ * /api/todos/bulk-restore:
+ *  post:
+ *    summary: Restore multiple todos
+ *    description: Deletes multiple todo items based on an array of IDs.
+ *    tags: [Todos]
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              ids:
+ *                type: number
+ *              description: The ID of the todo to restore
+ *            example: {ids: [1, 2, 3]}
+ *    responses:
+ *      200:
+ *        description: Todos restored successfully
+ *      400:
+ *        description: Invalid ID supplied
+ */
 export async function bulkRestoreTodos(req: Request, res: Response) {
   if (!req.user) return res.status(401).json({ error: 'Unauthorized' });
 
@@ -188,6 +306,30 @@ export async function bulkRestoreTodos(req: Request, res: Response) {
   }
 }
 
+/**
+ * @swagger
+ * /api/todos/bulk-delete:
+ *  post:
+ *    summary: Delete multiple todos
+ *    description: Deletes multiple todo items based on an array of IDs.
+ *    tags: [Todos]
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              ids:
+ *                type: number
+ *              description: The ID of the todo to delete
+ *            example: {ids: [1, 2, 3]}
+ *    responses:
+ *      200:
+ *        description: Todos deleted successfully
+ *      400:
+ *        description: Invalid ID supplied
+ */
 export async function bulkHardRDeleteTodos(req: Request, res: Response) {
   if (!req.user) return res.status(401).json({ error: 'Unauthorized' });
 
