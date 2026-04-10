@@ -22,12 +22,3 @@
   border: transparent;
   cursor: pointer;
 }
-
-.header a {
-  text-decoration: none;
-  color: #000;
-}
-
-.header a:hover {
-  color: grey;
-}

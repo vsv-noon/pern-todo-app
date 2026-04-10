@@ -13,7 +13,12 @@ export function Header() {
   return (
     <header className="header">
       <nav className="header-nav">
-        <NavLink style={({ isActive }) => ({ color: isActive ? 'grey' : '' })} to="/">
+        <NavLink
+          style={({ isActive, isPending }) => ({
+            color: isActive ? 'grey' : isPending ? 'blue' : 'black',
+          })}
+          to="/"
+        >
           🏠 Home
         </NavLink>
         {user && (
