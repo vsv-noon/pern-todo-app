@@ -51,6 +51,14 @@ export function Header() {
               style={({ isActive, isPending }) => ({
                 color: isActive ? 'grey' : isPending ? 'blue' : 'black',
               })}
+              to="/measurements"
+            >
+              Measurements
+            </NavLink>
+            <NavLink
+              style={({ isActive, isPending }) => ({
+                color: isActive ? 'grey' : isPending ? 'blue' : 'black',
+              })}
               to="/trash"
             >
               🗑 Trash

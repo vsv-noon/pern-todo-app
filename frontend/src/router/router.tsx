@@ -11,6 +11,7 @@ import ResetPasswordPage from '../pages/ResetPasswordPage/ResetPasswordPage';
 import ForgotPasswordPage from '../pages/ForgotPasswordPage/ForgotPasswordPage';
 import VerifyYourEmail from '../components/VerifyYourEmail/VerifyYourEmail';
 import TasksPage from '../pages/TasksPage/TasksPage';
+import { BodyMeasurementsForm } from '../components/BodyMeasurementsForm/BodyMeasurementsForm';
 
 // import { ProtectedRoute } from '../routes/ProtectedRoute/ProtectedRoute';
 
@@ -67,6 +68,10 @@ export const router = createBrowserRouter([
           {
             path: '/goals/:id',
             element: <GoalDetailPage />,
+          },
+          {
+            path: 'measurements',
+            element: <BodyMeasurementsForm />,
           },
           {
             path: '/trash',
