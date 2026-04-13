@@ -1,5 +1,7 @@
 import cron from 'node-cron';
 
+import { seedMeasurementTypes } from '../seeds/measurementTypes.seed.js';
+
 import { app } from './app.js';
 import { ENV } from './config/env.js';
 import { testDbConnection } from './config/db.js';
@@ -14,6 +16,8 @@ import { cleanupExpiresTokens } from './cron/cleanupExpiresTokens.js';
 // app.listen(port, () => {
 //   console.log(`Server is running on http://localhost:${port}`);
 // });
+
+await seedMeasurementTypes();
 
 cron.schedule('0 3 * * *', cleanupDeletedTodos);
 cron.schedule('5 3 * * *', cleanupExpiresTokens);

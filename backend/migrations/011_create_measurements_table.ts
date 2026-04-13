@@ -14,14 +14,14 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     },
     type_id: {
       type: 'integer',
-      // notNull: true,
+      notNull: true,
       references: 'measurement_types',
       onDelete: 'CASCADE',
     },
     goal_id: {
       type: 'integer',
-      notNull: true,
-      references: 'goals(id)',
+      // notNull: true,
+      references: 'goals',
       onDelete: 'CASCADE',
     },
     session_id: {

@@ -43,6 +43,11 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
       default: 'medium',
     },
 
+    position: {
+      type: 'integer',
+      default: 0,
+    },
+
     completed_at: {
       type: 'timestamptz',
       notNull: false,

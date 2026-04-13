@@ -1,0 +1,7 @@
+{
+  "compilerOptions": {
+    "rootDir": "./backend"
+  },
+  "extends": "./tsconfig.json",
+  "include": ["src", "seeds", "migrations"]
+}

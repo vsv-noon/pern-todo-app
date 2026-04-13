@@ -6,6 +6,7 @@ import statsRoutes from './stats.routes.js';
 import todoRoutes from './todo.routes.js';
 import goalsRoutes from './goals.routes.js';
 import measurementsRoutes from './measurements.routes.js';
+import measurementTypesRoutes from './measurementTypes.routes.js';
 
 const router = Router();
 
@@ -15,5 +16,6 @@ router.use('/stats', statsRoutes);
 router.use('/todos', todoRoutes);
 router.use('/goals', goalsRoutes);
 router.use('/measurements', measurementsRoutes);
+router.use('/measurement-types', measurementTypesRoutes);
 
 export default router;

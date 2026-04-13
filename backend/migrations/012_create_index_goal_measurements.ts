@@ -5,8 +5,12 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
 
   pgm.sql(`
     CREATE UNIQUE INDEX CONCURRENTLY idx_measurements_unique_day
-    ON measurements (goal_id, CAST(measured_at AS DATE));
+    ON measurements (type_id, CAST(measured_at AS DATE));
     `);
+
+  // CREATE UNIQUE INDEX CONCURRENTLY idx_measurements_unique_day
+  // ON measurements (goal_id, CAST(measured_at AS DATE));
+  // `);
 
   // pgm.createIndex('measurements', [{ name: 'goal_id' }, { name: 'measured_at' }], {
   //   unique: true,

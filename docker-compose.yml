@@ -37,7 +37,7 @@ services:
         condition: service_healthy
       # Сначала накатываем миграции, потом запускаем сервер
     command: >
-      sh -c "npx node-pg-migrate up -m ./src/migrations -j ts && npm run dev"
+      sh -c "npx node-pg-migrate up -m ./migrations -j ts && npm run dev"
     networks:
       - pern-app-network
 
