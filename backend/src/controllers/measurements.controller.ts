@@ -19,7 +19,6 @@ export async function saveFullBodyMeasurementsController(req: Request, res: Resp
   if (!req.user) return res.status(401).json({ error: 'Unauthorized' });
   try {
     const measured = await measurementsService.saveFullBodyMeasurements(req.user.userId, req.body);
-    console.log(measured);
 
     if (
       !req.body.measurements ||

@@ -1,0 +1,90 @@
+.calendar {
+  padding: 10px;
+}
+
+.select-range-checkbox {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.react-calendar {
+  width: 350px;
+  max-width: 100%;
+  background: #fff;
+  color: #222;
+  border: transparent;
+  border-radius: 8px;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.125em;
+  padding: 5px;
+}
+
+.react-calendar,
+.react-calendar *,
+.react-calendar *::before,
+.react-calendar *::after {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.react-calendar__tile {
+  position: relative;
+  border-radius: 6px;
+}
+
+/* badge */
+.todo-badge {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+
+  min-width: 15px;
+  height: 15px;
+
+  background: #ef4444; /* red */
+  color: white;
+  font-size: 10px;
+  font-weight: 400;
+
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  pointer-events: none;
+}
+
+/* today + badge */
+.react-calendar__tile--now .todo-badge {
+  background: #2563eb;
+}
+
+/* selected + badge */
+.react-calendar__tile--active .todo-badge {
+  background: white;
+  color: #2563eb;
+}
+
+.highlight {
+  background-color: #ffcccb !important;
+  /* color: #000; */
+  /* border-radius: 50%; */
+}
+
+.highlight abbr {
+  font-weight: bold;
+}
+
+.link-btn {
+  display: block;
+  width: 150px;
+  border: 1px solid gray;
+  border-radius: 6px;
+  color: #000;
+  padding: 5px;
+  cursor: pointer;
+  margin-bottom: 50px;
+}

@@ -10,8 +10,6 @@ import GoalDetailPage from '../pages/GoalDetailPage/GoalDetailPage';
 import ResetPasswordPage from '../pages/ResetPasswordPage/ResetPasswordPage';
 import ForgotPasswordPage from '../pages/ForgotPasswordPage/ForgotPasswordPage';
 import VerifyYourEmail from '../components/VerifyYourEmail/VerifyYourEmail';
-import TasksPage from '../pages/TasksPage/TasksPage';
-import { BodyMeasurementsForm } from '../components/BodyMeasurementsForm/BodyMeasurementsForm';
 
 // import { ProtectedRoute } from '../routes/ProtectedRoute/ProtectedRoute';
 
@@ -25,6 +23,13 @@ const AboutPage = lazy(() => import('../pages/AboutPage'));
 const NotFoundPage = lazy(() => import('../pages/NotFoundPage'));
 const ErrorPage = lazy(() => import('../pages/ErrorPage/ErrorPage'));
 const GoalsPage = lazy(() => import('../pages/GoalsPage/GoalsPage'));
+// const GoalDetailPage = (() => import ('../pages/GoalDetailPage/GoalDetailPage'));
+// const ResetPasswordPage = (() => import ('../pages/ResetPasswordPage/ResetPasswordPage'));
+const TasksPage = lazy(() => import('../pages/TasksPage/TasksPage'));
+const MeasurementsPage = lazy(() => import('../pages/MeasurementsPage/MeasurementsPage'));
+const BodyMeasurementsForm = lazy(
+  () => import('../components/BodyMeasurementsForm/BodyMeasurementsForm'),
+);
 
 export const router = createBrowserRouter([
   {
@@ -71,6 +76,10 @@ export const router = createBrowserRouter([
           },
           {
             path: 'measurements',
+            element: <MeasurementsPage />,
+          },
+          {
+            path: 'body-measurement-form',
             element: <BodyMeasurementsForm />,
           },
           {

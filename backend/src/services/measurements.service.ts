@@ -30,7 +30,7 @@ export async function saveFullBodyMeasurements(
 
   console.log(dto);
 
-  const date = dto.measuredAt || new Date();
+  const date = dto.measured_at || new Date();
 
   try {
     await client.query('BEGIN');

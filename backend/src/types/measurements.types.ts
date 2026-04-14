@@ -13,7 +13,7 @@ export interface MeasurementInput {
 
 export interface SaveFullBodyMeasurementsDTO {
   userId: number;
-  measuredAt?: Date;
+  measured_at?: Date;
   measurements: MeasurementInput[];
   category: string;
 }

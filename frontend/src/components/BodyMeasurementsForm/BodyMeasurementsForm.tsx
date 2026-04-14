@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { apiFetch } from '../../services/api/api';
 import { useMeasurementTypes, type MeasurementType } from '../../hooks/useMeasurementTypes';
+import { useNavigate } from 'react-router-dom';
 
 // type MeasurementField = {
 //   key: string;
@@ -18,12 +19,15 @@ import { useMeasurementTypes, type MeasurementType } from '../../hooks/useMeasur
 //   { key: 'thigh', label: 'Thigh (cm)' },
 // ];
 
-export function BodyMeasurementsForm() {
+function BodyMeasurementsForm() {
   const { types, loading } = useMeasurementTypes();
   // const [fields, setFields] = useState<MeasurementField[]>(defaultFields);
   const [values, setValues] = useState<Record<string, string>>({});
   const [comment, setComment] = useState('');
+  const [date, setDate] = useState(new Date().toLocaleDateString('en-CA'));
   // const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   function groupTypes(types: MeasurementType[]) {
     return {
@@ -68,7 +72,7 @@ export function BodyMeasurementsForm() {
       await apiFetch('/measurements/body', {
         method: 'POST',
         body: JSON.stringify({
-          measured_at: new Date().toLocaleDateString('en-CA'),
+          measured_at: date,
           measurements,
           category: 'body',
           comment,
@@ -78,6 +82,7 @@ export function BodyMeasurementsForm() {
       alert('Measurements saved!');
       setValues({});
       setComment('');
+      navigate('/measurements');
     } catch (err) {
       console.error(err);
       alert('Error saving measurements');
@@ -90,6 +95,7 @@ export function BodyMeasurementsForm() {
     <form onSubmit={handleSubmit} style={styles.form}>
       <h2>Body Measurements (circumference)</h2>
 
+      <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
       <div style={styles.grid}>
         {grouped.body.map((type) => (
           <div key={type.id} style={styles.field}>
@@ -141,6 +147,8 @@ export function BodyMeasurementsForm() {
     </form>
   );
 }
+
+export default BodyMeasurementsForm;
 
 const styles: Record<string, React.CSSProperties> = {
   form: {
