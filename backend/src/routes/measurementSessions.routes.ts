@@ -9,5 +9,7 @@ router.use(authMiddleware);
 router.use(activateMiddleware);
 
 router.get('/', measurementSessionsController.getMeasurementSessionsController);
+router.get('/:id', measurementSessionsController.getMeasurementSessionByIdController);
+router.patch('/:id', measurementSessionsController.updateMeasurementSessionByIdController);
 
 export default router;

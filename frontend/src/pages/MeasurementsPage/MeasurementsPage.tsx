@@ -11,6 +11,7 @@ import Loader from '../../components/Loader/Loader';
 import './style.css';
 
 export interface CalendarEventProps {
+  id: number;
   user_id: number;
   session_date: string;
   category: string;
@@ -19,7 +20,18 @@ export interface CalendarEventProps {
 
 function MeasurementsPage() {
   const [sessions, setSessions] = useState<CalendarEventProps[]>([]);
+  const [sessionId, setSessionId] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
+
+  function handleClickDay(clickedDay: Date) {
+    const foundSession = sessions.find(
+      (s) => s.session_date === clickedDay.toLocaleDateString('en-CA'),
+    );
+
+    if (foundSession) {
+      setSessionId(foundSession.id);
+    }
+  }
 
   useEffect(() => {
     try {
@@ -44,6 +56,7 @@ function MeasurementsPage() {
       </Link>
       {sessions && (
         <Calendar
+          onClickDay={handleClickDay}
           tileClassName={({ date, view }: { date: Date; view: string }) => {
             if (view === 'month') {
               const formattedDate = date.toLocaleDateString('en-CA');
@@ -53,7 +66,7 @@ function MeasurementsPage() {
           }}
         />
       )}
-      <MeasurementsList />
+      <MeasurementsList id={sessionId} />
     </div>
   );
 }
