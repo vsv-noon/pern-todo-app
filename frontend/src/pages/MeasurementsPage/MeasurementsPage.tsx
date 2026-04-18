@@ -4,12 +4,12 @@ import { apiFetch } from '../../services/api/api';
 import Calendar from 'react-calendar';
 // import type { CalendarProps } from 'react-calendar/src/Calendar.js';
 import 'react-calendar/dist/Calendar.css';
-import MeasurementsList from '../../components/BodyMeasurementsList/BodyMeasurementsList';
+import MeasurementsList from '../../components/MeasurementsList/MeasurementsList';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import Loader from '../../components/Loader/Loader';
 
 import './style.css';
-import BodyMeasurementsChart from '../../components/BodyMeasurementsChart/BodyMeasurementsChart';
+import MeasurementsChart from '../../components/MeasurementsChart/MeasurementsChart';
 
 export interface CalendarEventProps {
   id: number;
@@ -37,7 +37,7 @@ function MeasurementsPage() {
 
     if (foundSession) {
       // setSessionId(foundSession.id);
-      navigate(`/measurements/body-measurements-details/${foundSession.id}`);
+      navigate(`/measurements/measurements-details/${foundSession.id}`);
     }
   }
 
@@ -60,7 +60,7 @@ function MeasurementsPage() {
   return (
     <div className="measurementsPage" onClick={handleCloseDetails}>
       {loading && <Loader />}
-      <Link className="link-btn" to="/body-measurement-form" onClick={(e) => e.stopPropagation()}>
+      <Link className="link-btn" to="/measurement-form" onClick={(e) => e.stopPropagation()}>
         New Measurement
       </Link>
       {sessions && (
@@ -79,7 +79,7 @@ function MeasurementsPage() {
       <div onClick={(e) => e.stopPropagation()}>
         <Outlet context={{ handleCloseDetails }} />
       </div>
-      <BodyMeasurementsChart />
+      <MeasurementsChart />
     </div>
   );
 }

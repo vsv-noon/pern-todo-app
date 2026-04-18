@@ -2,30 +2,16 @@ import React, { useState } from 'react';
 import { apiFetch } from '../../services/api/api';
 import { useMeasurementTypes, type MeasurementType } from '../../hooks/useMeasurementTypes';
 import { useNavigate } from 'react-router-dom';
+import { getSystemLocalFormat } from '../../utils/date';
 
-function BodyMeasurementsForm() {
+function MeasurementsForm() {
   const { types, loading } = useMeasurementTypes();
   const [values, setValues] = useState<Record<string, string>>({});
   const [comment, setComment] = useState('');
-  // const [date, setDate] = useState(new Date().toISOString().slice(0, 16));
+  const [localTime, setLocalTime] = useState(getSystemLocalFormat(new Date()));
   const [category, setCategory] = useState('body');
   // const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
-  function getSystemLocalFormat() {
-    const now = new Date();
-
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-
-    return `${year}-${month}-${day}T${hours}:${minutes}`;
-  }
-
-  const [localTime, setLocalTime] = useState(getSystemLocalFormat());
-  console.log(localTime);
 
   function groupTypes(types: MeasurementType[]) {
     return {
@@ -91,11 +77,11 @@ function BodyMeasurementsForm() {
 
   return (
     <form onSubmit={handleSubmit} style={styles.form}>
-      <h2>New Measurements</h2>
+      <h2>New measurements</h2>
       <label>Category</label>
       <select onChange={(e) => setCategory(e.target.value)}>
-        <option value="body">Body Measurements (weight, circumference)</option>
-        <option value="health">Health Metrics (blood pressure, heart rate)</option>
+        <option value="body">Body measurements (weight, circumference)</option>
+        <option value="health">Health metrics (blood pressure, heart rate)</option>
       </select>
 
       {/* <input type="date" value={date} onChange={(e) => setDate(e.target.value)} /> */}
@@ -107,7 +93,7 @@ function BodyMeasurementsForm() {
       />
       {category === 'body' && (
         <>
-          <h3>Body Measurements (circumference)</h3>
+          <h3>Body measurements (circumference)</h3>
           <div style={styles.grid}>
             {grouped.body.map((type) => (
               <div key={type.id} style={styles.field}>
@@ -129,7 +115,7 @@ function BodyMeasurementsForm() {
 
       {category === 'health' && (
         <>
-          <h3>Health</h3>
+          <h3>Health metrics</h3>
 
           <div style={styles.grid}>
             {grouped.health.map((type) => (
@@ -167,7 +153,7 @@ function BodyMeasurementsForm() {
   );
 }
 
-export default BodyMeasurementsForm;
+export default MeasurementsForm;
 
 const styles: Record<string, React.CSSProperties> = {
   form: {

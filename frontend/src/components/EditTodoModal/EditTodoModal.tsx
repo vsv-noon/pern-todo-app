@@ -4,19 +4,19 @@ import { useTodoForm } from '../../hooks/useTodoForm';
 import { TodoForm } from '../TodoForm/TodoForm';
 import { updateTodo } from '../../services/api/todos.api';
 import type { EditTodoModalProps } from './types';
-import { formattedDate } from '../../utils/date';
 import { initialForm } from '../AddTodoModal/constants';
+import { getSystemLocalFormat } from '../../utils/date';
 
 export function EditTodoModal({ todo, onClose, onUpdated }: EditTodoModalProps) {
   const { form, setForm, update, validate, error } = useTodoForm(initialForm);
-  // console.log(todo?.remind_at)
+
   useEffect(() => {
     if (todo) {
       setForm({
         title: todo.title,
         description: todo.description || '',
         due_date: todo.due_date,
-        remind_at: todo.remind_at ? formattedDate(todo.remind_at, 16) : '',
+        remind_at: todo.remind_at ? getSystemLocalFormat(todo.remind_at) : '',
         priority: todo.priority,
         completed: todo.completed,
       });
@@ -28,7 +28,11 @@ export function EditTodoModal({ todo, onClose, onUpdated }: EditTodoModalProps) 
   async function submit() {
     if (!validate()) return;
     if (todo) {
-      const updated = await updateTodo(todo.id, form);
+      const dto = {
+        ...form,
+        remind_at: new Date(form.remind_at).toISOString(),
+      };
+      const updated = await updateTodo(todo.id, dto);
       onUpdated(updated);
     }
     onClose();

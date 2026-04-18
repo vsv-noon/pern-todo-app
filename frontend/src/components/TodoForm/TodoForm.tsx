@@ -6,6 +6,7 @@ import { fetchTitleSuggestions } from '../../services/api/todos.api';
 // import { styles } from './styles';
 import './styles.css';
 import { useDebounce } from '../../hooks/useDebounce';
+import { getSystemLocalFormat } from '../../utils/date';
 
 export function TodoForm({
   todoFormTitle,
@@ -88,7 +89,7 @@ export function TodoForm({
   const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const date = new Date(e.target.value);
     if (!isNaN(date.getTime())) {
-      update('remind_at', date.toISOString());
+      update('remind_at', getSystemLocalFormat(date));
     }
   };
 

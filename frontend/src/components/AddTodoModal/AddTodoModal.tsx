@@ -20,7 +20,7 @@ export function AddTodoModal({ isOpen, onClose, onCreated }: AddTodoModalProps) 
 
     const dto = {
       ...form,
-      remind_at: form.remind_at || null,
+      remind_at: new Date(form.remind_at).toISOString() || null,
     };
 
     const todo = await createTodo(dto);

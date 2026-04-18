@@ -27,11 +27,9 @@ const GoalsPage = lazy(() => import('../pages/GoalsPage/GoalsPage'));
 // const ResetPasswordPage = (() => import ('../pages/ResetPasswordPage/ResetPasswordPage'));
 const TasksPage = lazy(() => import('../pages/TasksPage/TasksPage'));
 const MeasurementsPage = lazy(() => import('../pages/MeasurementsPage/MeasurementsPage'));
-const BodyMeasurementsForm = lazy(
-  () => import('../components/BodyMeasurementsForm/BodyMeasurementsForm'),
-);
-const BodyMeasurementsDetails = lazy(
-  () => import('../components/BodyMeasurementsDetails/BodyMeasurementsDetails'),
+const MeasurementsForm = lazy(() => import('../components/MeasurementsForm/MeasurementsForm'));
+const MeasurementsDetails = lazy(
+  () => import('../components/MeasurementsDetails/MeasurementsDetails'),
 );
 
 export const router = createBrowserRouter([
@@ -82,14 +80,14 @@ export const router = createBrowserRouter([
             element: <MeasurementsPage />,
             children: [
               {
-                path: 'body-measurements-details/:id',
-                element: <BodyMeasurementsDetails />,
+                path: 'measurements-details/:id',
+                element: <MeasurementsDetails />,
               },
             ],
           },
           {
-            path: 'body-measurement-form',
-            element: <BodyMeasurementsForm />,
+            path: 'measurement-form',
+            element: <MeasurementsForm />,
           },
           {
             path: '/trash',

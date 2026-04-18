@@ -1,4 +1,4 @@
-.bodyMeasurementsDetails {
+.measurementsDetails {
   position: absolute;
   overflow-y: auto;
   overflow-x: hidden;
@@ -9,28 +9,28 @@
   right: 50px;
 }
 
-.bodyMeasurementsDetails h2 {
+.measurementsDetails h2 {
   text-align: center;
   margin: 30px;
 }
 
-.bodyMeasurementsDetails h4 {
+.measurementsDetails h4 {
   margin-bottom: 10px;
 }
 
-.bodyMeasurementsDetailsList {
+.measurementsDetailsList {
   display: grid;
   grid-template-columns: 1fr 1fr;
   column-gap: 30px;
   row-gap: 5px;
 }
 
-.bodyMeasurementsDetailsList li {
+.measurementsDetailsList li {
   display: flex;
   justify-content: space-between;
 }
 
-.bodyMeasurementsDetails button {
+.measurementsDetails button {
   position: absolute;
   top: 0;
   right: 0px;

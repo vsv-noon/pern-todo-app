@@ -10,15 +10,15 @@ export interface MeasurementsProps {
   unit: string;
 }
 
-export interface BodyMeasurementDetailsProps {
+export interface MeasurementDetailsProps {
   session_date: string;
   recorded_at: string;
   measurements: MeasurementsProps[];
 }
 
-function BodyMeasurementDetails() {
+function MeasurementDetails() {
   const { handleCloseDetails } = useOutletContext<{ handleCloseDetails: () => void }>();
-  const [value, setValue] = useState<BodyMeasurementDetailsProps>();
+  const [value, setValue] = useState<MeasurementDetailsProps>();
 
   const { id } = useParams();
   useEffect(() => {
@@ -26,7 +26,7 @@ function BodyMeasurementDetails() {
       if (!id) return;
       async function load() {
         const data = await apiFetch(`/measurement-sessions/${id}`);
-        setValue(data as BodyMeasurementDetailsProps);
+        setValue(data as MeasurementDetailsProps);
       }
       load();
     } catch (err) {
@@ -35,12 +35,12 @@ function BodyMeasurementDetails() {
   }, [id]);
 
   return (
-    <div className="bodyMeasurementsDetails">
+    <div className="measurementsDetails">
       <button onClick={handleCloseDetails}>Close</button>
-      <h2>Body Measurements Details</h2>
+      <h2>Measurements details</h2>
       <h4>{value && value.session_date}</h4>
       <h5>{value && new Date(value.recorded_at).toLocaleString()}</h5>
-      <ul className="bodyMeasurementsDetailsList">
+      <ul className="measurementsDetailsList">
         {value &&
           value.measurements.map((el, i) => (
             <li key={i}>
@@ -55,4 +55,4 @@ function BodyMeasurementDetails() {
   );
 }
 
-export default BodyMeasurementDetails;
+export default MeasurementDetails;

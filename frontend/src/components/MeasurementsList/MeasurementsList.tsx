@@ -1,19 +1,16 @@
 import { Link } from 'react-router-dom';
 import type { CalendarEventProps } from '../../pages/MeasurementsPage/MeasurementsPage';
 
-function BodyMeasurementsList({ sessions }: { sessions: CalendarEventProps[] }) {
+function MeasurementsList({ sessions }: { sessions: CalendarEventProps[] }) {
   return (
     <>
       <div>
-        <h2>Body Measurements List</h2>
-        <ul className="bodyMeasurementsList">
+        <h2>Measurements list</h2>
+        <ul className="measurementsList">
           {sessions &&
             sessions.map((el, i) => (
               <li key={i}>
-                <Link
-                  to={`body-measurements-details/${el.id}`}
-                  onClick={(e) => e.stopPropagation()}
-                >
+                <Link to={`measurements-details/${el.id}`} onClick={(e) => e.stopPropagation()}>
                   {new Date(el.recorded_at).toLocaleString('en-CA', {
                     year: 'numeric',
                     month: '2-digit',
@@ -31,4 +28,4 @@ function BodyMeasurementsList({ sessions }: { sessions: CalendarEventProps[] }) 
   );
 }
 
-export default BodyMeasurementsList;
+export default MeasurementsList;

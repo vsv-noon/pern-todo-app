@@ -61,7 +61,7 @@ const measurementType = [
   { label: 'Hips', value: 'hips' },
 ];
 
-function BodyMeasurementsChart() {
+function MeasurementsChart() {
   const [data, setData] = useState<ChartDataPoint[]>([]);
   const [targetValue, setTargetValue] = useState<Target | null>(null);
   const [selectorType, setSelectorType] = useState<string>('weight');
@@ -108,7 +108,7 @@ function BodyMeasurementsChart() {
 
   return (
     <div>
-      BodyMeasurementsChart
+      Measurements chart
       <select value={selectorType} onChange={(e) => setSelectorType(e.target.value)}>
         {measurementType.map((opt, i) => (
           <option key={i} value={opt.value}>
@@ -118,21 +118,16 @@ function BodyMeasurementsChart() {
       </select>
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={data}>
-          <XAxis dataKey="date" domain={['auto', 'auto']} tickFormatter={customChartFormatter} />
-          <YAxis type="number" domain={['dataMin - 5', 'dataMax + 5']} />
-          <Tooltip
-            labelFormatter={(value) =>
-              new Date(value).toLocaleString('en-CA', {
-                year: 'numeric',
-                month: 'numeric',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false,
-              })
-            }
+          <XAxis
+            // type="number"
+            dataKey="date"
+            domain={['auto', 'auto']}
+            tickFormatter={customChartFormatter}
+            padding={{ left: 0, right: 10 }}
           />
-          <Tooltip labelFormatter={(label) => customChartFormatter(label)} />
+          <YAxis type="number" domain={['dataMin - 5', 'dataMax + 5']} />
+
+          <Tooltip labelFormatter={(label) => customChartFormatter(label)} itemSorter={() => 1} />
 
           <Legend />
           {lines.map((line) => (
@@ -157,4 +152,4 @@ function BodyMeasurementsChart() {
   );
 }
 
-export default BodyMeasurementsChart;
+export default MeasurementsChart;
