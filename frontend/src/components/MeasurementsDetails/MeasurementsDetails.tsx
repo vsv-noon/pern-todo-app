@@ -3,6 +3,7 @@ import { apiFetch } from '../../services/api/api';
 import { useOutletContext, useParams } from 'react-router-dom';
 
 import './style.css';
+import { getSystemLocalFormat } from '../../utils/date';
 
 export interface MeasurementsProps {
   label: string;
@@ -12,7 +13,7 @@ export interface MeasurementsProps {
 
 export interface MeasurementDetailsProps {
   session_date: string;
-  recorded_at: string;
+  recorded_at: Date;
   measurements: MeasurementsProps[];
 }
 
@@ -38,8 +39,9 @@ function MeasurementDetails() {
     <div className="measurementsDetails">
       <button onClick={handleCloseDetails}>Close</button>
       <h2>Measurements details</h2>
-      <h4>{value && value.session_date}</h4>
-      <h5>{value && new Date(value.recorded_at).toLocaleString()}</h5>
+      <h4>{value && getSystemLocalFormat(value.recorded_at).replace('T', ', ')}</h4>
+      {/* <h4>{value && value.session_date}</h4> */}
+      {/* <h5>{value && new Date(value.recorded_at).toLocaleString()}</h5> */}
       <ul className="measurementsDetailsList">
         {value &&
           value.measurements.map((el, i) => (

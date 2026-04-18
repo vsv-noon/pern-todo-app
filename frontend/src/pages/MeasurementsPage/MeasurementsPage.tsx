@@ -15,7 +15,7 @@ export interface CalendarEventProps {
   id: number;
   user_id: number;
   session_date: string;
-  recorded_at: string;
+  recorded_at: Date;
   category: string;
   created_at: Date;
 }
@@ -64,22 +64,26 @@ function MeasurementsPage() {
         New Measurement
       </Link>
       {sessions && (
-        <Calendar
-          onClickDay={handleClickDay}
-          tileClassName={({ date, view }: { date: Date; view: string }) => {
-            if (view === 'month') {
-              const formattedDate = date.toLocaleDateString('en-CA');
-              const hasEvent = sessions.find((event) => event.session_date === formattedDate);
-              return hasEvent ? 'highlight' : null;
-            }
-          }}
-        />
+        <>
+          <div className="measurementChartBlock">
+            <Calendar
+              onClickDay={handleClickDay}
+              tileClassName={({ date, view }: { date: Date; view: string }) => {
+                if (view === 'month') {
+                  const formattedDate = date.toLocaleDateString('en-CA');
+                  const hasEvent = sessions.find((event) => event.session_date === formattedDate);
+                  return hasEvent ? 'highlight' : null;
+                }
+              }}
+            />
+            <MeasurementsChart />
+          </div>
+          <MeasurementsList sessions={sessions} />
+          <div onClick={(e) => e.stopPropagation()}>
+            <Outlet context={{ handleCloseDetails }} />
+          </div>
+        </>
       )}
-      <MeasurementsList sessions={sessions} />
-      <div onClick={(e) => e.stopPropagation()}>
-        <Outlet context={{ handleCloseDetails }} />
-      </div>
-      <MeasurementsChart />
     </div>
   );
 }

@@ -1,0 +1,14 @@
+.rechartContainer {
+  width: 80%;
+}
+
+.rechartContainer h4 {
+  margin: 0 0 10px 30px;
+}
+.rechartsSelector {
+  margin: 0 0 10px 30px;
+  padding: 5px;
+  border: none;
+  outline: none;
+  /* appearance: none; */
+}

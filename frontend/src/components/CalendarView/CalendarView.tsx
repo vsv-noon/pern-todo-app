@@ -3,9 +3,10 @@ import type { CalendarProps } from 'react-calendar/src/Calendar.js';
 import 'react-calendar/dist/Calendar.css';
 import type { CalendarViewProps } from './types';
 import './style.css';
-import { formattedDate } from '../../utils/date';
-import { LAST_INDEX } from './constants';
+
+// import { LAST_INDEX } from './constants';
 import { useState } from 'react';
+import { formattedDate } from '../../utils/date';
 
 export function CalendarView({
   onSelect,
@@ -36,7 +37,8 @@ export function CalendarView({
         tileContent={({ date, view }) => {
           if (view !== 'month') return null;
 
-          const key = formattedDate(date, LAST_INDEX);
+          const key = formattedDate(date);
+          // const key = date.toLocaleDateString('en-CA');
           const count = counts[key];
 
           if (!count) return null;

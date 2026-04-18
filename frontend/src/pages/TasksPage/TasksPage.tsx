@@ -12,7 +12,7 @@ import { AddTodoModal } from '../../components/AddTodoModal/AddTodoModal';
 import { EditTodoModal } from '../../components/EditTodoModal/EditTodoModal';
 import Loader from '../../components/Loader/Loader';
 import { useDebounce } from '../../hooks/useDebounce';
-import { LAST_INDEX } from '../constants';
+// import { LAST_INDEX } from '../constants';
 import { TodoStatusChart } from '../../Dashboard/widgets/StatusChart';
 
 import './style.css';
@@ -79,11 +79,11 @@ export default function TodosPage() {
   }, [selectedDate, search, status, setParams]);
 
   function handleDateRange(date: Date) {
-    setDateRange(formattedDate(date, LAST_INDEX));
+    setDateRange(formattedDate(date));
   }
 
   function handleDateSelect(date: Date) {
-    setSelectedDate(formattedDate(date, LAST_INDEX));
+    setSelectedDate(formattedDate(date));
   }
 
   function handleUpdateTodo(updated: Todo) {

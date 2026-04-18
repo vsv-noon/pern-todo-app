@@ -19,6 +19,10 @@ export function formatDate(date: Date): string {
 //   return correctTimezone(d).toISOString().slice(0, s);
 // }
 
+export function formattedDate(d: Date) {
+  return d.toLocaleDateString('en-CA');
+}
+
 export function getFirstDayOfMonth(date = new Date()) {
   return new Date(date.getFullYear(), date.getMonth(), 1).toLocaleDateString('en-CA');
 }

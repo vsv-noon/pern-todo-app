@@ -48,7 +48,7 @@ export async function getMeasurementsAnalytics(
       s.user_id = $1
       AND t.name = ANY($2)
       AND s.session_date BETWEEN $3 AND $4
-    ORDER BY t.name, s.session_date
+    ORDER BY t.name, s.session_date, s.recorded_at
     `,
     [userId, types, from, to]
   );

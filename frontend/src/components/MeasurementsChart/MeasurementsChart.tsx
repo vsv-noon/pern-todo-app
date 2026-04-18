@@ -12,6 +12,8 @@ import {
   YAxis,
 } from 'recharts';
 
+import './style.css';
+
 export interface ApiResponse {
   target: string;
   result: number[];
@@ -32,7 +34,7 @@ type AnalyticsResponse = {
 };
 
 type ChartDataPoint = {
-  date: string;
+  date: number;
   [key: string]: string | number | undefined;
 };
 
@@ -82,7 +84,7 @@ function MeasurementsChart() {
       for (const typeKey in result) {
         result[typeKey].forEach((point) => {
           if (!map[point.date]) {
-            map[point.date] = { date: point.date };
+            map[point.date] = { date: new Date(point.date).getTime() };
           }
 
           map[point.date][typeKey] = point.value;
@@ -107,9 +109,14 @@ function MeasurementsChart() {
   }
 
   return (
-    <div>
-      Measurements chart
-      <select value={selectorType} onChange={(e) => setSelectorType(e.target.value)}>
+    <div className="rechartContainer">
+      <h4>Measurements chart</h4>
+
+      <select
+        className="rechartsSelector"
+        value={selectorType}
+        onChange={(e) => setSelectorType(e.target.value)}
+      >
         {measurementType.map((opt, i) => (
           <option key={i} value={opt.value}>
             {opt.label}
@@ -119,7 +126,8 @@ function MeasurementsChart() {
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={data}>
           <XAxis
-            // type="number"
+            type="number"
+            scale="time"
             dataKey="date"
             domain={['auto', 'auto']}
             tickFormatter={customChartFormatter}
@@ -130,14 +138,14 @@ function MeasurementsChart() {
           <Tooltip labelFormatter={(label) => customChartFormatter(label)} itemSorter={() => 1} />
 
           <Legend />
-          {lines.map((line) => (
+          {lines.map((line, i) => (
             <Line
-              key={line.key}
+              key={i}
               type="monotone"
               dataKey={line.key}
               stroke={line.color}
               name={line.name}
-              dot={false}
+              // dot={false}
             />
           ))}
 
