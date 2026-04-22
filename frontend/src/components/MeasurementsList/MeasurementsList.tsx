@@ -5,7 +5,12 @@ import { apiDelete } from '../../services/api/api';
 import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog';
 import { useState } from 'react';
 
-function MeasurementsList({ sessions }: { sessions: CalendarEventProps[] }) {
+export interface MeasurementsListProps {
+  sessionsList: CalendarEventProps[];
+  setSessionsList: React.Dispatch<React.SetStateAction<CalendarEventProps[]>>;
+}
+
+function MeasurementsList({ sessionsList, setSessionsList }: MeasurementsListProps) {
   const [isModalOpen, setModalOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<number | null>(null);
 
@@ -16,7 +21,7 @@ function MeasurementsList({ sessions }: { sessions: CalendarEventProps[] }) {
     };
   }
 
-  const grouped = groupTypes(sessions);
+  const grouped = groupTypes(sessionsList);
 
   function handleDeleteClick(itemId: number) {
     setItemToDelete(itemId);
@@ -24,6 +29,8 @@ function MeasurementsList({ sessions }: { sessions: CalendarEventProps[] }) {
   }
 
   async function handleConfirmDelete(sessionId: number | null) {
+    if (!sessionsList) return;
+    setSessionsList((prev) => prev.filter((item) => item.id !== sessionId));
     try {
       await apiDelete(`/measurement-sessions/${sessionId}`);
       setItemToDelete(null);
@@ -37,7 +44,7 @@ function MeasurementsList({ sessions }: { sessions: CalendarEventProps[] }) {
       <div>
         <h3>Body measurements list</h3>
         <ul className="measurementsList">
-          {sessions &&
+          {sessionsList &&
             grouped.body.map((el, i) => (
               <li key={i}>
                 <Link to={`measurements-details/${el.id}`} onClick={(e) => e.stopPropagation()}>
@@ -51,7 +58,7 @@ function MeasurementsList({ sessions }: { sessions: CalendarEventProps[] }) {
       <div>
         <h3>Health metrics list</h3>
         <ul className="measurementsList">
-          {sessions &&
+          {sessionsList &&
             grouped.health.map((el, i) => (
               <li key={i}>
                 <Link to={`measurements-details/${el.id}`} onClick={(e) => e.stopPropagation()}>

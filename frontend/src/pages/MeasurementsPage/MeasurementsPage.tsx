@@ -21,7 +21,7 @@ export interface CalendarEventProps {
 }
 
 function MeasurementsPage() {
-  const [sessions, setSessions] = useState<CalendarEventProps[]>([]);
+  const [sessionsList, setSessionsList] = useState<CalendarEventProps[]>([]);
   // const [sessionId, setSessionId] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -31,7 +31,7 @@ function MeasurementsPage() {
   };
   function handleClickDay(clickedDay: Date, event: React.MouseEvent<HTMLButtonElement>) {
     event.stopPropagation();
-    const foundSession = sessions.find(
+    const foundSession = sessionsList.find(
       (s) => s.session_date === clickedDay.toLocaleDateString('en-CA'),
     );
 
@@ -46,7 +46,7 @@ function MeasurementsPage() {
       setLoading(true);
       async function loadSessions() {
         const data = await apiFetch('/measurement-sessions');
-        setSessions(data as CalendarEventProps[]);
+        setSessionsList(data as CalendarEventProps[]);
       }
 
       loadSessions();
@@ -55,7 +55,7 @@ function MeasurementsPage() {
     } finally {
       setLoading(false);
     }
-  }, [sessions]);
+  }, []);
 
   return (
     <div className="measurementsPage" onClick={handleCloseDetails}>
@@ -63,7 +63,7 @@ function MeasurementsPage() {
       <Link className="link-btn" to="/measurement-form" onClick={(e) => e.stopPropagation()}>
         New Measurement
       </Link>
-      {sessions && (
+      {sessionsList && (
         <>
           <div className="measurementChartBlock">
             <Calendar
@@ -71,14 +71,16 @@ function MeasurementsPage() {
               tileClassName={({ date, view }: { date: Date; view: string }) => {
                 if (view === 'month') {
                   const formattedDate = date.toLocaleDateString('en-CA');
-                  const hasEvent = sessions.find((event) => event.session_date === formattedDate);
+                  const hasEvent = sessionsList.find(
+                    (event) => event.session_date === formattedDate,
+                  );
                   return hasEvent ? 'highlight' : null;
                 }
               }}
             />
-            <MeasurementsChart />
+            <MeasurementsChart sessionsList={sessionsList} />
           </div>
-          <MeasurementsList sessions={sessions} />
+          <MeasurementsList sessionsList={sessionsList} setSessionsList={setSessionsList} />
           <div onClick={(e) => e.stopPropagation()}>
             <Outlet context={{ handleCloseDetails }} />
           </div>

@@ -13,6 +13,7 @@ import {
 } from 'recharts';
 
 import './style.css';
+import type { CalendarEventProps } from '../../pages/MeasurementsPage/MeasurementsPage';
 
 export interface ApiResponse {
   target: string;
@@ -63,7 +64,7 @@ const measurementType = [
   { label: 'Hips', value: 'hips' },
 ];
 
-function MeasurementsChart() {
+function MeasurementsChart({ sessionsList }: { sessionsList: CalendarEventProps[] }) {
   const [data, setData] = useState<ChartDataPoint[]>([]);
   const [targetValue, setTargetValue] = useState<Target | null>(null);
   const [selectorType, setSelectorType] = useState<string>('weight');
@@ -95,7 +96,9 @@ function MeasurementsChart() {
       setTargetValue(target);
     }
     load();
-  }, [selectorType, data]);
+  }, [selectorType, sessionsList]);
+
+  console.log(data);
 
   function customChartFormatter(item: Date) {
     return new Date(item).toLocaleString('en-CA', {
