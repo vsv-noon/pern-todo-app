@@ -14,6 +14,7 @@ import {
 
 import './style.css';
 import type { CalendarEventProps } from '../../pages/MeasurementsPage/MeasurementsPage';
+import { getFirstDayOfMonth, getLastDayOfMonth } from '../../utils/date';
 
 export interface ApiResponse {
   target: string;
@@ -68,16 +69,20 @@ function MeasurementsChart({ sessionsList }: { sessionsList: CalendarEventProps[
   const [data, setData] = useState<ChartDataPoint[]>([]);
   const [targetValue, setTargetValue] = useState<Target | null>(null);
   const [selectorType, setSelectorType] = useState<string>('weight');
+  const [dateRange, setDateRange] = useState({
+    from: getFirstDayOfMonth(),
+    to: getLastDayOfMonth(),
+  });
 
-  const from = '2009-01-01';
-  const to = '2027-01-01';
+  // const from = '2009-01-01';
+  // const to = '2027-01-01';
 
   const lines = chartConfig[selectorType as keyof typeof chartConfig] || [];
 
   useEffect(() => {
     async function load() {
       const { target, result } = await apiFetch<AnalyticsResponse>(
-        `/measurements/analytics?types=${selectorType}&from=${from}&to=${to}`,
+        `/measurements/analytics?types=${selectorType}&from=${dateRange.from}&to=${dateRange.to}`,
       );
 
       const map: Record<string, ChartDataPoint> = {};
@@ -96,9 +101,7 @@ function MeasurementsChart({ sessionsList }: { sessionsList: CalendarEventProps[
       setTargetValue(target);
     }
     load();
-  }, [selectorType, sessionsList]);
-
-  console.log(data);
+  }, [selectorType, sessionsList, dateRange.from, dateRange.to]);
 
   function customChartFormatter(item: Date) {
     return new Date(item).toLocaleString('en-CA', {
@@ -126,6 +129,22 @@ function MeasurementsChart({ sessionsList }: { sessionsList: CalendarEventProps[
           </option>
         ))}
       </select>
+      <label>
+        From:
+        <input
+          type="date"
+          value={dateRange.from}
+          onChange={(e) => setDateRange({ ...dateRange, from: e.target.value })}
+        />
+      </label>
+      <label>
+        To:
+        <input
+          type="date"
+          value={dateRange.to}
+          onChange={(e) => setDateRange({ ...dateRange, to: e.target.value })}
+        />
+      </label>
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={data} width={500} height={300}>
           <XAxis

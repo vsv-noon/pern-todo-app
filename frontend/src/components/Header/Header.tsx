@@ -43,6 +43,14 @@ export function Header() {
               style={({ isActive, isPending }) => ({
                 color: isActive ? 'grey' : isPending ? 'blue' : 'black',
               })}
+              to="/todos"
+            >
+              Todos
+            </NavLink>
+            <NavLink
+              style={({ isActive, isPending }) => ({
+                color: isActive ? 'grey' : isPending ? 'blue' : 'black',
+              })}
               to="/tasks"
             >
               Tasks

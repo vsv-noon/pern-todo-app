@@ -10,6 +10,7 @@ import GoalDetailPage from '../pages/GoalDetailPage/GoalDetailPage';
 import ResetPasswordPage from '../pages/ResetPasswordPage/ResetPasswordPage';
 import ForgotPasswordPage from '../pages/ForgotPasswordPage/ForgotPasswordPage';
 import VerifyYourEmail from '../components/VerifyYourEmail/VerifyYourEmail';
+import TaskForm from '../components/TaskForm/TaskForm';
 
 // import { ProtectedRoute } from '../routes/ProtectedRoute/ProtectedRoute';
 
@@ -25,6 +26,7 @@ const ErrorPage = lazy(() => import('../pages/ErrorPage/ErrorPage'));
 const GoalsPage = lazy(() => import('../pages/GoalsPage/GoalsPage'));
 // const GoalDetailPage = (() => import ('../pages/GoalDetailPage/GoalDetailPage'));
 // const ResetPasswordPage = (() => import ('../pages/ResetPasswordPage/ResetPasswordPage'));
+const TodosPage = lazy(() => import('../pages/TodosPage/TodosPage'));
 const TasksPage = lazy(() => import('../pages/TasksPage/TasksPage'));
 const MeasurementsPage = lazy(() => import('../pages/MeasurementsPage/MeasurementsPage'));
 const MeasurementsForm = lazy(() => import('../components/MeasurementsForm/MeasurementsForm'));
@@ -64,8 +66,16 @@ export const router = createBrowserRouter([
             element: <DashboardPage />,
           },
           {
+            path: '/todos',
+            element: <TodosPage />,
+          },
+          {
             path: '/tasks',
             element: <TasksPage />,
+          },
+          {
+            path: '/task-form',
+            element: <TaskForm />,
           },
           {
             path: '/goals',

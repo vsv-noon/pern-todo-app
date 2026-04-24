@@ -12,6 +12,7 @@ export interface CreateMeasurementTypeDTO {
   label: string;
   unit: string;
   category?: string;
+  created_at: Date;
 }
 
 export interface UpdateMeasurementTypeDTO {

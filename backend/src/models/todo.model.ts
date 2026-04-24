@@ -165,16 +165,33 @@ export async function getTodos(
   return result.rows;
 }
 
+// export async function getCalendarCounts(userId: number): Promise<TodoCountByDateRow[]> {
+//   const result = await pool.query<TodoCountByDateRow>(
+//     `
+//       SELECT
+//         due_date::date AS date,
+//         COUNT(*)::int AS count
+//       FROM todos
+//       WHERE user_id = $1
+//         AND deleted_at IS NULL
+//         AND completed = FALSE
+//       GROUP BY due_date::date
+//     `,
+//     [userId]
+//   );
+
+//   return result.rows;
+// }
+
 export async function getCalendarCounts(userId: number): Promise<TodoCountByDateRow[]> {
   const result = await pool.query<TodoCountByDateRow>(
     `
       SELECT
         due_date::date AS date,
         COUNT(*)::int AS count
-      FROM todos
+      FROM task_instances
       WHERE user_id = $1
-        AND deleted_at IS NULL
-        AND completed = FALSE
+      
       GROUP BY due_date::date
     `,
     [userId]
