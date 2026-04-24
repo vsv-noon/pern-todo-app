@@ -43,7 +43,7 @@ export async function createTodo(
 ): Promise<TodoRow> {
   const result = await pool.query(
     `
-      INSERT INTO todos (user_id, title, description, due_date, remind_at, priority, goal_id)
+      INSERT INTO tasks (user_id, title, description, due_date, remind_at, priority, goal_id)
       VALUES ($1, $2, $3, $4::date, $5::timestamptz, $6, $7)
       RETURNING *
       `,
@@ -79,7 +79,7 @@ export async function updateTodo(
 
   const result = await pool.query(
     `
-      UPDATE todos
+      UPDATE tasks
       SET ${fields}, updated_at = NOW()
       WHERE id = $1
         AND user_id = $${Object.keys(updates).length + 2}
@@ -95,7 +95,7 @@ export async function updateTodo(
 export async function updateTodoPosition(client: PoolClient, item: ReorderItem, userId: number) {
   const result = await client.query(
     `
-    UPDATE todos
+    UPDATE tasks
     SET position = $1
     WHERE id = $2
       AND user_id = $3
@@ -110,7 +110,7 @@ export async function updateTodoPosition(client: PoolClient, item: ReorderItem, 
 export async function getTodoById(userId: number, id: number): Promise<TodoRow | null> {
   const result = await pool.query<TodoRow>(
     `
-    SELECT * FROM todos
+    SELECT * FROM tasks
     WHERE id = $1
       AND user_id = $2
       AND deleted_at IS NULL
@@ -135,10 +135,10 @@ export async function getTodos(
   values.push(userId);
   conditions.push(`user_id = $${values.length}`);
 
-  if (filters.date) {
-    values.push(filters.date);
-    conditions.push(`due_date::date = $${values.length}`);
-  }
+  // if (filters.date) {
+  //   values.push(filters.date);
+  //   conditions.push(`due_date::date = $${values.length}`);
+  // }
 
   if (filters.search) {
     values.push(`%${filters.search}%`);
@@ -155,9 +155,9 @@ export async function getTodos(
 
   const result = await pool.query(
     `
-      SELECT * FROM todos
+      SELECT * FROM tasks
       WHERE ${conditions.join(' AND ')}
-      ORDER BY position ASC, due_date ASC, created_at ASC
+      ORDER BY position ASC, created_at ASC
     `,
     values
   );
@@ -171,7 +171,7 @@ export async function getTodos(
 //       SELECT
 //         due_date::date AS date,
 //         COUNT(*)::int AS count
-//       FROM todos
+//       FROM tasks
 //       WHERE user_id = $1
 //         AND deleted_at IS NULL
 //         AND completed = FALSE
@@ -209,7 +209,7 @@ export async function getTitleSuggestions(
   const result = await pool.query<TitleSuggestionRow>(
     `
       SELECT DISTINCT title
-      FROM todos
+      FROM tasks
       WHERE user_id = $1
         AND deleted_at IS NULL
         AND title ILIKE $2
@@ -237,7 +237,7 @@ export async function getDeletedTodos(userId: number, search?: string): Promise<
   const result = await pool.query<TodoRow>(
     `
       SELECT *
-      FROM todos
+      FROM tasks
       WHERE ${conditions.join(' AND ')}
       ORDER BY deleted_at DESC
       `,
@@ -250,7 +250,7 @@ export async function getDeletedTodos(userId: number, search?: string): Promise<
 export async function softDeleteTodo(userId: number, id: number): Promise<boolean> {
   const result = await pool.query(
     `
-      UPDATE todos
+      UPDATE tasks
       SET deleted_at = now()
       WHERE id = $1
         AND user_id = $2
@@ -266,7 +266,7 @@ export async function softDeleteTodo(userId: number, id: number): Promise<boolea
 export async function bulkRestoreTodos(userId: number, ids: number[]): Promise<number[]> {
   const result = await pool.query(
     `
-      UPDATE todos
+      UPDATE tasks
       SET deleted_at = NULL, updated_at = NOW()
       WHERE id = ANY($1)
         AND user_id = $2
@@ -281,7 +281,7 @@ export async function bulkRestoreTodos(userId: number, ids: number[]): Promise<n
 export async function bulkHardDeleteTodos(userId: number, ids: number[]): Promise<number[]> {
   const result = await pool.query(
     `
-      DELETE FROM todos
+      DELETE FROM tasks
       WHERE id = ANY($1)
         AND user_id = $2
       RETURNING id

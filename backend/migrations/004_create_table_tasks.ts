@@ -1,7 +1,7 @@
 import { MigrationBuilder } from 'node-pg-migrate';
 
 export async function up(pgm: MigrationBuilder): Promise<void> {
-  pgm.createTable('todos', {
+  pgm.createTable('tasks', {
     id: {
       type: 'integer GENERATED ALWAYS AS IDENTITY',
       primaryKey: true,
@@ -10,6 +10,12 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     user_id: {
       type: 'integer',
       references: 'users',
+      onDelete: 'CASCADE',
+    },
+
+    goal_id: {
+      type: 'integer',
+      references: 'goals',
       onDelete: 'CASCADE',
     },
 
@@ -26,16 +32,6 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
       type: 'boolean',
       notNull: true,
       default: false,
-    },
-
-    due_date: {
-      type: 'date',
-      notNull: false,
-    },
-
-    remind_at: {
-      type: 'timestamptz',
-      notNull: false,
     },
 
     priority: {
@@ -69,14 +65,21 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
       notNull: true,
       default: pgm.func('now()'),
     },
+
+    is_recurring: {
+      type: 'boolean',
+      default: false,
+    },
+
+    is_active: {
+      type: 'boolean',
+      default: true,
+    },
   });
 
-  // index for calendar
-  pgm.createIndex('todos', 'due_date');
-
-  pgm.createIndex('todos', 'deleted_at');
+  pgm.createIndex('tasks', 'deleted_at');
 }
 
 export async function down(pgm: MigrationBuilder): Promise<void> {
-  pgm.dropTable('todos');
+  pgm.dropTable('tasks');
 }

@@ -35,6 +35,6 @@ export async function testDbConnection() {
 
 // const { rows } = await pool.query("SELECT current_database()");
 
-// if (rows[0].current_database !== "todo_test") {
+// if (rows[0].current_database !== "task_test") {
 //   throw new Error("❌ Wrong database for tests");
 // }

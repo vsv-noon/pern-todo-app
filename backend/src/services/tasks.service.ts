@@ -32,7 +32,7 @@ export async function createTaskItem(
     if (data.isRecurring) {
       await tasksModel.createTaskRecurrence(client, result.id, data.recurrence);
     } else {
-      await tasksModel.createTaskInstance(client, result.id, data.dueDate);
+      await tasksModel.createTaskInstance(client, userId, result.id, data.dueDate);
     }
 
     await client.query('COMMIT');
@@ -57,7 +57,7 @@ export async function getTasksRangeService(userId: number, start: string, end: s
     for (const task of recurringTasks) {
       const dates = generateDatesForRange(task, new Date(start as string), new Date(end as string));
 
-      await tasksModel.createInstances(client, task.task_id, dates);
+      await tasksModel.createInstances(client, userId, task.task_id, dates);
     }
 
     const result = await tasksModel.getRangeInstances(client, userId, start, end);

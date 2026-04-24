@@ -2,11 +2,11 @@ import request from 'supertest';
 
 import { app } from '../../app.js';
 
-export async function createTodo(overrides = {}) {
+export async function createTask(overrides = {}) {
   const res = await request(app)
-    .post('/todos')
+    .post('/tasks')
     .send({
-      title: 'Test todo',
+      title: 'Test task',
       due_date: '2026-01-01',
       ...overrides,
     });

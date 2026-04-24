@@ -5,7 +5,7 @@ import { seedMeasurementTypes } from '../seeds/measurementTypes.seed.js';
 import { app } from './app.js';
 import { ENV } from './config/env.js';
 import { testDbConnection } from './config/db.js';
-import { cleanupDeletedTodos } from './cron/cleanupDeletedTodos.js';
+import { cleanupDeletedTasks } from './cron/cleanupDeletedTasks.js';
 import { saveDailyMetrics } from './cron/saveDailyMetrics.js';
 import { cleanupExpiresTokens } from './cron/cleanupExpiresTokens.js';
 // import dotenv from "dotenv";
@@ -19,7 +19,7 @@ import { cleanupExpiresTokens } from './cron/cleanupExpiresTokens.js';
 
 await seedMeasurementTypes();
 
-cron.schedule('0 3 * * *', cleanupDeletedTodos);
+cron.schedule('0 3 * * *', cleanupDeletedTasks);
 cron.schedule('5 3 * * *', cleanupExpiresTokens);
 cron.schedule('5 0 * * *', saveDailyMetrics);
 // cron.schedule('52 3 * * *', saveDailyMetrics);

@@ -16,7 +16,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     `
   );
 
-  pgm.createTrigger('todos', 'set_updated_at_trigger', {
+  pgm.createTrigger('tasks', 'set_updated_at_trigger', {
     when: 'BEFORE',
     operation: 'UPDATE',
     function: 'set_updated_at',
@@ -24,6 +24,6 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
 }
 
 export async function down(pgm: MigrationBuilder): Promise<void> {
-  pgm.dropTrigger('todos', 'set_updated_at_trigger');
+  pgm.dropTrigger('tasks', 'set_updated_at_trigger');
   pgm.dropFunction('set_updated_at', []);
 }

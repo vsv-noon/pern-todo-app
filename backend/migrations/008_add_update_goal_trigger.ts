@@ -33,14 +33,14 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
   `);
 
   pgm.sql(`
-    CREATE TRIGGER trg_update_goal_on_todo_change
-    AFTER INSERT OR UPDATE OR DELETE ON todos
+    CREATE TRIGGER trg_update_goal_on_task_change
+    AFTER INSERT OR UPDATE OR DELETE ON tasks
     FOR EACH ROW  
     EXECUTE FUNCTION update_goal_counter();
   `);
 }
 
 export async function down(pgm: MigrationBuilder): Promise<void> {
-  pgm.sql(`DROP TRIGGER IF EXISTS trg_update_goal_on_todo_change ON todos;`);
+  pgm.sql(`DROP TRIGGER IF EXISTS trg_update_goal_on_task_change ON tasks;`);
   pgm.sql(`DROP FUNCTION IF EXISTS update_goal_counter();`);
 }

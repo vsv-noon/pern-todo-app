@@ -10,7 +10,7 @@ export async function saveDailyMetrics() {
           CURRENT_DATE AS date,
           COUNT(*) FILTER (WHERE completed) AS completed_count,
           COUNT(*) AS created_count
-        FROM todos
+        FROM tasks
         WHERE created_at::date = CURRENT_DATE
           AND deleted_at IS NULL
         GROUP BY user_id  

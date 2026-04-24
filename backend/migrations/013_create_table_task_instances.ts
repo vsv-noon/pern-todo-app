@@ -5,7 +5,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     CREATE TABLE task_instances (
     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 
-    task_id INTEGER NOT NULL REFERENCES todos(id) ON DELETE CASCADE,
+    task_id INTEGER NOT NULL REFERENCES tasks(id) ON DELETE CASCADE,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
 
     due_date DATE NOT NULL,

@@ -15,7 +15,7 @@ export async function createTask(
 ) {
   const result = await client.query(
     `
-      INSERT INTO todos (user_id, title, description, goal_id, is_recurring)
+      INSERT INTO tasks (user_id, title, description, goal_id, is_recurring)
       VALUES ($1, $2, $3, $4, $5)
       RETURNING *
       `,
@@ -73,25 +73,35 @@ export async function createTaskRecurrence(
   return result.rows[0];
 }
 
-export async function createTaskInstance(client: PoolClient, taskId: number, dueDate: Date) {
+export async function createTaskInstance(
+  client: PoolClient,
+  userId: number,
+  taskId: number,
+  dueDate: Date
+) {
   await client.query(
     `
-    INSERT INTO task_instances (task_id, due_date)
-    VALUES ($1, $2)
+    INSERT INTO task_instances (user_id, task_id, due_date)
+    VALUES ($1, $2, $3)
     `,
-    [taskId, dueDate]
+    [userId, taskId, dueDate]
   );
 }
 
-export async function createInstances(client: PoolClient, taskId: number, dates: Date[]) {
+export async function createInstances(
+  client: PoolClient,
+  userId: number,
+  taskId: number,
+  dates: Date[]
+) {
   for (const d of dates) {
     await client.query(
       `
-      INSERT INTO task_instances (task_id, due_date)
-      VALUES ($1, $2)
+      INSERT INTO task_instances (user_id, task_id, due_date)
+      VALUES ($1, $2, $3)
       ON CONFLICT (task_id, due_date) DO NOTHING
       `,
-      [taskId, d.toISOString().slice(0, 10)]
+      [userId, taskId, d.toISOString().slice(0, 10)]
     );
   }
 }
@@ -100,7 +110,7 @@ export async function getRecurringTasks(client: PoolClient, userId: number) {
   const result = await client.query(
     `
           SELECT t.id, tr.*
-          FROM todos t
+          FROM tasks t
           JOIN task_recurrence tr ON tr.task_id = t.id
           WHERE t.user_id = $1
           `,
@@ -120,7 +130,7 @@ export async function getRangeInstances(
     `
           SELECT ti.*, t.title
           FROM task_instances ti
-          JOIN todos t ON t.id = ti.task_id
+          JOIN tasks t ON t.id = ti.task_id
           WHERE t.user_id = $1
             AND ti.due_date BETWEEN $2 AND $3
           ORDER BY ti.due_date

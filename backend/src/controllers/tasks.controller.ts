@@ -4,11 +4,11 @@ import * as tasksService from '../services/tasks.service.js';
 
 /**
  * @swagger
- * /api/todos:
+ * /api/tasks:
  *    post:
- *      summary: Create a new Todo
- *      description: Create a new Todo
- *      tags: [Todos]
+ *      summary: Create a new Task
+ *      description: Create a new Task
+ *      tags: [Task]
  *      security:
  *        - bearerAuth: []
  *      requestBody:
@@ -24,13 +24,13 @@ import * as tasksService from '../services/tasks.service.js';
  *                remind_at: {type: string}
  *                priority: {type: string}
  *              example:
- *                title: New Todo
- *                description: New Todo
+ *                title: New Task
+ *                description: New Task
  *                due_date: 2026-01-01
  *                priority: high
  *      responses:
  *        201:
- *          description: Todo created successfully
+ *          description: Task created successfully
  */
 export async function createTask(req: Request, res: Response) {
   if (!req.user) return res.status(401).json({ error: 'Unauthorized' });
@@ -44,11 +44,11 @@ export async function createTask(req: Request, res: Response) {
   }
 
   try {
-    const todo = await tasksService.createTaskItem(req.user.userId, data);
-    return res.status(201).json(todo);
+    const task = await tasksService.createTaskItem(req.user.userId, data);
+    return res.status(201).json(task);
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ error: 'Failed to create todo' });
+    return res.status(500).json({ error: 'Failed to create task' });
   }
 }
 

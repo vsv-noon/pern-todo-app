@@ -4,11 +4,11 @@ import * as todoService from '../services/todo.service.js';
 
 /**
  * @swagger
- * /api/todos:
+ * /api/tasks:
  *    post:
- *      summary: Create a new Todo
- *      description: Create a new Todo
- *      tags: [Todos]
+ *      summary: Create a new Task
+ *      description: Create a new Task
+ *      tags: [Tasks]
  *      security:
  *        - bearerAuth: []
  *      requestBody:
@@ -24,13 +24,13 @@ import * as todoService from '../services/todo.service.js';
  *                remind_at: {type: string}
  *                priority: {type: string}
  *              example:
- *                title: New Todo
- *                description: New Todo
+ *                title: New Task
+ *                description: New Task
  *                due_date: 2026-01-01
  *                priority: high
  *      responses:
  *        201:
- *          description: Todo created successfully
+ *          description: Task created successfully
  */
 export async function createTodo(req: Request, res: Response) {
   if (!req.user) return res.status(401).json({ error: 'Unauthorized' });
@@ -42,26 +42,26 @@ export async function createTodo(req: Request, res: Response) {
   }
 
   try {
-    const todo = await todoService.createTodoItem(req.user.userId, {
+    const task = await todoService.createTodoItem(req.user.userId, {
       title,
       description,
       due_date,
       remind_at,
       priority,
     });
-    return res.status(201).json(todo);
+    return res.status(201).json(task);
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ error: 'Failed to create todo' });
+    return res.status(500).json({ error: 'Failed to create task' });
   }
 }
 
 /**@swagger
- * /api/todos/{id}:
+ * /api/tasks/{id}:
  *  patch:
- *    summary: Partially update a Todo
- *    description: Update specific fields of a todo
- *    tags: [Todos]
+ *    summary: Partially update a Task
+ *    description: Update specific fields of a task
+ *    tags: [Tasks]
  *    parameters:
  *      - in: path
  *        name: id
@@ -90,9 +90,9 @@ export async function createTodo(req: Request, res: Response) {
  *                example: "medium"
  *    responses:
  *      200:
- *        description: Todo updated successfully
+ *        description: Task updated successfully
  *      404:
- *        description: Todo not found
+ *        description: Task not found
  */
 export async function updateTodo(req: Request, res: Response) {
   if (!req.user) return res.status(401).json({ error: 'Unauthorized' });
@@ -101,14 +101,14 @@ export async function updateTodo(req: Request, res: Response) {
   const updates = req.body;
 
   try {
-    const todo = await todoService.updateTodoItem(req.user.userId, Number(id), updates);
-    if (!todo) {
-      return res.status(404).json({ error: 'Todo not found' });
+    const task = await todoService.updateTodoItem(req.user.userId, Number(id), updates);
+    if (!task) {
+      return res.status(404).json({ error: 'Task not found' });
     }
-    return res.json(todo);
+    return res.json(task);
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ error: 'Failed to update todo' });
+    return res.status(500).json({ error: 'Failed to update task' });
   }
 }
 
@@ -133,13 +133,13 @@ export async function reorderTodos(req: Request, res: Response) {
 
 /**
  * @swagger
- * /api/todos:
+ * /api/tasks:
  *  get:
- *    summary: Retrieve a list of todos
+ *    summary: Retrieve a list of tasks
  *    security:
  *      - bearerAuth: []
- *    tags: [Todos]
- *    description: Returns an array of todos objects from the database.
+ *    tags: [Tasks]
+ *    description: Returns an array of tasks objects from the database.
  *    produces:
  *      - application/json
  *    responses:
@@ -179,12 +179,12 @@ export async function getTodos(req: Request, res: Response) {
   if (status && status !== 'all') filters.status = status;
 
   try {
-    const todos = await todoService.getTodoList(req.user.userId, filters);
+    const tasks = await todoService.getTodoList(req.user.userId, filters);
 
-    return res.json(todos);
+    return res.json(tasks);
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ error: 'Failed to fetch todos' });
+    return res.status(500).json({ error: 'Failed to fetch tasks' });
   }
 }
 
@@ -220,32 +220,32 @@ export async function getDeletedTodos(req: Request, res: Response) {
   const { query } = req.query as { query?: string };
 
   try {
-    const todos = await todoService.getDeletedTodoList(req.user.userId, query ?? undefined);
-    return res.json(todos);
+    const tasks = await todoService.getDeletedTodoList(req.user.userId, query ?? undefined);
+    return res.json(tasks);
   } catch (err) {
-    console.error('Failed to fetch deleted todos', err);
-    return res.status(500).json({ error: 'Failed to fetch deleted todos' });
+    console.error('Failed to fetch deleted tasks', err);
+    return res.status(500).json({ error: 'Failed to fetch deleted tasks' });
   }
 }
 
 /**
  * @swagger
- * /api/todos/{id}:
+ * /api/tasks/{id}:
  *  delete:
- *    summary: Delete a todo item
- *    tags: [Todos]
+ *    summary: Delete a task item
+ *    tags: [Tasks]
  *    parameters:
  *      - in: path
  *        name: id
  *        required: true
  *        schema:
  *          type: number
- *        description: The todo ID
+ *        description: The task ID
  *    responses:
  *      204:
- *        description: Todo deleted successfully
+ *        description: Task deleted successfully
  *      404:
- *        description: Todo not found
+ *        description: Task not found
  */
 export async function deleteTodo(req: Request, res: Response) {
   if (!req.user) return res.status(401).json({ error: 'Unauthorized' });
@@ -255,22 +255,22 @@ export async function deleteTodo(req: Request, res: Response) {
   try {
     const deleted = await todoService.deleteTodoItem(req.user.userId, Number(id));
     if (!deleted) {
-      return res.status(404).json({ error: 'Todo not found' });
+      return res.status(404).json({ error: 'Task not found' });
     }
     return res.status(204).send();
   } catch (err) {
-    console.error('Failed to delete todo', err);
-    return res.status(500).json({ error: 'Failed to delete todo' });
+    console.error('Failed to delete task', err);
+    return res.status(500).json({ error: 'Failed to delete task' });
   }
 }
 
 /**
  * @swagger
- * /api/todos/bulk-restore:
+ * /api/tasks/bulk-restore:
  *  post:
- *    summary: Restore multiple todos
- *    description: Deletes multiple todo items based on an array of IDs.
- *    tags: [Todos]
+ *    summary: Restore multiple tasks
+ *    description: Deletes multiple task items based on an array of IDs.
+ *    tags: [Tasks]
  *    requestBody:
  *      required: true
  *      content:
@@ -280,11 +280,11 @@ export async function deleteTodo(req: Request, res: Response) {
  *            properties:
  *              ids:
  *                type: number
- *              description: The ID of the todo to restore
+ *              description: The ID of the task to restore
  *            example: {ids: [1, 2, 3]}
  *    responses:
  *      200:
- *        description: Todos restored successfully
+ *        description: Tasks restored successfully
  *      400:
  *        description: Invalid ID supplied
  */
@@ -308,11 +308,11 @@ export async function bulkRestoreTodos(req: Request, res: Response) {
 
 /**
  * @swagger
- * /api/todos/bulk-delete:
+ * /api/tasks/bulk-delete:
  *  post:
- *    summary: Delete multiple todos
- *    description: Deletes multiple todo items based on an array of IDs.
- *    tags: [Todos]
+ *    summary: Delete multiple tasks
+ *    description: Deletes multiple task items based on an array of IDs.
+ *    tags: [Tasks]
  *    requestBody:
  *      required: true
  *      content:
@@ -322,11 +322,11 @@ export async function bulkRestoreTodos(req: Request, res: Response) {
  *            properties:
  *              ids:
  *                type: number
- *              description: The ID of the todo to delete
+ *              description: The ID of the task to delete
  *            example: {ids: [1, 2, 3]}
  *    responses:
  *      200:
- *        description: Todos deleted successfully
+ *        description: Tasks deleted successfully
  *      400:
  *        description: Invalid ID supplied
  */

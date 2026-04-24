@@ -3,10 +3,10 @@ import {
   getProductivity,
   getStatus,
   getStreak,
-  getTodosByDate,
+  getTasksByDate,
 } from '../models/stats.model.js';
 
-export type StatsType = 'priority' | 'productivity' | 'status' | 'streak' | 'todosByDate';
+export type StatsType = 'priority' | 'productivity' | 'status' | 'streak' | 'tasksByDate';
 
 export async function getStats(
   type: StatsType,
@@ -27,8 +27,8 @@ export async function getStats(
     case 'streak':
       return getStreak();
 
-    case 'todosByDate':
-      return getTodosByDate(from, to, userId);
+    case 'tasksByDate':
+      return getTasksByDate(from, to, userId);
 
     default:
       throw new Error(`Unknown stats type${type}`);

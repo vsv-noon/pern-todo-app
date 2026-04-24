@@ -6,7 +6,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
     CREATE TABLE task_recurrence (
     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     
-    task_id INTEGER UNIQUE REFERENCES todos(id) ON DELETE CASCADE,
+    task_id INTEGER UNIQUE REFERENCES tasks(id) ON DELETE CASCADE,
 
     type TEXT CHECK (type IN ('daily', 'weekly', 'monthly')),
     interval INTEGER DEFAULT 1,

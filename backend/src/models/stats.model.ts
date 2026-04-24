@@ -1,6 +1,6 @@
 import { pool } from '../config/db.js';
 
-export type TodoRow = {
+export type TaskRow = {
   date: string;
   count: number;
 };
@@ -29,12 +29,12 @@ export async function getPriority(
   from: string | null,
   to: string | null,
   userId: number
-): Promise<TodoRow[]> {
+): Promise<TaskRow[]> {
   const result = await pool.query(
     `
     SELECT 
       priority, COUNT(*) 
-    FROM todos
+    FROM task_instances
     WHERE deleted_at IS NULL
       AND ($1::date IS NULL OR due_date >= $1)
       AND ($2::date IS NULL OR due_date <= $2)
@@ -51,17 +51,17 @@ export async function getStatus(
   from: string | null,
   to: string | null,
   userId: number
-): Promise<TodoRow[]> {
-  const result = await pool.query<TodoRow>(
+): Promise<TaskRow[]> {
+  const result = await pool.query<TaskRow>(
     `
     SELECT
-      completed, COUNT(*)
-    FROM todos
+      status, COUNT(*)
+    FROM task_instances
     WHERE deleted_at IS NULL
       AND ($1::date IS NULL OR due_date >= $1)
       AND ($2::date IS NULL OR due_date <= $2)
       AND user_id = $3
-    GROUP BY completed;
+    GROUP BY status;
     `,
     [from || null, to || null, userId]
   );
@@ -95,17 +95,17 @@ export async function getStreak() {
   return { streak: Number(result.rows[0]?.streak || 0) };
 }
 
-export async function getTodosByDate(
+export async function getTasksByDate(
   from: string | null,
   to: string | null,
   userId: number
-): Promise<TodoRow[]> {
-  const result = await pool.query<TodoRow>(
+): Promise<TaskRow[]> {
+  const result = await pool.query<TaskRow>(
     `
     SELECT
       due_date::date AS date,
       COUNT(*) AS count
-    FROM todos
+    FROM task_instances
     WHERE deleted_at IS NULL
       AND ($1::date IS NULL OR due_date >= $1)
       AND ($2::date IS NULL OR due_date <= $2)
