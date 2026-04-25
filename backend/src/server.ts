@@ -8,6 +8,7 @@ import { testDbConnection } from './config/db.js';
 import { cleanupDeletedTasks } from './cron/cleanupDeletedTasks.js';
 import { saveDailyMetrics } from './cron/saveDailyMetrics.js';
 import { cleanupExpiresTokens } from './cron/cleanupExpiresTokens.js';
+import { setTaskMissedStatus } from './cron/setTaskMissedStatus.js';
 // import dotenv from "dotenv";
 // dotenv.config();
 
@@ -22,6 +23,7 @@ await seedMeasurementTypes();
 cron.schedule('0 3 * * *', cleanupDeletedTasks);
 cron.schedule('5 3 * * *', cleanupExpiresTokens);
 cron.schedule('5 0 * * *', saveDailyMetrics);
+cron.schedule('0 2 * * *', setTaskMissedStatus);
 // cron.schedule('52 3 * * *', saveDailyMetrics);
 
 async function bootstrap() {

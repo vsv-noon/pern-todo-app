@@ -10,7 +10,7 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
 
     due_date DATE NOT NULL,
     status TEXT DEFAULT 'pending'
-      CHECK (status IN ('pending', 'done', 'skipped')),
+      CHECK (status IN ('pending', 'done', 'skipped', 'missed')),
 
     value NUMERIC,
 
