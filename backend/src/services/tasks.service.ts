@@ -70,3 +70,22 @@ export async function getTasksRangeService(userId: number, start: string, end: s
     client.release();
   }
 }
+
+export async function updateTaskItem(userId: number, id: number, status: string) {
+  const client = await pool.connect();
+
+  try {
+    await client.query('BEGIN');
+
+    const result = await tasksModel.updateTask(client, status, id, userId);
+
+    await client.query('COMMIT');
+
+    return result;
+  } catch (err) {
+    await client.query('ROLLBACK');
+    throw err;
+  } finally {
+    client.release();
+  }
+}

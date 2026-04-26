@@ -12,5 +12,6 @@ router.use(activateMiddleware);
 router.get('/range', tasksController.getTasksRange);
 
 router.post('/', tasksController.createTask);
+router.patch('/:id', tasksController.updateTask);
 
 export default router;

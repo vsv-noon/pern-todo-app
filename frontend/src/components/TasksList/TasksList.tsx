@@ -1,36 +1,34 @@
-import { useEffect, useState } from 'react';
 import { apiFetch } from '../../services/api/api';
+import type { Task } from '../../pages/TasksPage/TasksPage';
+import TaskItem from '../TaskItem/TaskItem';
 
-function TasksList() {
-  const [tasksList, setTasksList] = useState();
+function TasksList({
+  tasks,
+  setTasks,
+}: {
+  tasks: Task[];
+  setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
+}) {
+  async function handleUpdate(item: Task, { status }: { status: string }) {
+    setTasks((prev) => prev.map((t) => (t.id === item.id ? { ...t, status } : t)));
 
-  useEffect(() => {
-    async function loadTasksList() {
-      try {
-        const data = await apiFetch(`/tasks/range?start=${'2026-04-01'}&end=${'2026-08-31'}`);
-        // const data = await apiFetch(`/tasks/range?start=2026-04-23&end=2026-04-30`)
-        // console.log(data);
+    try {
+      await apiFetch(`/tasks/${item.id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ status: status }),
+      });
 
-        setTasksList(data);
-      } catch (err) {
-        console.error(err);
-      }
+      setTasks((prev) => prev.map((t) => (t.id === item.id ? { ...t, status: item.status } : t)));
+    } catch (err) {
+      console.error(err);
     }
-
-    loadTasksList();
-  }, []);
+  }
 
   return (
     <div>
       <h2>TasksList</h2>
 
-      <ul>
-        {tasksList?.map((el, i) => (
-          <li key={i}>
-            {el.id} {el.title} {el.due_date} {el.status}
-          </li>
-        ))}
-      </ul>
+      <ul>{tasks && tasks.map((el) => <TaskItem task={el} onUpdate={handleUpdate} />)}</ul>
     </div>
   );
 }

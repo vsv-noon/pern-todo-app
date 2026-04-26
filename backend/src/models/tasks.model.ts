@@ -140,3 +140,20 @@ export async function getRangeInstances(
 
   return result.rows;
 }
+
+export async function updateTask(client: PoolClient, status: string, id: number, userId: number) {
+  const result = await client.query(
+    `
+    UPDATE task_instances ti
+    SET status = $1
+    FROM tasks t
+    WHERE ti.id = $2
+      AND ti.task_id = t.id
+      AND t.user_id = $3
+    RETURNING ti.*;
+    `,
+    [status, id, userId]
+  );
+
+  return result.rows[0];
+}
